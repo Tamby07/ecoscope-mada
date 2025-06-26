@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoScope Mada</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #0e4d3a;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background: #eaf0ec;
+      padding: 10px;
+      text-align: center;
+    }
+    nav a {
+      margin: 10px;
+      text-decoration: none;
+      color: #0e4d3a;
+      font-weight: bold;
+    }
+    section {
+      padding: 20px;
+    }
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+    footer {
+      background-color: #0e4d3a;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>EcoScope Mada</h1>
+    <p>Surveillance écologique intelligente de Madagascar</p>
+  </header>
+
+  <nav>
+    <a href="#accueil">Accueil</a>
+    <a href="#carte">Carte</a>
+    <a href="#services">Services</a>
+    <a href="#apropos">À propos</a>
+    <a href="#contact">Contact</a>
+  </nav>
+
+  <section id="accueil">
+    <h2>Bienvenue</h2>
+    <p>Bienvenue sur EcoScope Mada, une initiative technologique dédiée à l’analyse et au suivi des écosystèmes de Madagascar par télédétection et données géospatiales.</p>
+  </section>
+
+  <section id="carte">
+    <h2>Carte interactive (démo)</h2>
+    <div id="map"></div>
+  </section>
+
+  <section id="services">
+    <h2>Nos Services</h2>
+    <ul>
+      <li>Suivi de la déforestation par satellite</li>
+      <li>Estimation de la biomasse forestière (AGBD)</li>
+      <li>Cartographie SIG (occupation du sol, NDVI, etc.)</li>
+      <li>Assistance technique en SIG, GEE, photogrammétrie</li>
+      <li>Appui aux ONG, chercheurs et projets environnementaux</li>
+    </ul>
+  </section>
+
+  <section id="apropos">
+    <h2>À propos</h2>
+    <p>EcoScope Mada a été fondé par Tamby, ingénieur agronome malgache spécialisé en foresterie, télédétection, SIG et drones. Nous mettons la technologie au service de la nature.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Email : ecoscope.mada@gmail.com</p>
+    <p>Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+    <p>WhatsApp : +261 ...</p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 EcoScope Mada - Tous droits réservés.</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    var map = L.map('map').setView([-18.8792, 47.5079], 6); // Centré sur Madagascar
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Données © OpenStreetMap',
+      maxZoom: 18
+    }).addTo(map);
+  </script>
+
+</body>
+</html>
