@@ -4,49 +4,102 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EcoScope Mada</title>
+
+  <!-- Police professionnelle -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Montserrat', sans-serif;
       margin: 0;
       padding: 0;
+      background-color: #f4f8f5;
+      color: #333;
     }
-   header {
-  background-image: url('Mangrove.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  color: white;
-  padding: 60px 20px;
-  text-align: center;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
-}
+
+    /* Animation douce à l'apparition */
+    section {
+      padding: 20px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    header {
+      background-image: url('Mangrove.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
     nav {
       background: #eaf0ec;
       padding: 10px;
       text-align: center;
+      box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
     }
+
     nav a {
       margin: 10px;
       text-decoration: none;
       color: #0e4d3a;
       font-weight: bold;
+      transition: color 0.3s, transform 0.2s;
     }
-    section {
-      padding: 20px;
+
+    nav a:hover {
+      color: #1c6b55;
+      transform: scale(1.05);
     }
+
     #map {
       height: 400px;
       width: 100%;
+      border: 2px solid #ccc;
+      border-radius: 8px;
     }
+
     footer {
       background-color: #0e4d3a;
       color: white;
       text-align: center;
       padding: 10px;
+      font-size: 14px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li::before {
+      content: "✅ ";
+      color: #0e4d3a;
+    }
+
+    a {
+      color: #0e4d3a;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
+
 <body>
 
   <header>
@@ -110,21 +163,22 @@
       maxZoom: 18
     }).addTo(map);
 
-    // Couches raster transparentes (tu dois avoir les bons fichiers PNG)
-    var occupationSol = L.imageOverlay('AA_OS.png', [[-25.2899108677032416, 43.1768953105059197], [-20.9083780694102757, 45.7948555430154443]]);
+    // Couches raster transparentes
+    var occupationSol = L.imageOverlay('AA_OS.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
     var agbd = L.imageOverlay('data/agbd.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
-    var rainfall = L.imageOverlay('Rainfall.png', [[-25.2899108677032416, 43.1768953105059197], [-20.9083780694102757, 45.7948555430154443]]);
-    // Groupe de couches à activer via menu
+    var rainfall = L.imageOverlay('Rainfall.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
+
+    // Groupe de couches
     var overlays = {
       "Land Use Land Cover": occupationSol,
       "AGBD (biomasse)": agbd,
       "Rainfall": rainfall
     };
 
-    // Menu interactif à gauche de la carte
+    // Menu interactif
     L.control.layers(null, overlays, { collapsed: false }).addTo(map);
 
-    // Afficher par défaut une couche (ex. occupation du sol)
+    // Couche par défaut
     occupationSol.addTo(map);
   </script>
 
