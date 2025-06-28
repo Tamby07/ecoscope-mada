@@ -89,7 +89,7 @@
     <h2>Contact</h2>
     <p>Email : ecoscope.mada@gmail.com</p>
     <p>Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-    <p>WhatsApp : +261343228303 </p>
+    <p>WhatsApp : +261343228303</p>
   </section>
 
   <footer>
@@ -100,13 +100,29 @@
   <script>
     var map = L.map('map').setView([-18.8792, 47.5079], 6); // Centré sur Madagascar
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Fond de carte
+    var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: 'Données © OpenStreetMap',
       maxZoom: 18
     }).addTo(map);
-    var imageUrl = 'AA.png';
-  var imageBounds = [[-24.2297191693853833, 43.2688827955997510], [-22.3325671208533656, 44.3464119789011164]];
-  L.imageOverlay(imageUrl, imageBounds).addTo(map);
+
+    // Couches raster transparentes (tu dois avoir les bons fichiers PNG)
+    var occupationSol = L.imageOverlay('AA.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
+    var agbd = L.imageOverlay('data/agbd.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
+    var feux = L.imageOverlay('data/feux.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
+
+    // Groupe de couches à activer via menu
+    var overlays = {
+      "Occupation du sol": occupationSol,
+      "AGBD (biomasse)": agbd,
+      "Feux de végétation": feux
+    };
+
+    // Menu interactif à gauche de la carte
+    L.control.layers(null, overlays, { collapsed: false }).addTo(map);
+
+    // Afficher par défaut une couche (ex. occupation du sol)
+    occupationSol.addTo(map);
   </script>
 
 </body>
