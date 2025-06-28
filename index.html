@@ -111,14 +111,14 @@
     }).addTo(map);
 
     // Couches raster transparentes (tu dois avoir les bons fichiers PNG)
-    var Land_use_Land_cover = L.imageOverlay('AA_OS.png', [[-25.2899108677032416, 43.1768953105059197], [-20.9083780694102757, 45.7948555430154443]]);
+    var occupationSol = L.imageOverlay('AA_OS.png', [[-25.2899108677032416, 43.1768953105059197], [-20.9083780694102757, 45.7948555430154443]]);
     var agbd = L.imageOverlay('data/agbd.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
-    var Rainfall = L.imageOverlay('data/Rainfall.png', [[-25.2899108677032416, 43.1768953105059197], [-20.9083780694102757, 45.7948555430154443]]);
+    var rainfall = L.imageOverlay('data/Rainfall.png', [[-25.2899108677032416, 43.1768953105059197], [-20.9083780694102757, 45.7948555430154443]]);
     // Groupe de couches à activer via menu
     var overlays = {
-      "Occupation du sol": occupationSol,
+      "Land Use Land Cover": occupationSol,
       "AGBD (biomasse)": agbd,
-      "Feux de végétation": feux
+      "Rainfall": rainfall
     };
 
     // Menu interactif à gauche de la carte
