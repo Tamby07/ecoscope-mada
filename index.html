@@ -97,6 +97,31 @@
     a:hover {
       text-decoration: underline;
     }
+
+    /* ✅ Légende de l'occupation du sol */
+    .legend {
+      background: white;
+      padding: 10px;
+      line-height: 20px;
+      color: #333;
+      font-size: 13px;
+      border-radius: 5px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.2);
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+
+    .legend i {
+      width: 18px;
+      height: 18px;
+      float: left;
+      margin-right: 8px;
+      opacity: 0.9;
+      border: 1px solid #999;
+      display: inline-block;
+    }
   </style>
 </head>
 
@@ -181,6 +206,18 @@
     // Couche par défaut
     occupationSol.addTo(map);
   </script>
+
+  <!-- ✅ Légende d’occupation du sol -->
+  <div class="legend">
+    <strong>Légende - Occupation du sol</strong><br>
+    <i style="background:#006400"></i> Tree cover<br>
+    <i style="background:#ffbb22"></i> Agricultural<br>
+    <i style="background:#ffff4c"></i> Grassland<br>
+    <i style="background:#fa0000"></i> Built-up<br>
+    <i style="background:#b4b4b4"></i> Bare / sparse vegetation<br>
+    <i style="background:#0064c8"></i> Water<br>
+    <i style="background:#00cf75"></i> Mangroves
+  </div>
 
 </body>
 </html>
