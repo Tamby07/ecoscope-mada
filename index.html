@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EcoScope Mada</title>
-
-  <!-- Police professionnelle -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -18,16 +16,6 @@
       color: #333;
     }
 
-    section {
-      padding: 20px;
-      animation: fadeIn 1s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
     header {
       background-image: url('Mangrove.jpg');
       background-size: cover;
@@ -37,11 +25,6 @@
       padding: 60px 20px;
       text-align: center;
       text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
-    }
-
-    h1, h2 {
-      margin-bottom: 10px;
-      font-weight: 600;
     }
 
     nav {
@@ -56,12 +39,6 @@
       text-decoration: none;
       color: #0e4d3a;
       font-weight: bold;
-      transition: color 0.3s, transform 0.2s;
-    }
-
-    nav a:hover {
-      color: #1c6b55;
-      transform: scale(1.05);
     }
 
     #map {
@@ -69,35 +46,9 @@
       width: 100%;
       border: 2px solid #ccc;
       border-radius: 8px;
+      position: relative;
     }
 
-    footer {
-      background-color: #0e4d3a;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-    }
-
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    li::before {
-      content: "✅ ";
-      color: #0e4d3a;
-    }
-
-    a {
-      color: #0e4d3a;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    /* ✅ Légende */
     .legend {
       background: white;
       padding: 10px;
@@ -108,9 +59,9 @@
       box-shadow: 0 0 8px rgba(0,0,0,0.2);
       position: absolute;
       bottom: 10px;
-      left: 10px; /* modifié pour éviter superposition */
+      left: 10px;
       z-index: 1000;
-      display: none; /* par défaut, cachée */
+      display: none;
     }
 
     .legend i {
@@ -121,6 +72,14 @@
       opacity: 0.9;
       border: 1px solid #999;
       display: inline-block;
+    }
+
+    footer {
+      background-color: #0e4d3a;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
     }
   </style>
 </head>
@@ -140,99 +99,67 @@
     <a href="#contact">Contact</a>
   </nav>
 
-  <section id="accueil">
-    <h2>Bienvenue</h2>
-    <p>Bienvenue sur EcoScope Mada, une initiative technologique dédiée à l’analyse et au suivi des écosystèmes de Madagascar par télédétection et données géospatiales.</p>
-  </section>
-
   <section id="carte">
-    <h2>Carte interactive (démo)</h2>
-    <div id="map"></div>
-  </section>
-
-  <section id="services">
-    <h2>Nos Services</h2>
-    <ul>
-      <li>Suivi de la déforestation par satellite</li>
-      <li>Suivi de la propagation feu par satellite</li>
-      <li>Estimation de la biomasse forestière (AGBD)</li>
-      <li>Cartographie SIG (occupation du sol, NDVI, etc.)</li>
-      <li>Assistance technique en SIG, GEE, photogrammétrie</li>
-      <li>Appui aux ONG, chercheurs et projets environnementaux</li>
-    </ul>
-  </section>
-
-  <section id="apropos">
-    <h2>À propos</h2>
-    <p>EcoScope Mada a été fondé par HERINANDRIANIA Tamby Iavintsoa, ingénieur agronome malgache spécialisé en foresterie, télédétection, SIG et drones. Nous mettons la technologie au service de la nature.</p>
-  </section>
-
-  <section id="contact">
-    <h2>Contact</h2>
-    <p>Email : ecoscope.mada@gmail.com</p>
-    <p>Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-    <p>WhatsApp : +261343228303</p>
+    <h2>Carte interactive</h2>
+    <div id="map">
+      <!-- ✅ Légende intégrée dans la carte -->
+      <div class="legend" id="lulcLegend">
+        <strong>Légende - Occupation du sol</strong><br>
+        <i style="background:#006400"></i> Tree cover<br>
+        <i style="background:#ffbb22"></i> Agricultural<br>
+        <i style="background:#ffff4c"></i> Grassland<br>
+        <i style="background:#fa0000"></i> Built-up<br>
+        <i style="background:#b4b4b4"></i> Bare / sparse vegetation<br>
+        <i style="background:#0064c8"></i> Water<br>
+        <i style="background:#00cf75"></i> Mangroves<br>
+      </div>
+    </div>
   </section>
 
   <footer>
     <p>&copy; 2025 EcoScope Mada - Tous droits réservés.</p>
   </footer>
 
- <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script>
-  var map = L.map('map').setView([-18.8792, 47.5079], 6);
+  <!-- Leaflet -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    window.onload = function () {
+      var map = L.map('map').setView([-18.8792, 47.5079], 6);
 
-  var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'Données © OpenStreetMap',
-    maxZoom: 18
-  }).addTo(map);
+      var baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Données © OpenStreetMap',
+        maxZoom: 18
+      }).addTo(map);
 
-  // Couches raster
-  var occupationSol = L.imageOverlay('AA_OS.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
-  var agbd = L.imageOverlay('data/agbd.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
-  var rainfall = L.imageOverlay('Rainfall.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
+      // Raster layers
+      var occupationSol = L.imageOverlay('AA_OS.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
+      var agbd = L.imageOverlay('data/agbd.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
+      var rainfall = L.imageOverlay('Rainfall.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
 
-  // Groupe de couches
-  var overlays = {
-    "Land Use Land Cover": occupationSol,
-    "AGBD (biomasse)": agbd,
-    "Rainfall": rainfall
-  };
+      var overlays = {
+        "Land Use Land Cover": occupationSol,
+        "AGBD (biomasse)": agbd,
+        "Rainfall": rainfall
+      };
 
-  L.control.layers(null, overlays, { collapsed: false }).addTo(map);
+      L.control.layers(null, overlays, { collapsed: false }).addTo(map);
 
-  // Ajouter couche LULC par défaut
-  occupationSol.addTo(map);
-  document.querySelector('.legend').style.display = 'block';
+      // Affiche par défaut occupationSol + légende
+      occupationSol.addTo(map);
+      document.getElementById('lulcLegend').style.display = 'block';
 
-  // ✅ Détecter l'ajout d'une couche
-  map.on('overlayadd', function (e) {
-    if (e.layer === occupationSol) {
-      document.querySelector('.legend').style.display = 'block';
-    }
-  });
+      map.on('overlayadd', function (e) {
+        if (e.layer === occupationSol) {
+          document.getElementById('lulcLegend').style.display = 'block';
+        }
+      });
 
-  // ✅ Détecter la suppression d'une couche
-  map.on('overlayremove', function (e) {
-    if (e.layer === occupationSol) {
-      document.querySelector('.legend').style.display = 'none';
-    }
-  });
-</script>
-
-
-  <!-- ✅ Légende dynamique -->
-  <div class="legend">
-    <strong>Légende - Occupation du sol</strong><br>
-    <i style="background:#006400"></i> Tree cover<br>
-    <i style="background:#ffbb22"></i> Xerophilous thicket/Shrubland<br>
-    <i style="background:#f096ff"></i> Agricultural<br>
-    <i style="background:#ffff4c"></i> Grassland<br>
-    <i style="background:#fa0000"></i> Built-up<br>
-    <i style="background:#b4b4b4"></i> Bare / sparse vegetation<br>
-    <i style="background:#0064c8"></i> Water<br>
-    <i style="background:#00cf75"></i> Mangroves
-  </div>
-
+      map.on('overlayremove', function (e) {
+        if (e.layer === occupationSol) {
+          document.getElementById('lulcLegend').style.display = 'none';
+        }
+      });
+    };
+  </script>
 </body>
 </html>
