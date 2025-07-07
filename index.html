@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EcoScope Mada</title>
+
+  <!-- Police professionnelle -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 
@@ -16,6 +18,16 @@
       color: #333;
     }
 
+    section {
+      padding: 20px;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     header {
       background-image: url('Mangrove.jpg');
       background-size: cover;
@@ -25,6 +37,11 @@
       padding: 60px 20px;
       text-align: center;
       text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8);
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+      font-weight: 600;
     }
 
     nav {
@@ -39,6 +56,12 @@
       text-decoration: none;
       color: #0e4d3a;
       font-weight: bold;
+      transition: color 0.3s, transform 0.2s;
+    }
+
+    nav a:hover {
+      color: #1c6b55;
+      transform: scale(1.05);
     }
 
     #map {
@@ -47,6 +70,32 @@
       border: 2px solid #ccc;
       border-radius: 8px;
       position: relative;
+    }
+
+    footer {
+      background-color: #0e4d3a;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li::before {
+      content: "✅ ";
+      color: #0e4d3a;
+    }
+
+    a {
+      color: #0e4d3a;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     .legend {
@@ -73,14 +122,6 @@
       border: 1px solid #999;
       display: inline-block;
     }
-
-    footer {
-      background-color: #0e4d3a;
-      color: white;
-      text-align: center;
-      padding: 10px;
-      font-size: 14px;
-    }
   </style>
 </head>
 
@@ -99,27 +140,56 @@
     <a href="#contact">Contact</a>
   </nav>
 
+  <section id="accueil">
+    <h2>Bienvenue</h2>
+    <p>Bienvenue sur <strong>EcoScope Mada</strong>, une initiative technologique fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG, télédétection et drones.</p>
+    <p>Notre mission : offrir un outil de surveillance écologique basé sur l’analyse géospatiale pour appuyer les efforts de conservation et de développement durable à Madagascar.</p>
+  </section>
+
   <section id="carte">
     <h2>Carte interactive</h2>
     <div id="map">
-      <!-- ✅ Légende intégrée dans la carte -->
       <div class="legend" id="lulcLegend">
+        <strong>Légende - Occupation du sol</strong><br>
         <i style="background:#006400"></i> Tree cover<br>
-    <i style="background:#ffbb22"></i> Xerophilous thicket/Shrubland<br>
-    <i style="background:#f096ff"></i> Agricultural<br>
-    <i style="background:#ffff4c"></i> Grassland<br>
-    <i style="background:#fa0000"></i> Built-up<br>
-    <i style="background:#b4b4b4"></i> Bare / sparse vegetation<br>
-    <i style="background:#0064c8"></i> Water<br>
-    <i style="background:#00cf75"></i> Mangroves
+        <i style="background:#ffbb22"></i> Agricultural<br>
+        <i style="background:#ffff4c"></i> Grassland<br>
+        <i style="background:#fa0000"></i> Built-up<br>
+        <i style="background:#b4b4b4"></i> Bare / sparse vegetation<br>
+        <i style="background:#0064c8"></i> Water<br>
+        <i style="background:#00cf75"></i> Mangroves<br>
+      </div>
     </div>
   </section>
 
+  <section id="services">
+    <h2>Nos Services</h2>
+    <ul>
+      <li>Suivi de la déforestation par satellite</li>
+      <li>Suivi de la propagation du feu</li>
+      <li>Estimation de la biomasse forestière (AGBD)</li>
+      <li>Cartographie SIG (occupation du sol, NDVI, etc.)</li>
+      <li>Assistance technique en SIG, GEE, photogrammétrie</li>
+      <li>Appui aux ONG, chercheurs et projets environnementaux</li>
+    </ul>
+  </section>
+
+  <section id="apropos">
+    <h2>À propos</h2>
+    <p><strong>EcoScope Mada</strong> est un projet personnel fondé par <strong>Tamby Herinandrianina</strong>, ingénieur agronome passionné par les technologies spatiales et la conservation. Fort de son expertise en télédétection, SIG, drones, et base de données, il met à disposition cet outil pour appuyer les initiatives écologiques à Madagascar.</p>
+  </section>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <p>Email : ecoscope.mada@gmail.com</p>
+    <p>Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+    <p>WhatsApp : +261343228303</p>
+  </section>
+
   <footer>
-    <p>&copy; 2025 EcoScope Mada - Tous droits réservés.</p>
+    <p>&copy; 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
   </footer>
 
-  <!-- Leaflet -->
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script>
     window.onload = function () {
@@ -130,7 +200,6 @@
         maxZoom: 18
       }).addTo(map);
 
-      // Raster layers
       var occupationSol = L.imageOverlay('AA_OS.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
       var agbd = L.imageOverlay('data/agbd.png', [[-24.2297, 43.2688], [-22.3325, 44.3464]]);
       var rainfall = L.imageOverlay('Rainfall.png', [[-25.2899, 43.1768], [-20.9083, 45.7948]]);
@@ -143,7 +212,6 @@
 
       L.control.layers(null, overlays, { collapsed: false }).addTo(map);
 
-      // Affiche par défaut occupationSol + légende
       occupationSol.addTo(map);
       document.getElementById('lulcLegend').style.display = 'block';
 
