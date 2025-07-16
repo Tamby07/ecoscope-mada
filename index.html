@@ -262,11 +262,18 @@
   </section>
 
   <section id="contact">
-    <h2>Contactez-nous</h2>
-    <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
-    <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-    <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
-  </section>
+  <h2>Contactez-nous</h2>
+  <form name="contact" method="POST" data-netlify="true">
+    <input type="hidden" name="form-name" value="contact">
+    <p><label>Nom : <input type="text" name="name" required></label></p>
+    <p><label>Email : <input type="email" name="email" required></label></p>
+    <p><label>Message : <textarea name="message" required></textarea></label></p>
+    <p><button type="submit">Envoyer</button></p>
+  </form>
+  <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
+  <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+  <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
+</section>
 
   <footer>
     <p>© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
