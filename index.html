@@ -64,8 +64,17 @@
       text-align: center;
     }
 
-    nav a {
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav li {
       margin: 0 20px;
+    }
+
+    nav a {
       text-decoration: none;
       color: #2d3748;
       font-weight: 500;
@@ -154,6 +163,29 @@
       margin-bottom: 10px;
     }
 
+    /* À Propos */
+    #apropos .profile-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #apropos img {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* GEE Section */
+    #gee iframe {
+      max-width: 100%;
+      margin: 20px auto;
+      display: block;
+    }
+
     /* Footer */
     footer {
       background: #2d3748;
@@ -180,12 +212,17 @@
       header h1 {
         font-size: 2rem;
       }
-      nav a {
-        margin: 0 10px;
-        font-size: 0.9rem;
+      nav ul {
+        flex-wrap: wrap;
       }
-      #map {
+      nav li {
+        margin: 10px;
+      }
+      #map, #gee iframe {
         height: 400px;
+      }
+      #apropos img {
+        max-width: 150px;
       }
     }
   </style>
@@ -197,89 +234,97 @@
   </header>
 
   <nav>
-    <a href="#accueil">Accueil</a>
-    <a href="#carte">Carte</a>
-    <a href="#services">Services</a>
-    <a href="#apropos">À Propos</a>
-    <a href="#contact">Contact</a>
-    <li><a href="#gee">Carte GEE</a></li>
+    <ul>
+      <li><a href="#accueil">Accueil</a></li>
+      <li><a href="#carte">Carte Visualiser</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#apropos">À Propos</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#gee">Carte Explorateur</a></li>
+    </ul>
   </nav>
 
-  <section id="accueil">
-    <h2>Bienvenue sur EcoScope Mada</h2>
-    <p>Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.</p>
-    <p>Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.</p>
-  </section>
+  <main>
+    <section id="accueil">
+      <h2>Bienvenue sur EcoScope Mada</h2>
+      <p>Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.</p>
+      <p>Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.</p>
+    </section>
 
-  <section id="carte">
-    <h2>Carte Interactive</h2>
-    <div id="map">
-      <div class="legend" id="lulcLegend">
-        <strong>Légende - Occupation du sol</strong><br>
-        <i style="background:#006400"></i> Forêt<br>
-        <i style="background:#ffbb22"></i> Agriculture<br>
-        <i style="background:#ffff4c"></i> Prairie<br>
-        <i style="background:#fa0000"></i> Zone urbaine<br>
-        <i style="background:#b4b4b4"></i> Végétation clairsemée<br>
-        <i style="background:#0064c8"></i> Eau<br>
-        <i style="background:#00cf75"></i> Mangroves<br>
+    <section id="carte">
+      <h2><i class="fas fa-map"></i> Carte Visualiser</h2>
+      <div id="map">
+        <div class="legend" id="lulcLegend">
+          <strong>Légende - Occupation du sol</strong><br>
+          <i style="background:#006400"></i> Forêt<br>
+          <i style="background:#ffbb22"></i> Agriculture<br>
+          <i style="background:#ffff4c"></i> Prairie<br>
+          <i style="background:#fa0000"></i> Zone urbaine<br>
+          <i style="background:#b4b4b4"></i> Végétation clairsemée<br>
+          <i style="background:#0064c8"></i> Eau<br>
+          <i style="background:#00cf75"></i> Mangroves<br>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="services">
-    <h2>Nos Services</h2>
-    <div class="services-list">
-      <div class="service-item">
-        <i class="fas fa-satellite"></i>
-        <p>Suivi de la déforestation par satellite</p>
+    <section id="services">
+      <h2>Nos Services</h2>
+      <div class="services-list">
+        <div class="service-item">
+          <i class="fas fa-satellite"></i>
+          <p>Suivi de la déforestation par satellite</p>
+        </div>
+        <div class="service-item">
+          <i class="fas fa-fire"></i>
+          <p>Suivi de la propagation des feux</p>
+        </div>
+        <div class="service-item">
+          <i class="fas fa-tree"></i>
+          <p>Estimation de la biomasse forestière</p>
+        </div>
+        <div class="service-item">
+          <i class="fas fa-map"></i>
+          <p>Cartographie SIG (occupation du sol, NDVI)</p>
+        </div>
+        <div class="service-item">
+          <i class="fas fa-cog"></i>
+          <p>Assistance technique en SIG et GEE</p>
+        </div>
+        <div class="service-item">
+          <i class="fas fa-handshake"></i>
+          <p>Collaboration avec ONG et chercheurs</p>
+        </div>
       </div>
-      <div class="service-item">
-        <i class="fas fa-fire"></i>
-        <p>Suivi de la propagation des feux</p>
-      </div>
-      <div class="service-item">
-        <i class="fas fa-tree"></i>
-        <p>Estimation de la biomasse forestière</p>
-      </div>
-      <div class="service-item">
-        <i class="fas fa-map"></i>
-        <p>Cartographie SIG (occupation du sol, NDVI)</p>
-      </div>
-      <div class="service-item">
-        <i class="fas fa-cog"></i>
-        <p>Assistance technique en SIG et GEE</p>
-      </div>
-      <div class="service-item">
-        <i class="fas fa-handshake"></i>
-        <p>Collaboration avec ONG et chercheurs</p>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <section id="apropos">
-    <h2>À Propos</h2>
-    <p><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Notre objectif est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar.</p>
-  </section>
+    <section id="apropos">
+      <h2>À Propos</h2>
+      <div class="profile-container">
+        <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome">
+        <p><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Notre objectif est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar.</p>
+      </div>
+    </section>
 
-  <section id="contact">
-  <h2>Contactez-nous</h2>
-  <form name="contact" method="POST" data-netlify="true">
-    <input type="hidden" name="form-name" value="contact">
-    <p><label>Nom : <input type="text" name="name" required></label></p>
-    <p><label>Email : <input type="email" name="email" required></label></p>
-    <p><label>Message : <textarea name="message" required></textarea></label></p>
-    <p><button type="submit">Envoyer</button></p>
-  </form>
-  <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
-  <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-  <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
-</section>
-  <section id="gee">
-  <h2>Carte Interactive Google Earth Engine</h2>
-  <p>Explorez les données environnementales de Madagascar avec notre carte interactive.</p>
-  <iframe src="https://herinandrianinatamby.users.earthengine.app/view/ecoscope-mada-map" width="100%" height="500px" style="border: none;"></iframe>
-  </section>
+    <section id="contact">
+      <h2>Contactez-nous</h2>
+      <form name="contact" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="contact">
+        <p><label>Nom : <input type="text" name="name" required></label></p>
+        <p><label>Email : <input type="email" name="email" required></label></p>
+        <p><label>Message : <textarea name="message" required></textarea></label></p>
+        <p><button type="submit">Envoyer</button></p>
+      </form>
+      <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
+      <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+      <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
+    </section>
+
+    <section id="gee">
+      <h2><i class="fas fa-globe"></i> Carte Explorateur</h2>
+      <p>Explorez les couches environnementales (Landcover, NDVI, AGBD) de Madagascar avec Google Earth Engine.</p>
+      <iframe src="https://herinandrianinatamby.users.earthengine.app/view/ecoscope-mada-map" width="100%" height="500px" style="border: none;"></iframe>
+    </section>
+  </main>
 
   <footer>
     <p>© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
@@ -334,6 +379,20 @@
         console.error('Erreur d’initialisation de la carte : ', error);
         alert('Une erreur s’est produite lors du chargement de la carte.');
       }
+    });
+
+    // Script pour le formulaire Netlify
+    document.querySelector('form[name="contact"]').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const form = this;
+      const formData = new FormData(form);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
+        .then(() => alert('Merci pour votre message ! Nous vous contacterons bientôt.'))
+        .catch(error => alert('Erreur lors de l\'envoi : ' + error));
     });
   </script>
 </body>
