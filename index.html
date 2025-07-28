@@ -254,11 +254,19 @@
     <section id="carte">
       <h2><i class="fas fa-map"></i> Carte Visualiser</h2>
       <div id="map">
-        <div class="legend" id="mapLegend">
-          <strong>Légende</strong><br>
-          <i style="background:#0064c8"></i> Bassin Versant<br>
-          <i style="background:#228B22"></i> Corridor<br>
-          <i style="background:#00B7EB"></i> Précipitations<br>
+        <div class="legend" id="legendBassin" style="display: none;">
+          <strong>Légende - Bassin Versant</strong><br>
+          <i style="background:#0064c8"></i> Zones de bassin<br>
+        </div>
+        <div class="legend" id="legendCorridor" style="display: none;">
+          <strong>Légende - Corridor</strong><br>
+          <i style="background:#228B22"></i> Zones protégées<br>
+          <i style="background:#FFD700"></i> Zones de transition<br>
+          <i style="background:#FFA500"></i> Zones critiques<br>
+        </div>
+        <div class="legend" id="legendPrecip" style="display: none;">
+          <strong>Légende - Précipitations</strong><br>
+          <i style="background:#00B7EB"></i> Pluviométrie<br>
         </div>
       </div>
     </section>
@@ -354,20 +362,41 @@
         // Layer control
         L.control.layers(null, overlays, { collapsed: false }).addTo(map);
         overlays["Bassin Versant"].addTo(map);
-        document.getElementById('mapLegend').style.display = 'block';
 
-        // Legend toggle
+        // Légendes
+        const legendBassin = document.getElementById('legendBassin');
+        const legendCorridor = document.getElementById('legendCorridor');
+        const legendPrecip = document.getElementById('legendPrecip');
+
+        // Afficher/masquer les légendes en fonction de la couche sélectionnée
         map.on('overlayadd', function (e) {
-          document.getElementById('mapLegend').style.display = 'block';
+          if (e.name === 'Bassin Versant') {
+            legendBassin.style.display = 'block';
+            legendCorridor.style.display = 'none';
+            legendPrecip.style.display = 'none';
+          } else if (e.name === 'Corridor') {
+            legendBassin.style.display = 'none';
+            legendCorridor.style.display = 'block';
+            legendPrecip.style.display = 'none';
+          } else if (e.name === 'Précipitations') {
+            legendBassin.style.display = 'none';
+            legendCorridor.style.display = 'none';
+            legendPrecip.style.display = 'block';
+          }
         });
 
         map.on('overlayremove', function (e) {
           if (!map.hasLayer(overlays["Bassin Versant"]) && 
               !map.hasLayer(overlays["Corridor"]) && 
               !map.hasLayer(overlays["Précipitations"])) {
-            document.getElementById('mapLegend').style.display = 'none';
+            legendBassin.style.display = 'none';
+            legendCorridor.style.display = 'none';
+            legendPrecip.style.display = 'none';
           }
         });
+
+        // Afficher la légende par défaut pour Bassin Versant
+        legendBassin.style.display = 'block';
 
         // Error handling for image loading
         Object.values(overlays).forEach(layer => {
