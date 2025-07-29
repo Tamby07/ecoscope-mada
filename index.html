@@ -191,7 +191,7 @@
       background: #2d3748;
       color: white;
       text-align: center;
-      padding: 20px;
+      padding: 40px 20px;
       font-size: 0.9rem;
     }
 
@@ -202,6 +202,10 @@
 
     footer a:hover {
       text-decoration: underline;
+    }
+
+    .contact-info {
+      margin: 20px 0;
     }
 
     /* Responsive */
@@ -224,6 +228,9 @@
       #apropos img {
         max-width: 150px;
       }
+      footer {
+        padding: 20px;
+      }
     }
   </style>
 </head>
@@ -236,7 +243,7 @@
   <nav>
     <ul>
       <li><a href="#accueil">Accueil</a></li>
-      <li><a href="#carte">Carte Visualiser</a></li>
+      <li><a href="#carte">Cartes des données</a></li>
       <li><a href="#services">Services</a></li>
       <li><a href="#apropos">À Propos</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -252,7 +259,7 @@
     </section>
 
     <section id="carte">
-      <h2><i class="fas fa-map"></i> Carte Visualiser</h2>
+      <h2><i class="fas fa-map"></i> Cartes des données sur Madagascar</h2>
       <div id="map">
         <div class="legend" id="legendBassin" style="display: none;">
           <strong>Légende - Bassin Versant</strong><br>
@@ -272,10 +279,6 @@
           <i style="background:#7D8B8F"></i> Paysage Kirindy Mangoky<br>
           <i style="background:#A47158"></i> Paysage Bidia Bezavona<br>
           <i style="background:#D5B43C"></i> Paysage Anosy<br>
-        </div>
-        <div class="legend" id="legendPrecip" style="display: none;">
-          <strong>Légende - Précipitations</strong><br>
-          <i style="background:#00B7EB"></i> Pluviométrie<br>
         </div>
       </div>
     </section>
@@ -314,12 +317,19 @@
       <h2>À Propos</h2>
       <div class="profile-container">
         <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome">
-        <p><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Notre objectif est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar.</p>
+        <p><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.</p>
       </div>
+    </section>
+
+    <section id="gee">
+      <h2><i class="fas fa-globe"></i> Carte Explorateur</h2>
+      <p>Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
+      <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
     </section>
 
     <section id="contact">
       <h2>Contactez-nous</h2>
+      <p>Pour plus d'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :</p>
       <form name="contact" method="POST" data-netlify="true">
         <input type="hidden" name="form-name" value="contact">
         <p><label>Nom : <input type="text" name="name" required></label></p>
@@ -327,20 +337,16 @@
         <p><label>Message : <textarea name="message" required></textarea></label></p>
         <p><button type="submit">Envoyer</button></p>
       </form>
-      <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
-      <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-      <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
-    </section>
-
-    <section id="gee">
-      <h2><i class="fas fa-globe"></i> Carte Explorateur</h2>
-      <p>Explorez les couches environnementales (Landcover, NDVI, AGBD) de Madagascar avec Google Earth Engine.</p>
-      <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
     </section>
   </main>
 
   <footer>
     <p>© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
+    <div class="contact-info">
+      <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
+      <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+      <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
+    </div>
     <p><a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a></p>
   </footer>
 
@@ -364,8 +370,7 @@
         // Overlays
         const overlays = {
           "Bassin Versant": L.imageOverlay('BV.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]]),
-          "Corridor": L.imageOverlay('Corridor.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]]),
-          "Précipitations": L.imageOverlay('Rainfall.png', [[-25.6057525959999452, 43.1769244800000820], [-11.9513883349998196, 50.4848516159999576]])
+          "Corridor": L.imageOverlay('Corridor.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]])
         };
 
         // Layer control
@@ -375,32 +380,22 @@
         // Légendes
         const legendBassin = document.getElementById('legendBassin');
         const legendCorridor = document.getElementById('legendCorridor');
-        const legendPrecip = document.getElementById('legendPrecip');
 
         // Afficher/masquer les légendes en fonction de la couche sélectionnée
         map.on('overlayadd', function (e) {
           if (e.name === 'Bassin Versant') {
             legendBassin.style.display = 'block';
             legendCorridor.style.display = 'none';
-            legendPrecip.style.display = 'none';
           } else if (e.name === 'Corridor') {
             legendBassin.style.display = 'none';
             legendCorridor.style.display = 'block';
-            legendPrecip.style.display = 'none';
-          } else if (e.name === 'Précipitations') {
-            legendBassin.style.display = 'none';
-            legendCorridor.style.display = 'none';
-            legendPrecip.style.display = 'block';
           }
         });
 
         map.on('overlayremove', function (e) {
-          if (!map.hasLayer(overlays["Bassin Versant"]) && 
-              !map.hasLayer(overlays["Corridor"]) && 
-              !map.hasLayer(overlays["Précipitations"])) {
+          if (!map.hasLayer(overlays["Bassin Versant"]) && !map.hasLayer(overlays["Corridor"])) {
             legendBassin.style.display = 'none';
             legendCorridor.style.display = 'none';
-            legendPrecip.style.display = 'none';
           }
         });
 
