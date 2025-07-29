@@ -133,7 +133,8 @@
       height: 20px;
       display: inline-block;
       margin-right: 10px;
-      border: 1px solid #ccc;
+      border: 2px solid #808080; /* Contour gris */
+      background: none; /* Pas de remplissage */
     }
 
     /* Services */
@@ -245,7 +246,6 @@
       <li><a href="#accueil">Accueil</a></li>
       <li><a href="#carte">Cartes des données</a></li>
       <li><a href="#services">Services</a></li>
-      <li><a href="#apropos">À Propos</a></li>
       <li><a href="#contact">Contact</a></li>
       <li><a href="#gee">Carte Explorateur</a></li>
     </ul>
@@ -263,7 +263,7 @@
       <div id="map">
         <div class="legend" id="legendBassin" style="display: none;">
           <strong>Légende - Bassin Versant</strong><br>
-          <i style="background:#0064c8"></i> Zones de bassin<br>
+          <i></i> Zones de bassin<br>
         </div>
         <div class="legend" id="legendCorridor" style="display: none;">
           <strong>Légende - Corridor</strong><br>
@@ -313,18 +313,18 @@
       </div>
     </section>
 
+    <section id="gee">
+      <h2><i class="fas fa-globe"></i> Carte Explorateur</h2>
+      <p>Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
+      <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
+    </section>
+
     <section id="apropos">
       <h2>À Propos</h2>
       <div class="profile-container">
         <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome">
         <p><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.</p>
       </div>
-    </section>
-
-    <section id="gee">
-      <h2><i class="fas fa-globe"></i> Carte Explorateur</h2>
-      <p>Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
-      <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
     </section>
 
     <section id="contact">
