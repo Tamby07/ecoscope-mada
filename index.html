@@ -38,7 +38,27 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      position: relative;
       animation: fadeIn 1s ease-in;
+    }
+
+    .language-switch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .language-switch img {
+      width: 20px;
+      height: 15px;
+      margin-left: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s;
+    }
+
+    .language-switch img.active {
+      border-color: #38a169;
     }
 
     header h1 {
@@ -252,11 +272,23 @@
       #donnees select {
         max-width: 100%;
       }
+      .language-switch {
+        top: 5px;
+        right: 5px;
+      }
+      .language-switch img {
+        width: 18px;
+        height: 13px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
+    <div class="language-switch">
+      <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage('fr')">
+      <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage('en')">
+    </div>
     <h1 id="header-title">EcoScope Mada</h1>
     <p id="header-subtitle">Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.</p>
   </header>
@@ -534,17 +566,6 @@
       }
     }
 
-    // Ajouter la bascule de langue avec drapeaux (similaire à votre demande précédente)
-    const header = document.querySelector('header');
-    const languageSwitch = document.createElement('div');
-    languageSwitch.className = 'language-switch';
-    languageSwitch.innerHTML = `
-      <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage('fr')">
-      <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage('en')">
-    `;
-    header.appendChild(languageSwitch);
-
-    // Charger la langue par défaut
     changeLanguage('fr');
   </script>
 </body>
