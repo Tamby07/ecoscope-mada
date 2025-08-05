@@ -172,9 +172,6 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       text-align: center;
       transition: transform 0.3s;
-      cursor: pointer;
-      position: relative;
-      overflow: hidden;
     }
 
     .service-item:hover {
@@ -185,25 +182,6 @@
       font-size: 2rem;
       color: #38a169;
       margin-bottom: 10px;
-    }
-
-    .service-detail {
-      display: none;
-      padding: 15px;
-      background: #f0f4f8;
-      margin-top: 10px;
-      border-radius: 5px;
-      text-align: left;
-      animation: slideDown 0.3s ease-in-out;
-    }
-
-    .service-item.active .service-detail {
-      display: block;
-    }
-
-    @keyframes slideDown {
-      from { max-height: 0; opacity: 0; }
-      to { max-height: 200px; opacity: 1; }
     }
 
     /* À Propos */
@@ -302,9 +280,6 @@
         width: 18px;
         height: 13px;
       }
-      .service-detail {
-        max-height: 150px;
-      }
     }
   </style>
 </head>
@@ -364,54 +339,29 @@
     <section id="services">
       <h2 id="services-title">Nos Services</h2>
       <div class="services-list">
-        <div class="service-item" onclick="toggleDetail(this)">
+        <div class="service-item">
           <i class="fas fa-satellite"></i>
           <p id="service-1">Suivi de la déforestation par satellite</p>
-          <div class="service-detail">
-            <p>Le suivi de la déforestation est réalisé grâce à l'analyse des données spatiales fournies par les satellites Sentinel et Landsat. Ces données sont traitées pour détecter les changements dans la couverture forestière en utilisant des techniques avancées de traitement d'images, telles que la classification supervisée et non supervisée, ainsi que l'indice de végétation par différence normalisée (NDVI). Nous générons des cartes d'occupation du sol à haute résolution, permettant d'identifier les zones déforestées avec précision, d'évaluer les taux de déforestation annuels, et de fournir des rapports détaillés pour les décideurs et les organisations de conservation.</p>
-          </div>
         </div>
-        <div class="service-item" onclick="toggleDetail(this)">
+        <div class="service-item">
           <i class="fas fa-fire"></i>
           <p id="service-2">Suivi de la propagation des feux</p>
-          <div class="service-detail">
-            <p>Le suivi de la propagation des feux repose sur l'utilisation de capteurs thermiques embarqués sur des satellites, combinés à des algorithmes de détection d'incendies en temps réel. Nous analysons les données pour cartographier les zones affectées, estimer la vitesse de propagation, et fournir des alertes précoces aux autorités et aux communautés locales. Cette approche permet une réponse rapide pour limiter les dégâts environnementaux et protéger les écosystèmes vulnérables de Madagascar.</p>
-          </div>
         </div>
-        <div class="service-item" onclick="toggleDetail(this)">
+        <div class="service-item">
           <i class="fas fa-tree"></i>
           <p id="service-3">Estimation de la biomasse forestière</p>
-          <div class="service-detail">
-            <p>L'estimation de la biomasse forestière est réalisée en intégrant les données du satellite GEDI (Global Ecosystem Dynamics Investigation), qui utilise la technologie lidar pour mesurer la hauteur et la densité des forêts. Ces données sont combinées à des modèles statistiques pour calculer la biomasse aérienne avec une précision accrue, offrant des informations cruciales pour la gestion des ressources forestières, la séquestration du carbone, et la planification de la reforestation à Madagascar.</p>
-          </div>
         </div>
-        <div class="service-item" onclick="toggleDetail(this)">
+        <div class="service-item">
           <i class="fas fa-map"></i>
           <p id="service-4">Cartographie SIG (occupation du sol, NDVI)</p>
-          <div class="service-detail">
-            <p>La cartographie SIG utilise des systèmes d'information géographique pour produire des cartes détaillées de l'occupation du sol et de l'indice de végétation par différence normalisée (NDVI). Ces cartes sont générées à partir de données satellitaires et permettent de surveiller les changements d'utilisation des terres, d'évaluer la santé végétale, et de soutenir les projets d'aménagement du territoire et de conservation à Madagascar.</p>
-          </div>
         </div>
-        <div class="service-item" onclick="toggleDetail(this)">
+        <div class="service-item">
           <i class="fas fa-cog"></i>
           <p id="service-5">Assistance technique en SIG et GEE</p>
-          <div class="service-detail">
-            <p>Nous offrons une assistance technique aux utilisateurs de systèmes d'information géographique (SIG) et de Google Earth Engine (GEE), en fournissant des formations, des scripts personnalisés, et un support pour l'analyse des données spatiales. Notre équipe aide les professionnels et les chercheurs à exploiter pleinement ces outils pour des projets environnementaux et de recherche à Madagascar.</p>
-          </div>
         </div>
-        <div class="service-item" onclick="toggleDetail(this)">
+        <div class="service-item">
           <i class="fas fa-handshake"></i>
           <p id="service-6">Collaboration avec ONG et chercheurs</p>
-          <div class="service-detail">
-            <p>Nous collaborons avec des ONG et des chercheurs pour mener des projets de conservation et de recherche environnementale. Ces partenariats incluent le partage de données, la co-conception de solutions, et la mise en œuvre de stratégies durables pour préserver la biodiversité et les ressources naturelles de Madagascar.</p>
-          </div>
-        </div>
-        <div class="service-item" onclick="toggleDetail(this)">
-          <i class="fas fa-graduation-cap"></i>
-          <p id="service-7">Appui académique</p>
-          <div class="service-detail">
-            <p>Nous offrons un appui académique aux étudiants en leur fournissant un accès aux données spatiales et des formations pratiques sur leur utilisation. Cela inclut des ateliers sur l'analyse des images satellitaires, l'interprétation des indices comme le NDVI, et l'utilisation de logiciels SIG. Ces initiatives visent à sensibiliser les jeunes aux enjeux environnementaux et à les préparer à des carrières dans la conservation et la télédétection.</p>
-          </div>
         </div>
       </div>
     </section>
@@ -582,7 +532,41 @@
         'service-4': { fr: 'Cartographie SIG (occupation du sol, NDVI)', en: 'GIS mapping (land use, NDVI)' },
         'service-5': { fr: 'Assistance technique en SIG et GEE', en: 'Technical support in GIS and GEE' },
         'service-6': { fr: 'Collaboration avec ONG et chercheurs', en: 'Collaboration with NGOs and researchers' },
-        'service-7': { fr: 'Appui académique', en: 'Academic support' },
         'gee-title': { fr: 'Carte Explorateur', en: 'Map Explorer' },
         'gee-text': { fr: 'Découvrez une analyse détaillée de l\'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l\'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.', en: 'Discover a detailed analysis of land use in Madagascar, annual precipitation sums, and the NDVI index using Google Earth Engine. These data are essential for monitoring deforestation, assessing ecosystem health, and planning sustainable environmental interventions.' },
         'data-title': { fr: 'Données', en: 'Data' },
+        'data-text': { fr: 'Téléchargez les shapefiles des limites administratives de Madagascar :', en: 'Download the shapefiles of Madagascar administrative boundaries:' },
+        'about-title': { fr: 'À Propos', en: 'About' },
+        'about-text': { fr: '<strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.', en: '<strong>EcoScope Mada</strong> is an initiative led by Tamby Herinandrianina, an agronomist engineer passionate about conservation and geospatial technologies. Based in Madagascar, in Antananarivo (postal code 101), our mission is to provide reliable tools and data to protect Madagascar\'s unique environment. We collaborate with NGOs and researchers to promote sustainable resource management.' },
+        'contact-title': { fr: 'Contactez-nous', en: 'Contact Us' },
+        'contact-text': { fr: 'Pour plus d\'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :', en: 'For more information or to collaborate with us, please use the form below or contact us directly:' },
+        'footer-text-1': { fr: '© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.', en: '© 2025 EcoScope Mada - All rights reserved. Developed by Tamby Herinandrianina.' },
+        'footer-text-2': { fr: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a>', en: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Contact Us</a>' }
+      };
+
+      const langFr = document.querySelector('.lang-fr');
+      const langEn = document.querySelector('.lang-en');
+
+      if (lang === 'fr') {
+        langFr.classList.add('active');
+        langEn.classList.remove('active');
+        document.documentElement.lang = 'fr';
+        for (let id in elements) {
+          const element = document.getElementById(id);
+          if (element) element.innerHTML = elements[id].fr;
+        }
+      } else if (lang === 'en') {
+        langEn.classList.add('active');
+        langFr.classList.remove('active');
+        document.documentElement.lang = 'en';
+        for (let id in elements) {
+          const element = document.getElementById(id);
+          if (element) element.innerHTML = elements[id].en;
+        }
+      }
+    }
+
+    changeLanguage('fr');
+  </script>
+</body>
+</html>
