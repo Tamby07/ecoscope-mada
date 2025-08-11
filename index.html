@@ -1,514 +1,639 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-&nbsp;&nbsp;<meta charset="UTF-8" />
-&nbsp;&nbsp;<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-&nbsp;&nbsp;<meta name="description" content="EcoScope Mada : Plateforme de visualisation écologique pour Madagascar, spécialisée en SIG et télédétection." />
-&nbsp;&nbsp;<meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement" />
-&nbsp;&nbsp;<meta name="author" content="Tamby Herinandrianina" />
-&nbsp;&nbsp;<title>EcoScope Mada - Surveillance écologique</title>
-&nbsp;&nbsp;<!-- Fonts -->
-&nbsp;&nbsp;<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-&nbsp;&nbsp;<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-&nbsp;&nbsp;<!-- FontAwesome pour icônes -->
-&nbsp;&nbsp;<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-&nbsp;&nbsp;<style>
-&nbsp;&nbsp;&nbsp;&nbsp;* {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 0;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 0;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-sizing: border-box;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;body {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-family: 'Roboto', sans-serif;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background-color: #f5f7fa;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: #2d3748;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;line-height: 1.6;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Header */
-&nbsp;&nbsp;&nbsp;&nbsp;header {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Mangrove.jpg') center/cover no-repeat;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 80px 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-align: center;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: white;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;min-height: 400px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display: flex;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flex-direction: column;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;justify-content: center;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position: relative;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;animation: fadeIn 1s ease-in;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.language-switch {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position: absolute;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;top: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.language-switch img {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: 15px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin-left: 5px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cursor: pointer;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border: 2px solid transparent;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transition: border-color 0.3s;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.language-switch img.active {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-color: #38a169;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;header h1 {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 2.5rem;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-weight: 700;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin-bottom: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;header p {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 1.2rem;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 600px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 0 auto;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Navigation */
-&nbsp;&nbsp;&nbsp;&nbsp;nav {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background: #ffffff;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position: sticky;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;top: 0;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z-index: 1000;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 15px 0;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-align: center;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;nav ul {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list-style: none;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display: flex;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;justify-content: center;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;nav li {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 0 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;nav a {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-decoration: none;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: #2d3748;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-weight: 500;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transition: color 0.3s, transform 0.2s;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;nav a:hover {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: #38a169;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transform: translateY(-2px);
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Sections */
-&nbsp;&nbsp;&nbsp;&nbsp;section {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 40px 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 1200px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 0 auto;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;animation: fadeIn 1s ease-in;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;@keyframes fadeIn {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;from { opacity: 0; transform: translateY(20px); }
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to { opacity: 1; transform: translateY(0); }
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;h2 {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 2rem;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: #2d3748;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin-bottom: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-align: center;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Map */
-&nbsp;&nbsp;&nbsp;&nbsp;#map {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: 500px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 100%;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position: relative;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.legend {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background: rgba(255, 255, 255, 0.95);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 15px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 8px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;position: absolute;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bottom: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;left: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z-index: 1000;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 14px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 200px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.legend i {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display: inline-block;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin-right: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border: 2px solid #808080;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background: none;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Services */
-&nbsp;&nbsp;&nbsp;&nbsp;.services-list {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display: grid;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gap: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 20px 0;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.service-item {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background: #ffffff;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 8px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-align: center;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transition: transform 0.3s;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.service-item:hover {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;transform: translateY(-5px);
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.service-item i {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 2rem;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: #38a169;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin-bottom: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* À Propos */
-&nbsp;&nbsp;&nbsp;&nbsp;#apropos .profile-container {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display: flex;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flex-direction: column;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;align-items: center;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gap: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;#apropos img {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 100%;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 200px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: auto;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 50%;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* GEE Section */
-&nbsp;&nbsp;&nbsp;&nbsp;#gee iframe {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 100%;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 20px auto;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;display: block;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Données Section */
-&nbsp;&nbsp;&nbsp;&nbsp;#donnees select {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 1rem;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-radius: 5px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border: 1px solid #ccc;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin-bottom: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 100%;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 300px;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;#donnees select:focus {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;outline: none;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;border-color: #38a169;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;box-shadow: 0 0 5px rgba(56, 161, 105, 0.5);
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Footer */
-&nbsp;&nbsp;&nbsp;&nbsp;footer {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;background: #2d3748;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: white;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-align: center;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 40px 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 0.9rem;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;footer a {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;color: #38a169;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-decoration: none;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;footer a:hover {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;text-decoration: underline;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;.contact-info {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 20px 0;
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;/* Responsive */
-&nbsp;&nbsp;&nbsp;&nbsp;@media (max-width: 768px) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;header {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 60px 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;header h1 {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;font-size: 2rem;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nav ul {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;flex-wrap: wrap;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nav li {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;margin: 10px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#map, #gee iframe {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: 400px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#apropos img {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 150px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;footer {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;padding: 20px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#donnees select {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max-width: 100%;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.language-switch {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;top: 5px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;right: 5px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.language-switch img {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;width: 18px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;height: 13px;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="EcoScope Mada : Plateforme de visualisation écologique pour Madagascar, spécialisée en SIG et télédétection." />
+  <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement" />
+  <meta name="author" content="Tamby Herinandrianina" />
+  <title>EcoScope Mada - Surveillance écologique</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- FontAwesome pour icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      color: #2d3748;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Mangrove.jpg') center/cover no-repeat;
+      padding: 80px 20px;
+      text-align: center;
+      color: white;
+      min-height: 400px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      animation: fadeIn 1s ease-in;
+    }
+
+    .language-switch {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    .language-switch img {
+      width: 20px;
+      height: 15px;
+      margin-left: 5px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.3s;
+    }
+
+    .language-switch img.active {
+      border-color: #38a169;
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Navigation */
+    nav {
+      background: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      padding: 15px 0;
+      text-align: center;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      justify-content: center;
+    }
+
+    nav li {
+      margin: 0 20px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #2d3748;
+      font-weight: 500;
+      transition: color 0.3s, transform 0.2s;
+    }
+
+    nav a:hover {
+      color: #38a169;
+      transform: translateY(-2px);
+    }
+
+    /* Sections */
+    section {
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      animation: fadeIn 1s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: #2d3748;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* Map */
+    #map {
+      height: 500px;
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .legend {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      font-size: 14px;
+      max-width: 200px;
+    }
+
+    .legend i {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+      margin-right: 10px;
+      border: 2px solid #808080;
+      background: none;
+    }
+
+    /* Services */
+    .services-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px 0;
+    }
+
+    .service-item {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-item:hover {
+      transform: translateY(-5px);
+    }
+
+    .service-item i {
+      font-size: 2rem;
+      color: #38a169;
+      margin-bottom: 10px;
+    }
+
+    .service-detail {
+      display: none;
+      padding: 15px;
+      background: #f0f4f8;
+      margin-top: 10px;
+      border-radius: 5px;
+      text-align: left;
+      animation: slideDown 0.3s ease-in-out;
+    }
+
+    .service-item.active .service-detail {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from { max-height: 0; opacity: 0; }
+      to { max-height: 200px; opacity: 1; }
+    }
+
+    /* À Propos */
+    #apropos .profile-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #apropos img {
+      width: 100%;
+      max-width: 200px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* GEE Section */
+    #gee iframe {
+      max-width: 100%;
+      margin: 20px auto;
+      display: block;
+    }
+
+    /* Données Section */
+    #donnees select {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    #donnees select:focus {
+      outline: none;
+      border-color: #38a169;
+      box-shadow: 0 0 5px rgba(56, 161, 105, 0.5);
+    }
+
+    /* Footer */
+    footer {
+      background: #2d3748;
+      color: white;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #38a169;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    .contact-info {
+      margin: 20px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      header {
+        padding: 60px 20px;
+      }
+      header h1 {
+        font-size: 2rem;
+      }
+      nav ul {
+        flex-wrap: wrap;
+      }
+      nav li {
+        margin: 10px;
+      }
+      #map, #gee iframe {
+        height: 400px;
+      }
+      #apropos img {
+        max-width: 150px;
+      }
+      footer {
+        padding: 20px;
+      }
+      #donnees select {
+        max-width: 100%;
+      }
+      .language-switch {
+        top: 5px;
+        right: 5px;
+      }
+      .language-switch img {
+        width: 18px;
+        height: 13px;
+      }
+    }
+  </style>
 </head>
 <body>
-&nbsp;&nbsp;<header>
-&nbsp;&nbsp;&nbsp;&nbsp;<div class="language-switch">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage('fr')">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage('en')">
-&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;<h1 id="header-title">EcoScope Mada</h1>
-&nbsp;&nbsp;&nbsp;&nbsp;<p id="header-subtitle">Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.</p>
-&nbsp;&nbsp;</header>
-&nbsp;&nbsp;<nav>
-&nbsp;&nbsp;&nbsp;&nbsp;<ul>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li><a href="#accueil" id="nav-home">Accueil</a></li>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li><a href="#carte" id="nav-maps">Cartes des données</a></li>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li><a href="#services" id="nav-services">Services</a></li>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li><a href="#contact" id="nav-contact">Contact</a></li>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<li><a href="#donnees" id="nav-data">Données</a></li>
-&nbsp;&nbsp;&nbsp;&nbsp;</ul>
-&nbsp;&nbsp;</nav>
-&nbsp;&nbsp;<main>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="accueil">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2 id="welcome-title">Bienvenue sur EcoScope Mada</h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="welcome-text-1">Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="welcome-text-2">Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.</p>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="carte">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2><i class="fas fa-map"></i> <span id="map-title">Cartes des données sur Madagascar</span></h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div id="map">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="legend" id="legendBassin" style="display: none;">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong id="legend-bassin-title">Légende - Bassin Versant</strong><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i></i> <span id="legend-bassin-text">Zones de bassin</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="legend" id="legendCorridor" style="display: none;">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong id="legend-corridor-title">Légende - Corridor</strong><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#85B66F"></i> <span id="legend-corridor-1">Paysage Extrême Nord</span> <br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#FF9E17"></i> <span id="legend-corridor-2">CAZ</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#8D5A99"></i> <span id="legend-corridor-3">COFAV</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#729B6F"></i> <span id="legend-corridor-4">MAMABAIE</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#F3A6B2"></i> <span id="legend-corridor-5">COMATSA</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#E8718D"></i> <span id="legend-corridor-6">COFAM</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#B7484B"></i> <span id="legend-corridor-7">Paysage plateau Mahafaly karimbola</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#8E8573"></i> <span id="legend-corridor-8">Paysage Mikea</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#91522D"></i> <span id="legend-corridor-9">Paysage Menabe</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#7D8B8F"></i> <span id="legend-corridor-10">Paysage Kirindy Mangoky</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#A47158"></i> <span id="legend-corridor-11">Paysage Bidia Bezavona</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i style="background:#D5B43C"></i> <span id="legend-corridor-12">Paysage Anosy</span><br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="services">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2 id="services-title">Nos Services</h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="services-list">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="service-item">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-satellite"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="service-1">Suivi de la déforestation par satellite</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="service-item">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-fire"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="service-2">Suivi de la propagation des feux</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="service-item">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-tree"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="service-3">Estimation de la biomasse forestière</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="service-item">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-map"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="service-4">Cartographie SIG (occupation du sol, NDVI)</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="service-item">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-cog"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="service-5">Assistance technique en SIG et GEE</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="service-item">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i class="fas fa-handshake"></i>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="service-6">Collaboration avec ONG et chercheurs</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="gee">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2><i class="fas fa-globe"></i> <span id="gee-title">Carte Explorateur</span></h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="donnees">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2 id="data-title">Données</h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="data-text">Téléchargez les shapefiles des limites administratives de Madagascar :</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select id="data-select" onchange="downloadShapefile(this)">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<option value="">Sélectionnez une limite</option>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<option value="1wO6POWt0XZR6Vc-pcAZVYvoIPeJw2Htm">Limite Commune</option>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<option value="1HaxwViLMSKmonJ5VuhqKW_WGGYmGa-a6">Limite District</option> <!-- Remplacez cet ID -->
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<option value="1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu">Limite Région</option> <!-- Remplacez cet ID -->
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<option value="1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCdQ">Limite Fokontany</option> <!-- Remplacez cet ID -->
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</select>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="apropos">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2 id="about-title">À Propos</h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<div class="profile-container">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="about-text"><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;&nbsp;&nbsp;<section id="contact">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<h2 id="contact-title">Contactez-nous</h2>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p id="contact-text">Pour plus d'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :</p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<form name="contact" method="POST" data-netlify="true">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="hidden" name="form-name" value="contact">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><label>Nom : <input type="text" name="name" required></label></p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><label>Email : <input type="email" name="email" required></label></p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><label>Message : <textarea name="message" required></textarea></label></p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><button type="submit">Envoyer</button></p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</form>
-&nbsp;&nbsp;&nbsp;&nbsp;</section>
-&nbsp;&nbsp;</main>
-&nbsp;&nbsp;<footer>
-&nbsp;&nbsp;&nbsp;&nbsp;<p id="footer-text-1">© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
-&nbsp;&nbsp;&nbsp;&nbsp;<div class="contact-info">
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
-&nbsp;&nbsp;&nbsp;&nbsp;</div>
-&nbsp;&nbsp;&nbsp;&nbsp;<p id="footer-text-2"><a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a></p>
-&nbsp;&nbsp;</footer>
-&nbsp;&nbsp;<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-&nbsp;&nbsp;<script>
-&nbsp;&nbsp;&nbsp;&nbsp;document.addEventListener('DOMContentLoaded', function () {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const map = L.map('map', {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;center: [-18.8792, 47.5079],
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zoom: 6,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;zoomControl: true,
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scrollWheelZoom: false
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;attribution: 'Données © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | EcoScope Mada',
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;maxZoom: 18
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}).addTo(map);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const overlays = {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Bassin Versant": L.imageOverlay('BV.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]]),
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"Corridor": L.imageOverlay('Corridor.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]])
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;L.control.layers(null, overlays, { collapsed: false }).addTo(map);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;overlays["Bassin Versant"].addTo(map);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const legendBassin = document.getElementById('legendBassin');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const legendCorridor = document.getElementById('legendCorridor');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.on('overlayadd', function (e) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (e.name === 'Bassin Versant') {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendBassin.style.display = 'block';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendCorridor.style.display = 'none';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (e.name === 'Corridor') {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendBassin.style.display = 'none';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendCorridor.style.display = 'block';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;map.on('overlayremove', function (e) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (!map.hasLayer(overlays["Bassin Versant"]) && !map.hasLayer(overlays["Corridor"])) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendBassin.style.display = 'none';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendCorridor.style.display = 'none';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;legendBassin.style.display = 'block';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Object.values(overlays).forEach(layer => {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;layer.on('error', () => alert('Erreur lors du chargement de la couche : ' + layer._url));
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;});
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} catch (error) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;console.error('Erreur d’initialisation de la carte : ', error);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alert('Une erreur s’est produite lors du chargement de la carte.');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;});
-&nbsp;&nbsp;&nbsp;&nbsp;document.querySelector('form[name="contact"]').addEventListener('submit', function (event) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;event.preventDefault();
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const form = this;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const formData = new FormData(form);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fetch('/', {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;method: 'POST',
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;body: new URLSearchParams(formData).toString()
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;})
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.then(() => alert('Merci pour votre message ! Nous vous contacterons bientôt.'))
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.catch(error => alert('Erreur lors de l\'envoi : ' + error));
-&nbsp;&nbsp;&nbsp;&nbsp;});
-&nbsp;&nbsp;&nbsp;&nbsp;function downloadShapefile(select) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const fileId = select.value;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (fileId) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const link = document.createElement('a');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;link.href = downloadUrl;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;link.download = ''; // Le nom du fichier sera déterminé par Google Drive
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.body.appendChild(link);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;link.click();
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.body.removeChild(link);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;function changeLanguage(lang) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const elements = {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'header-title': { fr: 'EcoScope Mada', en: 'EcoScope Mada' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'header-subtitle': { fr: 'Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.', en: 'Ecological monitoring platform for Madagascar, using GIS and remote sensing for conservation and sustainable development.' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nav-home': { fr: 'Accueil', en: 'Home' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nav-maps': { fr: 'Cartes des données', en: 'Data Maps' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nav-services': { fr: 'Services', en: 'Services' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nav-contact': { fr: 'Contact', en: 'Contact' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nav-explorer': { fr: 'Carte Explorateur', en: 'Map Explorer' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nav-data': { fr: 'Données', en: 'Data' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'welcome-title': { fr: 'Bienvenue sur EcoScope Mada', en: 'Welcome to EcoScope Mada' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'welcome-text-1': { fr: 'Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.', en: 'Founded by <strong>Tamby Herinandrianina</strong>, an agronomist engineer specialized in forestry, GIS, and remote sensing, <strong>EcoScope Mada</strong> is an innovative platform dedicated to ecological monitoring and sustainable resource management in Madagascar.' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'welcome-text-2': { fr: 'Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.', en: 'Explore our interactive maps and discover how our data can support environmental projects and NGOs.' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'map-title': { fr: 'Cartes des données sur Madagascar', en: 'Data Maps of Madagascar' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-bassin-title': { fr: 'Légende - Bassin Versant', en: 'Legend - Watershed' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-bassin-text': { fr: 'Zones de bassin', en: 'Watershed Areas' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-title': { fr: 'Légende - Corridor', en: 'Legend - Corridor' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-1': { fr: 'Paysage Extrême Nord', en: 'Northern Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-2': { fr: 'CAZ', en: 'CAZ' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-3': { fr: 'COFAV', en: 'COFAV' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-4': { fr: 'MAMABAIE', en: 'MAMABAIE' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-5': { fr: 'COMATSA', en: 'COMATSA' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-6': { fr: 'COFAM', en: 'COFAM' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-7': { fr: 'Paysage plateau Mahafaly karimbola', en: 'Mahafaly-Karimbola Plateau Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-8': { fr: 'Paysage Mikea', en: 'Mikea Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-9': { fr: 'Paysage Menabe', en: 'Menabe Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-10': { fr: 'Paysage Kirindy Mangoky', en: 'Kirindy Mangoky Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-11': { fr: 'Paysage Bidia Bezavona', en: 'Bidia Bezavona Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'legend-corridor-12': { fr: 'Paysage Anosy', en: 'Anosy Landscape' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'services-title': { fr: 'Nos Services', en: 'Our Services' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'service-1': { fr: 'Suivi de la déforestation par satellite', en: 'Satellite deforestation monitoring' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'service-2': { fr: 'Suivi de la propagation des feux', en: 'Fire spread tracking' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'service-3': { fr: 'Estimation de la biomasse forestière', en: 'Forest biomass estimation' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'service-4': { fr: 'Cartographie SIG (occupation du sol, NDVI)', en: 'GIS mapping (land use, NDVI)' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'service-5': { fr: 'Assistance technique en SIG et GEE', en: 'Technical support in GIS and GEE' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'service-6': { fr: 'Collaboration avec ONG et chercheurs', en: 'Collaboration with NGOs and researchers' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gee-title': { fr: 'Carte Explorateur', en: 'Map Explorer' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'gee-text': { fr: 'Découvrez une analyse détaillée de l\'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l\'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.', en: 'Discover a detailed analysis of land use in Madagascar, annual precipitation sums, and the NDVI index using Google Earth Engine. These data are essential for monitoring deforestation, assessing ecosystem health, and planning sustainable environmental interventions.' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data-title': { fr: 'Données', en: 'Data' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'data-text': { fr: 'Téléchargez les shapefiles des limites administratives de Madagascar :', en: 'Download the shapefiles of Madagascar administrative boundaries:' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'about-title': { fr: 'À Propos', en: 'About' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'about-text': { fr: '<strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.', en: '<strong>EcoScope Mada</strong> is an initiative led by Tamby Herinandrianina, an agronomist engineer passionate about conservation and geospatial technologies. Based in Madagascar, in Antananarivo (postal code 101), our mission is to provide reliable tools and data to protect Madagascar\'s unique environment. We collaborate with NGOs and researchers to promote sustainable resource management.' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'contact-title': { fr: 'Contactez-nous', en: 'Contact Us' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'contact-text': { fr: 'Pour plus d\'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :', en: 'For more information or to collaborate with us, please use the form below or contact us directly:' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'footer-text-1': { fr: '© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.', en: '© 2025 EcoScope Mada - All rights reserved. Developed by Tamby Herinandrianina.' },
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'footer-text-2': { fr: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a>', en: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Contact Us</a>' }
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const langFr = document.querySelector('.lang-fr');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const langEn = document.querySelector('.lang-en');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (lang === 'fr') {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;langFr.classList.add('active');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;langEn.classList.remove('active');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.documentElement.lang = 'fr';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (let id in elements) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const element = document.getElementById(id);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (element) element.innerHTML = elements[id].fr;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;} else if (lang === 'en') {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;langEn.classList.add('active');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;langFr.classList.remove('active');
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;document.documentElement.lang = 'en';
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for (let id in elements) {
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const element = document.getElementById(id);
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (element) element.innerHTML = elements[id].en;
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;}
-&nbsp;&nbsp;&nbsp;&nbsp;changeLanguage('fr');
-&nbsp;&nbsp;</script>
+  <header>
+    <div class="language-switch">
+      <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage('fr')">
+      <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage('en')">
+    </div>
+    <h1 id="header-title">EcoScope Mada</h1>
+    <p id="header-subtitle">Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.</p>
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#accueil" id="nav-home">Accueil</a></li>
+      <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
+      <li><a href="#services" id="nav-services">Services</a></li>
+      <li><a href="#contact" id="nav-contact">Contact</a></li>
+      <li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
+      <li><a href="#donnees" id="nav-data">Données</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="accueil">
+      <h2 id="welcome-title">Bienvenue sur EcoScope Mada</h2>
+      <p id="welcome-text-1">Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.</p>
+      <p id="welcome-text-2">Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.</p>
+    </section>
+
+    <section id="carte">
+      <h2><i class="fas fa-map"></i> <span id="map-title">Cartes des données sur Madagascar</span></h2>
+      <div id="map">
+        <div class="legend" id="legendBassin" style="display: none;">
+          <strong id="legend-bassin-title">Légende - Bassin Versant</strong><br>
+          <i></i> <span id="legend-bassin-text">Zones de bassin</span><br>
+        </div>
+        <div class="legend" id="legendCorridor" style="display: none;">
+          <strong id="legend-corridor-title">Légende - Corridor</strong><br>
+          <i style="background:#85B66F"></i> <span id="legend-corridor-1">Paysage Extrême Nord</span> <br>
+          <i style="background:#FF9E17"></i> <span id="legend-corridor-2">CAZ</span><br>
+          <i style="background:#8D5A99"></i> <span id="legend-corridor-3">COFAV</span><br>
+          <i style="background:#729B6F"></i> <span id="legend-corridor-4">MAMABAIE</span><br>
+          <i style="background:#F3A6B2"></i> <span id="legend-corridor-5">COMATSA</span><br>
+          <i style="background:#E8718D"></i> <span id="legend-corridor-6">COFAM</span><br>
+          <i style="background:#B7484B"></i> <span id="legend-corridor-7">Paysage plateau Mahafaly karimbola</span><br>
+          <i style="background:#8E8573"></i> <span id="legend-corridor-8">Paysage Mikea</span><br>
+          <i style="background:#91522D"></i> <span id="legend-corridor-9">Paysage Menabe</span><br>
+          <i style="background:#7D8B8F"></i> <span id="legend-corridor-10">Paysage Kirindy Mangoky</span><br>
+          <i style="background:#A47158"></i> <span id="legend-corridor-11">Paysage Bidia Bezavona</span><br>
+          <i style="background:#D5B43C"></i> <span id="legend-corridor-12">Paysage Anosy</span><br>
+        </div>
+      </div>
+    </section>
+
+    <section id="services">
+      <h2 id="services-title">Nos Services</h2>
+      <div class="services-list">
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-satellite"></i>
+          <p id="service-1">Suivi de la déforestation par satellite</p>
+          <div class="service-detail">
+            <p>Le suivi de la déforestation est réalisé en exploitant les données spatiales de Sentinel et Landsat, qui offrent des images à haute résolution. Ces données sont traitées avec des algorithmes de classification supervisée et non supervisée pour générer des cartes d'occupation du sol précises. Cela inclut la détection des changements forestiers, l'analyse des taux de déforestation annuelle, et l'identification des causes comme l'agriculture sur brûlis ou l'exploitation illégale, fournissant ainsi des bases solides pour des interventions de conservation.</p>
+          </div>
+        </div>
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-fire"></i>
+          <p id="service-2">Suivi de la propagation des feux</p>
+          <div class="service-detail">
+            <p>Le suivi de la propagation des feux repose sur l'utilisation de capteurs thermiques de satellites comme MODIS et Sentinel-2, analysés pour détecter les points chauds et cartographier leur progression en temps réel. Cette méthode permet d'estimer l'étendue des zones brûlées, d'évaluer les impacts sur la végétation et les écosystèmes, et de fournir des alertes précoces aux gestionnaires pour une réponse rapide et efficace.</p>
+          </div>
+        </div>
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-tree"></i>
+          <p id="service-3">Estimation de la biomasse forestière</p>
+          <div class="service-detail">
+            <p>L'estimation de la biomasse forestière utilise le satellite GEDI, qui emploie la technologie lidar pour mesurer la hauteur et la densité des arbres, convertissant ces données en biomasse aérienne en équivalent carbone. Cette approche intègre des modèles allométriques et des validations sur le terrain pour évaluer les stocks de carbone, supports essentiels pour les projets de compensation carbone et la gestion durable des forêts.</p>
+          </div>
+        </div>
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-map"></i>
+          <p id="service-4">Cartographie SIG (occupation du sol, NDVI)</p>
+          <div class="service-detail">
+            <p>La cartographie SIG repose sur l'utilisation de données Landsat et Sentinel pour produire des cartes d'occupation du sol, en détail, cela inclut le traitement d'images multi-spectrales avec des algorithmes de classification, le calcul de l'indice NDVI pour évaluer la santé végétale, et la génération de cartes thématiques pour l'analyse des changements d'utilisation des terres et la planification environnementale.</p>
+          </div>
+        </div>
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-cog"></i>
+          <p id="service-5">Assistance technique en SIG et GEE</p>
+          <div class="service-detail">
+            <p>L'assistance technique en SIG et Google Earth Engine (GEE) offre des formations sur l'utilisation de ces outils, incluant des tutoriels sur le traitement des images Landsat et Sentinel, la création de scripts personnalisés pour l'analyse spatiale, et un support technique pour des applications spécifiques en conservation et gestion des ressources naturelles.</p>
+          </div>
+        </div>
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-handshake"></i>
+          <p id="service-6">Collaboration avec ONG et chercheurs</p>
+          <div class="service-detail">
+            <p>La collaboration avec ONG et chercheurs se traduit par le partage de données satellitaires et d'expertise, incluant la co-conception de cartes SIG, l'analyse conjointe des tendances environnementales via GEE, et le soutien à des études sur la biodiversité et les impacts climatiques pour des projets de conservation durables.</p>
+          </div>
+        </div>
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-graduation-cap"></i>
+          <p id="service-7">Appui académique</p>
+          <div class="service-detail">
+            <p>L'appui académique soutient les étudiants en leur offrant un accès gratuit aux données spatiales de Landsat, Sentinel et GEDI, avec des formations pratiques sur l'analyse d'occupation du sol, le calcul du NDVI, et l'estimation de la biomasse aérienne, leur permettant de visualiser les cours académiques et de développer des compétences pour des projets de recherche environnementale.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gee">
+      <h2><i class="fas fa-globe"></i> <span id="gee-title">Carte Explorateur</span></h2>
+      <p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
+      <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
+    </section>
+
+    <section id="donnees">
+      <h2 id="data-title">Données</h2>
+      <p id="data-text">Téléchargez les shapefiles des limites administratives de Madagascar :</p>
+      <select id="data-select" onchange="downloadShapefile(this)">
+        <option value="">Sélectionnez une limite</option>
+        <option value="1wO6POWt0XZR6Vc-pcAZVYvoIPeJw2Htm">Limite Commune</option>
+        <option value="1HaxwViLMSKmonJ5VuhqKW_WGGYmGa-a6">Limite District</option> <!-- Remplacez cet ID -->
+        <option value="1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu">Limite Région</option> <!-- Remplacez cet ID -->
+        <option value="1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCdQ">Limite Fokontany</option> <!-- Remplacez cet ID -->
+      </select>
+    </section>
+
+    <section id="apropos">
+      <h2 id="about-title">À Propos</h2>
+      <div class="profile-container">
+        <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome">
+        <p id="about-text"><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.</p>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2 id="contact-title">Contactez-nous</h2>
+      <p id="contact-text">Pour plus d'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :</p>
+      <form name="contact" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="contact">
+        <p><label>Nom : <input type="text" name="name" required></label></p>
+        <p><label>Email : <input type="email" name="email" required></label></p>
+        <p><label>Message : <textarea name="message" required></textarea></label></p>
+        <p><button type="submit">Envoyer</button></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p id="footer-text-1">© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
+    <div class="contact-info">
+      <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
+      <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+      <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
+    </div>
+    <p id="footer-text-2"><a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        const map = L.map('map', {
+          center: [-18.8792, 47.5079],
+          zoom: 6,
+          zoomControl: true,
+          scrollWheelZoom: false
+        });
+
+        const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Données © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | EcoScope Mada',
+          maxZoom: 18
+        }).addTo(map);
+
+        const overlays = {
+          "Bassin Versant": L.imageOverlay('BV.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]]),
+          "Corridor": L.imageOverlay('Corridor.png', [[-25.605753, 43.176924], [-11.951388, 50.484852]])
+        };
+
+        L.control.layers(null, overlays, { collapsed: false }).addTo(map);
+        overlays["Bassin Versant"].addTo(map);
+
+        const legendBassin = document.getElementById('legendBassin');
+        const legendCorridor = document.getElementById('legendCorridor');
+
+        map.on('overlayadd', function (e) {
+          if (e.name === 'Bassin Versant') {
+            legendBassin.style.display = 'block';
+            legendCorridor.style.display = 'none';
+          } else if (e.name === 'Corridor') {
+            legendBassin.style.display = 'none';
+            legendCorridor.style.display = 'block';
+          }
+        });
+
+        map.on('overlayremove', function (e) {
+          if (!map.hasLayer(overlays["Bassin Versant"]) && !map.hasLayer(overlays["Corridor"])) {
+            legendBassin.style.display = 'none';
+            legendCorridor.style.display = 'none';
+          }
+        });
+
+        legendBassin.style.display = 'block';
+
+        Object.values(overlays).forEach(layer => {
+          layer.on('error', () => alert('Erreur lors du chargement de la couche : ' + layer._url));
+        });
+      } catch (error) {
+        console.error('Erreur d’initialisation de la carte : ', error);
+        alert('Une erreur s’est produite lors du chargement de la carte.');
+      }
+    });
+
+    document.querySelector('form[name="contact"]').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const form = this;
+      const formData = new FormData(form);
+      fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString()
+      })
+        .then(() => alert('Merci pour votre message ! Nous vous contacterons bientôt.'))
+        .catch(error => alert('Erreur lors de l\'envoi : ' + error));
+    });
+
+    function toggleDetail(item) {
+      item.classList.toggle('active');
+      const detail = item.querySelector('.service-detail');
+      if (detail.style.display === 'block') {
+        detail.style.display = 'none';
+      } else {
+        detail.style.display = 'block';
+      }
+    }
+
+    function downloadShapefile(select) {
+      const fileId = select.value;
+      if (fileId) {
+        const downloadUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = ''; // Le nom du fichier sera déterminé par Google Drive
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    function changeLanguage(lang) {
+      const elements = {
+        'header-title': { fr: 'EcoScope Mada', en: 'EcoScope Mada' },
+        'header-subtitle': { fr: 'Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.', en: 'Ecological monitoring platform for Madagascar, using GIS and remote sensing for conservation and sustainable development.' },
+        'nav-home': { fr: 'Accueil', en: 'Home' },
+        'nav-maps': { fr: 'Cartes des données', en: 'Data Maps' },
+        'nav-services': { fr: 'Services', en: 'Services' },
+        'nav-contact': { fr: 'Contact', en: 'Contact' },
+        'nav-explorer': { fr: 'Carte Explorateur', en: 'Map Explorer' },
+        'nav-data': { fr: 'Données', en: 'Data' },
+        'welcome-title': { fr: 'Bienvenue sur EcoScope Mada', en: 'Welcome to EcoScope Mada' },
+        'welcome-text-1': { fr: 'Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.', en: 'Founded by <strong>Tamby Herinandrianina</strong>, an agronomist engineer specialized in forestry, GIS, and remote sensing, <strong>EcoScope Mada</strong> is an innovative platform dedicated to ecological monitoring and sustainable resource management in Madagascar.' },
+        'welcome-text-2': { fr: 'Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.', en: 'Explore our interactive maps and discover how our data can support environmental projects and NGOs.' },
+        'map-title': { fr: 'Cartes des données sur Madagascar', en: 'Data Maps of Madagascar' },
+        'legend-bassin-title': { fr: 'Légende - Bassin Versant', en: 'Legend - Watershed' },
+        'legend-bassin-text': { fr: 'Zones de bassin', en: 'Watershed Areas' },
+        'legend-corridor-title': { fr: 'Légende - Corridor', en: 'Legend - Corridor' },
+        'legend-corridor-1': { fr: 'Paysage Extrême Nord', en: 'Northern Landscape' },
+        'legend-corridor-2': { fr: 'CAZ', en: 'CAZ' },
+        'legend-corridor-3': { fr: 'COFAV', en: 'COFAV' },
+        'legend-corridor-4': { fr: 'MAMABAIE', en: 'MAMABAIE' },
+        'legend-corridor-5': { fr: 'COMATSA', en: 'COMATSA' },
+        'legend-corridor-6': { fr: 'COFAM', en: 'COFAM' },
+        'legend-corridor-7': { fr: 'Paysage plateau Mahafaly karimbola', en: 'Mahafaly-Karimbola Plateau Landscape' },
+        'legend-corridor-8': { fr: 'Paysage Mikea', en: 'Mikea Landscape' },
+        'legend-corridor-9': { fr: 'Paysage Menabe', en: 'Menabe Landscape' },
+        'legend-corridor-10': { fr: 'Paysage Kirindy Mangoky', en: 'Kirindy Mangoky Landscape' },
+        'legend-corridor-11': { fr: 'Paysage Bidia Bezavona', en: 'Bidia Bezavona Landscape' },
+        'legend-corridor-12': { fr: 'Paysage Anosy', en: 'Anosy Landscape' },
+        'services-title': { fr: 'Nos Services', en: 'Our Services' },
+        'service-1': { fr: 'Suivi de la déforestation par satellite', en: 'Satellite deforestation monitoring' },
+        'service-2': { fr: 'Suivi de la propagation des feux', en: 'Fire spread tracking' },
+        'service-3': { fr: 'Estimation de la biomasse forestière', en: 'Forest biomass estimation' },
+        'service-4': { fr: 'Cartographie SIG (occupation du sol, NDVI)', en: 'GIS mapping (land use, NDVI)' },
+        'service-5': { fr: 'Assistance technique en SIG et GEE', en: 'Technical support in GIS and GEE' },
+        'service-6': { fr: 'Collaboration avec ONG et chercheurs', en: 'Collaboration with NGOs and researchers' },
+        'service-7': { fr: 'Appui académique', en: 'Academic Support' },
+        'gee-title': { fr: 'Carte Explorateur', en: 'Map Explorer' },
+        'gee-text': { fr: 'Découvrez une analyse détaillée de l\'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l\'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.', en: 'Discover a detailed analysis of land use in Madagascar, annual precipitation sums, and the NDVI index using Google Earth Engine. These data are essential for monitoring deforestation, assessing ecosystem health, and planning sustainable environmental interventions.' },
+        'data-title': { fr: 'Données', en: 'Data' },
+        'data-text': { fr: 'Téléchargez les shapefiles des limites administratives de Madagascar :', en: 'Download the shapefiles of Madagascar administrative boundaries:' },
+        'about-title': { fr: 'À Propos', en: 'About' },
+        'about-text': { fr: '<strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.', en: '<strong>EcoScope Mada</strong> is an initiative led by Tamby Herinandrianina, an agronomist engineer passionate about conservation and geospatial technologies. Based in Madagascar, in Antananarivo (postal code 101), our mission is to provide reliable tools and data to protect Madagascar\'s unique environment. We collaborate with NGOs and researchers to promote sustainable resource management.' },
+        'contact-title': { fr: 'Contactez-nous', en: 'Contact Us' },
+        'contact-text': { fr: 'Pour plus d\'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :', en: 'For more information or to collaborate with us, please use the form below or contact us directly:' },
+        'footer-text-1': { fr: '© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.', en: '© 2025 EcoScope Mada - All rights reserved. Developed by Tamby Herinandrianina.' },
+        'footer-text-2': { fr: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a>', en: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Contact Us</a>' }
+      };
+
+      const langFr = document.querySelector('.lang-fr');
+      const langEn = document.querySelector('.lang-en');
+
+      if (lang === 'fr') {
+        langFr.classList.add('active');
+        langEn.classList.remove('active');
+        document.documentElement.lang = 'fr';
+        for (let id in elements) {
+          const element = document.getElementById(id);
+          if (element) element.innerHTML = elements[id].fr;
+        }
+      } else if (lang === 'en') {
+        langEn.classList.add('active');
+        langFr.classList.remove('active');
+        document.documentElement.lang = 'en';
+        for (let id in elements) {
+          const element = document.getElementById(id);
+          if (element) element.innerHTML = elements[id].en;
+        }
+      }
+    }
+
+    changeLanguage('fr');
+
+    // Fonction pour ouvrir/fermer les détails des services
+    const serviceItems = document.querySelectorAll('.service-item');
+    serviceItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const detail = item.querySelector('.service-detail');
+        detail.classList.toggle('active');
+      });
+    });
+  </script>
 </body>
 </html>
