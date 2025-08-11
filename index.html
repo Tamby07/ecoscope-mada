@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="EcoScope Mada : Plateforme de visualisation écologique pour Madagascar, spécialisée en SIG et télédétection." />
-  <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement" />
-  <meta name="author" content="Tamby Herinandrianina" />
+<meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="EcoScope Mada : Plateforme de visualisation écologique pour Madagascar, spécialisée en SIG et télédétection.">
+  <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement">
+  <meta name="author" content="Tamby Herinandrianina">
   <title>EcoScope Mada - Surveillance écologique</title>
-
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- FontAwesome pour icônes -->
+  
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&#x26;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
   <style>
     * {
       margin: 0;
@@ -172,6 +167,9 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       text-align: center;
       transition: transform 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
     }
 
     .service-item:hover {
@@ -182,6 +180,25 @@
       font-size: 2rem;
       color: #38a169;
       margin-bottom: 10px;
+    }
+
+    .service-detail {
+      display: none;
+      padding: 15px;
+      background: #f0f4f8;
+      margin-top: 10px;
+      border-radius: 5px;
+      text-align: left;
+      animation: slideDown 0.3s ease-in-out;
+    }
+
+    .service-item.active .service-detail {
+      display: block;
+    }
+
+    @keyframes slideDown {
+      from { max-height: 0; opacity: 0; }
+      to { max-height: 300px; opacity: 1; }
     }
 
     /* À Propos */
@@ -260,6 +277,14 @@
       nav li {
         margin: 10px;
       }
+      .language-switch {
+        top: 5px;
+        right: 5px;
+      }
+      .language-switch img {
+        width: 18px;
+        height: 13px;
+      }
       #map, #gee iframe {
         height: 400px;
       }
@@ -272,149 +297,174 @@
       #donnees select {
         max-width: 100%;
       }
-      .language-switch {
-        top: 5px;
-        right: 5px;
-      }
-      .language-switch img {
-        width: 18px;
-        height: 13px;
+      .service-detail {
+        max-height: 200px;
       }
     }
   </style>
-</head>
-<body>
-  <header>
-    <div class="language-switch">
-      <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage('fr')">
-      <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage('en')">
-    </div>
-    <h1 id="header-title">EcoScope Mada</h1>
-    <p id="header-subtitle">Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.</p>
-  </header>
 
-  <nav>
-    <ul>
-      <li><a href="#accueil" id="nav-home">Accueil</a></li>
-      <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
-      <li><a href="#services" id="nav-services">Services</a></li>
-      <li><a href="#contact" id="nav-contact">Contact</a></li>
-      <li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
-      <li><a href="#donnees" id="nav-data">Données</a></li>
-    </ul>
-  </nav>
 
-  <main>
-    <section id="accueil">
-      <h2 id="welcome-title">Bienvenue sur EcoScope Mada</h2>
-      <p id="welcome-text-1">Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.</p>
-      <p id="welcome-text-2">Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.</p>
-    </section>
+  
+    
+      <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage(&#x27;fr&#x27;)">
+      <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage(&#x27;en&#x27;)">
+    
+    EcoScope Mada
+    Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.
+  
+  
+    
+      Accueil
+      Cartes des données
+      Services
+      Contact
+      Carte Explorateur
+      Données
+    
+  
+  
+    
+      Bienvenue sur EcoScope Mada
+      Fondée par Tamby Herinandrianina, ingénieur agronome spécialisé en foresterie, SIG et télédétection, EcoScope Mada est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.
+      Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.
+    
+    
+       Cartes des données sur Madagascar
+      
+        
+          Légende - Bassin Versant
 
-    <section id="carte">
-      <h2><i class="fas fa-map"></i> <span id="map-title">Cartes des données sur Madagascar</span></h2>
-      <div id="map">
-        <div class="legend" id="legendBassin" style="display: none;">
-          <strong id="legend-bassin-title">Légende - Bassin Versant</strong><br>
-          <i></i> <span id="legend-bassin-text">Zones de bassin</span><br>
-        </div>
-        <div class="legend" id="legendCorridor" style="display: none;">
-          <strong id="legend-corridor-title">Légende - Corridor</strong><br>
-          <i style="background:#85B66F"></i> <span id="legend-corridor-1">Paysage Extrême Nord</span> <br>
-          <i style="background:#FF9E17"></i> <span id="legend-corridor-2">CAZ</span><br>
-          <i style="background:#8D5A99"></i> <span id="legend-corridor-3">COFAV</span><br>
-          <i style="background:#729B6F"></i> <span id="legend-corridor-4">MAMABAIE</span><br>
-          <i style="background:#F3A6B2"></i> <span id="legend-corridor-5">COMATSA</span><br>
-          <i style="background:#E8718D"></i> <span id="legend-corridor-6">COFAM</span><br>
-          <i style="background:#B7484B"></i> <span id="legend-corridor-7">Paysage plateau Mahafaly karimbola</span><br>
-          <i style="background:#8E8573"></i> <span id="legend-corridor-8">Paysage Mikea</span><br>
-          <i style="background:#91522D"></i> <span id="legend-corridor-9">Paysage Menabe</span><br>
-          <i style="background:#7D8B8F"></i> <span id="legend-corridor-10">Paysage Kirindy Mangoky</span><br>
-          <i style="background:#A47158"></i> <span id="legend-corridor-11">Paysage Bidia Bezavona</span><br>
-          <i style="background:#D5B43C"></i> <span id="legend-corridor-12">Paysage Anosy</span><br>
-        </div>
-      </div>
-    </section>
+           Zones de bassin
 
-    <section id="services">
-      <h2 id="services-title">Nos Services</h2>
-      <div class="services-list">
-        <div class="service-item">
-          <i class="fas fa-satellite"></i>
-          <p id="service-1">Suivi de la déforestation par satellite</p>
-        </div>
-        <div class="service-item">
-          <i class="fas fa-fire"></i>
-          <p id="service-2">Suivi de la propagation des feux</p>
-        </div>
-        <div class="service-item">
-          <i class="fas fa-tree"></i>
-          <p id="service-3">Estimation de la biomasse forestière</p>
-        </div>
-        <div class="service-item">
-          <i class="fas fa-map"></i>
-          <p id="service-4">Cartographie SIG (occupation du sol, NDVI)</p>
-        </div>
-        <div class="service-item">
-          <i class="fas fa-cog"></i>
-          <p id="service-5">Assistance technique en SIG et GEE</p>
-        </div>
-        <div class="service-item">
-          <i class="fas fa-handshake"></i>
-          <p id="service-6">Collaboration avec ONG et chercheurs</p>
-        </div>
-      </div>
-    </section>
+        
+        
+          Légende - Corridor
 
-    <section id="gee">
-      <h2><i class="fas fa-globe"></i> <span id="gee-title">Carte Explorateur</span></h2>
-      <p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
+           Paysage Extrême Nord 
+
+           CAZ
+
+           COFAV
+
+           MAMABAIE
+
+           COMATSA
+
+           COFAM
+
+           Paysage plateau Mahafaly karimbola
+
+           Paysage Mikea
+
+           Paysage Menabe
+
+           Paysage Kirindy Mangoky
+
+           Paysage Bidia Bezavona
+
+           Paysage Anosy
+
+        
+      
+    
+    
+      Nos Services
+      
+        
+          
+          Suivi de la déforestation par satellite
+          
+            Le suivi de la déforestation s'effectue en utilisant les données spatiales de Sentinel et Landsat pour sortir des cartes d'occupation du sol. Ces satellites fournissent des images à haute résolution qui sont analysées via des algorithmes de classification et de détection de changements, permettant d'identifier les zones déforestées avec précision, de calculer les taux annuels de perte forestière, et de générer des rapports pour les autorités et les organisations de conservation. Cette approche aide à comprendre les causes de la déforestation, comme l'agriculture sur brûlis, et à proposer des mesures de protection adaptées.
+          
+        
+        
+          
+          Suivi de la propagation des feux
+          
+            Le suivi de la propagation des feux utilise des données satellitaires thermiques de Sentinel et MODIS pour détecter les points chauds en temps réel. Ces données sont traitées avec des algorithmes pour cartographier les incendies, estimer leur étendue et leur vitesse de propagation, et fournir des alertes précoces aux équipes sur le terrain. Cela permet de limiter les dégâts aux écosystèmes, de protéger la biodiversité, et d'analyser les causes des feux, comme les pratiques agricoles ou les changements climatiques.
+          
+        
+        
+          
+          Estimation de la biomasse forestière
+          
+            L'estimation de la biomasse forestière utilise les données du satellite GEDI (Global Ecosystem Dynamics Investigation) pour mesurer la hauteur et la densité des arbres. Ces données lidar sont combinées avec des modèles pour calculer la biomasse aérienne en équivalent carbone, offrant une évaluation précise des stocks de carbone dans les forêts. Cette information est cruciale pour les projets de REDD+ (Réduction des Émissions liées à la Déforestation et à la Dégradation des forêts), la surveillance du carbone, et la planification de la reforestation.
+          
+        
+        
+          
+          Cartographie SIG (occupation du sol, NDVI)
+          
+            La cartographie SIG utilise des données de Landsat et Sentinel pour créer des cartes d'occupation du sol et calculer l'indice NDVI (Normalized Difference Vegetation Index). Ces cartes détaillées permettent d'analyser les changements d'utilisation des terres, d'évaluer la santé de la végétation, et de détecter les zones dégradées. Avec des outils comme Google Earth Engine, nous produisons des analyses temporelles pour suivre l'évolution des écosystèmes et soutenir les décisions en matière de conservation.
+          
+        
+        
+          
+          Assistance technique en SIG et GEE
+          
+            L'assistance technique en SIG et Google Earth Engine (GEE) inclut la formation à l'utilisation de ces outils, le développement de scripts personnalisés pour le traitement de données satellitaires, et le support pour l'analyse spatiale. Nous aidons les utilisateurs à exploiter des données comme Sentinel et Landsat pour des applications pratiques en conservation, agriculture, et urbanisme, en fournissant des solutions adaptées aux besoins spécifiques à Madagascar.
+          
+        
+        
+          
+          Collaboration avec ONG et chercheurs
+          
+            La collaboration avec ONG et chercheurs implique le partage de données et d'expertise pour des projets de conservation. Nous fournissons des cartes et des analyses basées sur SIG et télédétection pour soutenir des initiatives comme la protection des forêts, la gestion des aires protégées, et la recherche sur la biodiversité. Ces partenariats permettent d'intégrer nos outils dans des stratégies à plus grande échelle pour un impact durable.
+          
+        
+        
+          
+          Appui académique
+          
+            L'appui académique offre aux étudiants un accès à des données spatiales gratuites et des visuels interactifs pour comprendre les concepts de télédétection et SIG. Nous fournissons des tutoriels sur l'utilisation de Landsat, Sentinel, et GEDI pour analyser l'occupation du sol, le NDVI, et la biomasse aérienne. Cela aide les étudiants à visualiser les cours académiques, à acquérir des compétences pratiques, et à contribuer à des recherches sur l'environnement, en favorisant une nouvelle génération de professionnels en conservation à Madagascar.
+          
+        
+      
+    
+    
+       Carte Explorateur
+      Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.
       <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="500px" style="border: none;"></iframe>
-    </section>
-
-    <section id="donnees">
-      <h2 id="data-title">Données</h2>
-      <p id="data-text">Téléchargez les shapefiles des limites administratives de Madagascar :</p>
+    
+    
+      Données
+      Téléchargez les shapefiles des limites administratives de Madagascar :
       <select id="data-select" onchange="downloadShapefile(this)">
         <option value="">Sélectionnez une limite</option>
-        <option value="1wO6POWt0XZR6Vc-pcAZVYvoIPeJw2Htm">Limite Commune</option>
-        <option value="1HaxwViLMSKmonJ5VuhqKW_WGGYmGa-a6">Limite District</option> <!-- Remplacez cet ID -->
-        <option value="1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu">Limite Région</option> <!-- Remplacez cet ID -->
+        <option value="1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCaQ">Limite Commune</option>
+        <option value="1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCbQ">Limite District</option> <!-- Remplacez cet ID -->
+        <option value="1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCcQ">Limite Région</option> <!-- Remplacez cet ID -->
         <option value="1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCdQ">Limite Fokontany</option> <!-- Remplacez cet ID -->
       </select>
-    </section>
-
-    <section id="apropos">
-      <h2 id="about-title">À Propos</h2>
-      <div class="profile-container">
+    
+    
+      À Propos
+      
         <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome">
-        <p id="about-text"><strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.</p>
-      </div>
-    </section>
-
-    <section id="contact">
-      <h2 id="contact-title">Contactez-nous</h2>
-      <p id="contact-text">Pour plus d'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :</p>
-      <form name="contact" method="POST" data-netlify="true">
-        <input type="hidden" name="form-name" value="contact">
-        <p><label>Nom : <input type="text" name="name" required></label></p>
-        <p><label>Email : <input type="email" name="email" required></label></p>
-        <p><label>Message : <textarea name="message" required></textarea></label></p>
-        <p><button type="submit">Envoyer</button></p>
-      </form>
-    </section>
-  </main>
-
-  <footer>
-    <p id="footer-text-1">© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
-    <div class="contact-info">
-      <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
-      <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
-      <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
-    </div>
-    <p id="footer-text-2"><a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a></p>
-  </footer>
-
+        EcoScope Mada est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.
+      
+    
+    
+      Contactez-nous
+      Pour plus d'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :
+      
+        
+        Nom : 
+        Email : 
+        Message : <textarea name="message" required></textarea>
+        <button type="submit">Envoyer</button>
+      
+    
+  
+  
+    © 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.
+    
+       Email : ecoscope.mada@gmail.com
+       Facebook : EcoScope Mada
+       WhatsApp : +261 34 32 283 03
+    
+    GitHub | Nous contacter
+  
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -427,7 +477,7 @@
         });
 
         const baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Données © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | EcoScope Mada',
+          attribution: 'Données © OpenStreetMap | EcoScope Mada',
           maxZoom: 18
         }).addTo(map);
 
@@ -483,6 +533,16 @@
         .catch(error => alert('Erreur lors de l\'envoi : ' + error));
     });
 
+    function toggleDetail(item) {
+      item.classList.toggle('active');
+      const detail = item.querySelector('.service-detail');
+      if (detail.style.display === 'block') {
+        detail.style.display = 'none';
+      } else {
+        detail.style.display = 'block';
+      }
+    }
+
     function downloadShapefile(select) {
       const fileId = select.value;
       if (fileId) {
@@ -507,7 +567,7 @@
         'nav-explorer': { fr: 'Carte Explorateur', en: 'Map Explorer' },
         'nav-data': { fr: 'Données', en: 'Data' },
         'welcome-title': { fr: 'Bienvenue sur EcoScope Mada', en: 'Welcome to EcoScope Mada' },
-        'welcome-text-1': { fr: 'Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.', en: 'Founded by <strong>Tamby Herinandrianina</strong>, an agronomist engineer specialized in forestry, GIS, and remote sensing, <strong>EcoScope Mada</strong> is an innovative platform dedicated to ecological monitoring and sustainable resource management in Madagascar.' },
+        'welcome-text-1': { fr: 'Fondée par Tamby Herinandrianina, ingénieur agronome spécialisé en foresterie, SIG et télédétection, EcoScope Mada est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.', en: 'Founded by Tamby Herinandrianina, an agronomist engineer specialized in forestry, GIS, and remote sensing, EcoScope Mada is an innovative platform dedicated to ecological monitoring and sustainable resource management in Madagascar.' },
         'welcome-text-2': { fr: 'Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.', en: 'Explore our interactive maps and discover how our data can support environmental projects and NGOs.' },
         'map-title': { fr: 'Cartes des données sur Madagascar', en: 'Data Maps of Madagascar' },
         'legend-bassin-title': { fr: 'Légende - Bassin Versant', en: 'Legend - Watershed' },
@@ -537,11 +597,11 @@
         'data-title': { fr: 'Données', en: 'Data' },
         'data-text': { fr: 'Téléchargez les shapefiles des limites administratives de Madagascar :', en: 'Download the shapefiles of Madagascar administrative boundaries:' },
         'about-title': { fr: 'À Propos', en: 'About' },
-        'about-text': { fr: '<strong>EcoScope Mada</strong> est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.', en: '<strong>EcoScope Mada</strong> is an initiative led by Tamby Herinandrianina, an agronomist engineer passionate about conservation and geospatial technologies. Based in Madagascar, in Antananarivo (postal code 101), our mission is to provide reliable tools and data to protect Madagascar\'s unique environment. We collaborate with NGOs and researchers to promote sustainable resource management.' },
+        'about-text': { fr: 'EcoScope Mada est une initiative portée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basé à Madagascar, à Antananarivo (code postal 101), notre mission est de fournir des outils et des données fiables pour protéger l’environnement unique de Madagascar. Nous collaborons avec des ONG et des chercheurs pour promouvoir la gestion durable des ressources naturelles.', en: 'EcoScope Mada is an initiative led by Tamby Herinandrianina, an agronomist engineer passionate about conservation and geospatial technologies. Based in Madagascar, in Antananarivo (postal code 101), our mission is to provide reliable tools and data to protect Madagascar\'s unique environment. We collaborate with NGOs and researchers to promote sustainable resource management.' },
         'contact-title': { fr: 'Contactez-nous', en: 'Contact Us' },
         'contact-text': { fr: 'Pour plus d\'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :', en: 'For more information or to collaborate with us, please use the form below or contact us directly:' },
         'footer-text-1': { fr: '© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.', en: '© 2025 EcoScope Mada - All rights reserved. Developed by Tamby Herinandrianina.' },
-        'footer-text-2': { fr: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a>', en: '<a href="https://github.com/herinandrianinatamby/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Contact Us</a>' }
+        'footer-text-2': { fr: 'GitHub | Nous contacter', en: 'GitHub | Contact Us' }
       };
 
       const langFr = document.querySelector('.lang-fr');
@@ -567,7 +627,16 @@
     }
 
     changeLanguage('fr');
-  </script>
-</body>
-</html>
 
+    // Fonction pour ouvrir/fermer les détails des services
+    const serviceItems = document.querySelectorAll('.service-item');
+    serviceItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const detail = item.querySelector('.service-detail');
+        detail.classList.toggle('active');
+      });
+    });
+  </script>
+
+
+```
