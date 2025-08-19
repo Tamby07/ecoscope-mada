@@ -7,6 +7,8 @@
   <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement" />
   <meta name="author" content="Tamby Herinandrianina" />
   <title>EcoScope Mada - Surveillance écologique</title>
+  <!-- Favicon (logo dans l'onglet) -->
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/herinandrianinatamby/ecoscope-mada/main/logo.png" />
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -72,11 +74,18 @@
       z-index: 1000;
       padding: 15px 0;
       text-align: center;
+      display: flex;
+      align-items: center;
+    }
+    nav .logo {
+      height: 40px;
+      margin-right: 20px;
     }
     nav ul {
       list-style: none;
       display: flex;
       justify-content: center;
+      flex-grow: 1;
     }
     nav li {
       margin: 0 20px;
@@ -269,6 +278,10 @@
       nav li {
         margin: 10px;
       }
+      nav .logo {
+        height: 30px;
+        margin-right: 10px;
+      }
       #map, #gee iframe {
         height: 400px;
       }
@@ -307,6 +320,7 @@
     <p id="header-subtitle">Plateforme de surveillance écologique pour Madagascar, utilisant SIG et télédétection pour la conservation et le développement durable.</p>
   </header>
   <nav>
+    <img src="https://raw.githubusercontent.com/herinandrianinatamby/ecoscope-mada/main/logo.png" alt="EcoScope Mada Logo" class="logo">
     <ul>
       <li><a href="#accueil" id="nav-home">Accueil</a></li>
       <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
@@ -409,7 +423,7 @@
       <h2 id="data-title">Données</h2>
       <p id="data-text">Téléchargez les shapefiles des limites administratives de Madagascar :</p>
       <ul>
-        <li class="data-item"><i class="fas fa-globe"></i> <a href="#" onclick="downloadShapefile('1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu'); return false;">Limite Région</a></li>
+        <li class="data-item"><i class="fas globe"></i> <a href="#" onclick="downloadShapefile('1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu'); return false;">Limite Région</a></li>
         <li class="data-item"><i class="fas fa-layer-group"></i> <a href="#" onclick="downloadShapefile('1HaxwViLMSKmonJ5VuhqKW_WGGYmGa-a6'); return false;">Limite District</a></li>
         <li class="data-item"><i class="fas fa-map-marker-alt"></i> <a href="#" onclick="downloadShapefile('1wO6POWt0XZR6Vc-pcAZVYvoIPeJw2Htm'); return false;">Limite Commune</a></li>
         <li class="data-item"><i class="fas fa-home"></i> <a href="#" onclick="downloadShapefile('1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCdQ'); return false;">Limite Fokontany</a></li>
