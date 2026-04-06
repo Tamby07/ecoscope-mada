@@ -286,4 +286,144 @@
       <h2 id="about-title">À Propos</h2>
       <div class="profile-container">
         <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome" style="width:180px; height:180px; object-fit:cover; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-        <p id="about-text"><strong>EcoScope Mada</strong> est une initi
+        <p id="about-text"><strong>EcoScope Mada</strong> est une initiative fondée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basée à Antananarivo, Madagascar, notre mission est de fournir des outils, des analyses et des données fiables pour appuyer la protection de l’environnement exceptionnel du pays. Nous travaillons en étroite collaboration avec des ONG et des chercheurs afin de promouvoir la gestion durable des ressources naturelles.</p>
+      </div>
+    </section>
+
+    <section id="contact">
+      <h2 id="contact-title">Contactez-nous</h2>
+      <p id="contact-text">Pour plus d'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :</p>
+      <form name="contact" method="POST" data-netlify="true">
+        <input type="hidden" name="form-name" value="contact">
+        <p><label>Nom : <input type="text" name="name" required></label></p>
+        <p><label>Email : <input type="email" name="email" required></label></p>
+        <p><label>Message : <textarea name="message" required></textarea></label></p>
+        <p><button type="submit">Envoyer</button></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p id="footer-text-1">© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.</p>
+    <div class="contact-info">
+      <p><i class="fas fa-envelope"></i> Email : <a href="mailto:ecoscope.mada@gmail.com">ecoscope.mada@gmail.com</a></p>
+      <p><i class="fab fa-facebook"></i> Facebook : <a href="#" target="_blank">EcoScope Mada</a></p>
+      <p><i class="fab fa-whatsapp"></i> WhatsApp : <a href="tel:+261343228303">+261 34 32 283 03</a></p>
+    </div>
+    <p id="footer-text-2"><a href="https://github.com/Tamby07/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a></p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        const map = L.map('map', { center: [-18.8792, 47.5079], zoom: 6, zoomControl: true, scrollWheelZoom: false });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: 'Données © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> | EcoScope Mada',
+          maxZoom: 18
+        }).addTo(map);
+        const overlays = {
+          "Bassin Versant": L.imageOverlay('BV.png', [[-25.63, 41.60], [-11.84, 51.87]]),
+          "Corridor": L.imageOverlay('Corridor.png', [[-25.63, 41.60], [-11.84, 51.87]])
+        };
+        L.control.layers(null, overlays, { collapsed: false }).addTo(map);
+        overlays["Bassin Versant"].addTo(map);
+        const legendBassin = document.getElementById('legendBassin');
+        const legendCorridor = document.getElementById('legendCorridor');
+        map.on('overlayadd', e => {
+          if (e.name === 'Bassin Versant') { legendBassin.style.display = 'block'; legendCorridor.style.display = 'none'; }
+          if (e.name === 'Corridor') { legendBassin.style.display = 'none'; legendCorridor.style.display = 'block'; }
+        });
+        map.on('overlayremove', () => {
+          if (!map.hasLayer(overlays["Bassin Versant"]) && !map.hasLayer(overlays["Corridor"])) {
+            legendBassin.style.display = 'none'; legendCorridor.style.display = 'none';
+          }
+        });
+        legendBassin.style.display = 'block';
+      } catch (error) { console.error('Erreur carte : ', error); alert('Erreur lors du chargement de la carte.'); }
+    });
+
+    document.querySelector('form[name="contact"]').addEventListener('submit', function (event) {
+      event.preventDefault();
+      const form = this;
+      const formData = new FormData(form);
+      fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(formData).toString() })
+        .then(() => alert('Merci pour votre message ! Nous vous contacterons bientôt.'))
+        .catch(error => alert('Erreur lors de l\'envoi : ' + error));
+    });
+
+    function toggleDetail(item) {
+      item.classList.toggle('active');
+    }
+
+    function downloadShapefile(fileId) {
+      if (fileId) {
+        const link = document.createElement('a');
+        link.href = `https://drive.google.com/uc?export=download&id=${fileId}`;
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    }
+
+    function changeLanguage(lang) {
+      const elements = {
+        'header-title': { fr: 'EcoScope Mada', en: 'EcoScope Mada' },
+        'header-subtitle': { fr: 'L’œil géospatial sur l’écologie de Madagascar', en: 'The geospatial eye on Madagascar\'s ecology' },
+        'nav-home': { fr: 'Accueil', en: 'Home' },
+        'nav-maps': { fr: 'Cartes des données', en: 'Data Maps' },
+        'nav-services': { fr: 'Services', en: 'Services' },
+        'nav-partners': { fr: 'Partenaires', en: 'Partners' },
+        'nav-contact': { fr: 'Contact', en: 'Contact' },
+        'nav-explorer': { fr: 'Carte Explorateur', en: 'Map Explorer' },
+        'nav-data': { fr: 'Données', en: 'Data' },
+        'welcome-title': { fr: 'Bienvenue sur EcoScope Mada', en: 'Welcome to EcoScope Mada' },
+        'partners-title': { fr: 'Partenaires & Opportunités de Collaboration', en: 'Partnerships & Collaboration Opportunities' },
+        'partners-text': { fr: 'EcoScope Mada est ouvert à tout partenariat stratégique : ONG, bailleurs de fonds, universités, institutions publiques et privées.', en: 'EcoScope Mada is open to all strategic partnerships: NGOs, donors, universities, public and private institutions.' },
+        'service-1': { fr: 'Suivi de la déforestation par satellite', en: 'Satellite deforestation monitoring' },
+        'service-3': { fr: 'Estimation de la biomasse forestière', en: 'Forest biomass estimation' },
+        'service-4': { fr: 'Cartographie SIG (occupation du sol, NDVI)', en: 'GIS mapping (land use, NDVI)' },
+        'service-5': { fr: 'Assistance technique en SIG et GEE', en: 'Technical support in GIS and GEE' },
+        'service-6': { fr: 'Collaboration avec ONG et chercheurs', en: 'Collaboration with NGOs and researchers' },
+        'service-7': { fr: 'Appui académique', en: 'Academic Support' },
+        'service-8': { fr: 'Imagerie Multispectrale par Drone', en: 'Multispectral Drone Imaging' },
+        'service-9': { fr: 'Levés LiDAR Haute Précision', en: 'High-Precision LiDAR Surveys' },
+        'gee-title': { fr: 'Carte Explorateur', en: 'Map Explorer' },
+        'gee-text': { fr: 'Découvrez une analyse détaillée de l\'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l\'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.', en: 'Discover a detailed analysis of land use in Madagascar, annual precipitation sums, and the NDVI index using Google Earth Engine. These data are essential for monitoring deforestation, assessing ecosystem health, and planning sustainable environmental interventions.' },
+        'data-title': { fr: 'Données', en: 'Data' },
+        'data-text': { fr: 'Téléchargez les shapefiles des limites administratives de Madagascar :', en: 'Download the shapefiles of Madagascar administrative boundaries:' },
+        'about-title': { fr: 'À Propos', en: 'About' },
+        'about-text': { fr: '<strong>EcoScope Mada</strong> est une initiative fondée par Tamby Herinandrianina, ingénieur agronome passionné par la conservation et les technologies géospatiales. Basée à Antananarivo, Madagascar, notre mission est de fournir des outils, des analyses et des données fiables pour appuyer la protection de l’environnement exceptionnel du pays. Nous travaillons en étroite collaboration avec des ONG et des chercheurs afin de promouvoir la gestion durable des ressources naturelles.', en: '<strong>EcoScope Mada</strong> is an initiative founded by Tamby Herinandrianina, an agronomist engineer passionate about conservation and geospatial technologies. Based in Antananarivo, Madagascar, our mission is to provide tools, analyses, and reliable data to support the protection of the country\'s exceptional environment. We work closely with NGOs and researchers to promote sustainable resource management.' },
+        'contact-title': { fr: 'Contactez-nous', en: 'Contact Us' },
+        'contact-text': { fr: 'Pour plus d\'informations ou pour collaborer avec nous, veuillez utiliser le formulaire ci-dessous ou nous contacter directement :', en: 'For more information or to collaborate with us, please use the form below or contact us directly:' },
+        'footer-text-1': { fr: '© 2025 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina.', en: '© 2025 EcoScope Mada - All rights reserved. Developed by Tamby Herinandrianina.' },
+        'footer-text-2': { fr: '<a href="https://github.com/Tamby07/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Nous contacter</a>', en: '<a href="https://github.com/Tamby07/ecoscope-mada" target="_blank">GitHub</a> | <a href="#contact">Contact Us</a>' }
+      };
+      const langFr = document.querySelector('.lang-fr');
+      const langEn = document.querySelector('.lang-en');
+      if (lang === 'fr') {
+        langFr.classList.add('active'); langEn.classList.remove('active'); document.documentElement.lang = 'fr';
+        for (let id in elements) {
+          const element = document.getElementById(id);
+          if (element) element.innerHTML = elements[id].fr;
+        }
+      } else if (lang === 'en') {
+        langEn.classList.add('active'); langFr.classList.remove('active'); document.documentElement.lang = 'en';
+        for (let id in elements) {
+          const element = document.getElementById(id);
+          if (element) element.innerHTML = elements[id].en;
+        }
+      }
+    }
+    changeLanguage('fr');
+
+    // Clic sur les services
+    document.querySelectorAll('.service-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>
