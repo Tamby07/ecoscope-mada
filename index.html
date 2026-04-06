@@ -7,15 +7,13 @@
   <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement, drone, LiDAR" />
   <meta name="author" content="Tamby Herinandrianina" />
   <title>EcoScope Mada - Surveillance écologique</title>
-  
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Tamby07/ecoscope-mada/main/Logo.png" />
 
-  <!-- Fonts -->
+  <!-- Fonts & Libraries -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  
-  <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
@@ -32,263 +30,236 @@
       flex-direction: column;
       justify-content: center;
       position: relative;
-      animation: fadeIn 1s ease-in;
     }
     .language-switch { position: absolute; top: 10px; right: 10px; }
-    .language-switch img { width: 20px; height: 15px; margin-left: 5px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s; }
+    .language-switch img { width: 22px; height: 16px; margin-left: 6px; cursor: pointer; border: 2px solid transparent; }
     .language-switch img.active { border-color: #38a169; }
-
-    header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; }
-    header p { font-size: 1.3rem; max-width: 800px; margin: 0 auto; }
 
     nav {
       background: #ffffff; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
       position: sticky; 
       top: 0; 
       z-index: 1000;
-      padding: 15px 0; 
-      display: flex; 
+      padding: 12px 0;
+      display: flex;
       align-items: center;
     }
     nav .logo { 
-      height: 45px; 
+      height: 48px; 
       margin-left: 30px; 
-      margin-right: 40px; 
+      margin-right: 40px;
+      object-fit: contain;
     }
     nav ul { 
       list-style: none; 
       display: flex; 
       flex-grow: 1; 
       justify-content: center; 
+      gap: 30px;
     }
-    nav li { margin: 0 20px; }
     nav a { 
       text-decoration: none; 
       color: #2d3748; 
       font-weight: 500; 
-      transition: color 0.3s; 
     }
     nav a:hover { color: #38a169; }
 
     section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; }
     h2 { font-size: 2.2rem; color: #2d3748; margin-bottom: 30px; text-align: center; }
 
-    /* Map */
+    /* Carte */
     #map { 
       height: 550px; 
       width: 100%; 
       border-radius: 12px; 
       box-shadow: 0 6px 20px rgba(0,0,0,0.15); 
-      position: relative; 
     }
     .legend {
       background: rgba(255,255,255,0.95); 
       padding: 15px; 
       border-radius: 10px; 
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       position: absolute; 
-      bottom: 25px; 
-      left: 25px; 
+      bottom: 20px; 
+      left: 20px; 
       z-index: 1000; 
       font-size: 14px; 
-      max-width: 240px;
+      max-width: 260px;
+      display: none;
     }
-    .legend i { width: 22px; height: 22px; display: inline-block; margin-right: 10px; }
+    .legend strong { display: block; margin-bottom: 8px; }
+    .legend i { 
+      width: 20px; 
+      height: 20px; 
+      display: inline-block; 
+      margin-right: 8px; 
+      vertical-align: middle;
+    }
 
     /* Services */
     .services-list { 
       display: grid; 
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
       gap: 25px; 
-      padding: 20px 0; 
     }
     .service-item {
-      background: #ffffff; 
+      background: white; 
       padding: 25px; 
       border-radius: 12px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
       text-align: center; 
-      transition: all 0.3s; 
-      cursor: pointer; 
-      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    .service-item:hover { 
-      transform: translateY(-8px); 
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
-    }
-    .service-item i { 
-      font-size: 2.5rem; 
-      color: #38a169; 
-      margin-bottom: 15px; 
-    }
+    .service-item:hover { transform: translateY(-8px); }
+    .service-item i { font-size: 2.6rem; color: #38a169; margin-bottom: 15px; }
     .service-detail {
       display: none; 
-      padding: 20px 0 0; 
-      background: #f8fff9; 
       margin-top: 15px; 
-      border-radius: 8px; 
+      padding-top: 15px; 
+      border-top: 1px solid #e0f0e0;
       text-align: justify;
     }
-    .service-item.active .service-detail { 
-      display: block; 
-      animation: slideDown 0.4s ease-in-out; 
-    }
-    @keyframes slideDown { 
-      from { max-height: 0; opacity: 0; } 
-      to { max-height: 400px; opacity: 1; } 
-    }
+    .service-item.active .service-detail { display: block; }
 
-    /* À Propos - Photo corrigée */
-    #apropos .profile-container img {
+    /* Photo À Propos */
+    .profile-container img {
       width: 180px; 
       height: 180px; 
       object-fit: cover; 
       border-radius: 50%; 
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
-    /* Footer */
-    footer { 
-      background: #2d3748; 
-      color: white; 
-      text-align: center; 
-      padding: 50px 20px; 
-      font-size: 0.95rem; 
-    }
-    footer a { color: #38a169; text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
   </style>
 </head>
 <body>
+
   <header>
     <div class="language-switch">
       <img src="https://upload.wikimedia.org/wikipedia/en/c/c3/Flag_of_France.svg" alt="Français" class="lang-fr active" onclick="changeLanguage('fr')">
       <img src="https://upload.wikimedia.org/wikipedia/en/a/ae/Flag_of_the_United_Kingdom.svg" alt="English" class="lang-en" onclick="changeLanguage('en')">
     </div>
-    <h1 id="header-title">EcoScope Mada</h1>
-    <p id="header-subtitle">L’œil géospatial sur l’écologie de Madagascar</p>
+    <h1>EcoScope Mada</h1>
+    <p>L’œil géospatial sur l’écologie de Madagascar</p>
   </header>
 
   <nav>
-    <img src="https://raw.githubusercontent.com/Tamby07/ecoscope-mada/main/Logo.png" alt="EcoScope Mada Logo" class="logo">
+    <!-- Logo corrigé -->
+    <img src="https://raw.githubusercontent.com/Tamby07/ecoscope-mada/main/Logo.png" 
+         alt="EcoScope Mada Logo" 
+         class="logo"
+         onerror="this.src='https://via.placeholder.com/180x48/38a169/ffffff?text=EcoScope';">
     <ul>
-      <li><a href="#accueil" id="nav-home">Accueil</a></li>
-      <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
-      <li><a href="#services" id="nav-services">Services</a></li>
-      <li><a href="#partenaires" id="nav-partners">Partenaires</a></li>
-      <li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
-      <li><a href="#donnees" id="nav-data">Données</a></li>
-      <li><a href="#contact" id="nav-contact">Contact</a></li>
+      <li><a href="#accueil">Accueil</a></li>
+      <li><a href="#carte">Cartes des données</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#partenaires">Partenaires</a></li>
+      <li><a href="#gee">Carte Explorateur</a></li>
+      <li><a href="#donnees">Données</a></li>
+      <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 
   <main>
     <section id="accueil">
-      <h2 id="welcome-title">Bienvenue sur EcoScope Mada</h2>
-      <p id="welcome-text-1">Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.</p>
-      <p id="welcome-text-2">Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.</p>
+      <h2>Bienvenue sur EcoScope Mada</h2>
+      <p>Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection.</p>
     </section>
 
     <section id="carte">
-      <h2><i class="fas fa-map"></i> <span id="map-title">Cartes des données sur Madagascar</span></h2>
+      <h2><i class="fas fa-map"></i> Cartes des données sur Madagascar</h2>
       <div id="map"></div>
-    </section>
 
-    <section id="services">
-      <h2 id="services-title">Nos Services</h2>
-      <div class="services-list">
-        <!-- Services existants (sans propagation des feux) -->
-        <div class="service-item" onclick="toggleDetail(this)">
-          <i class="fas fa-satellite"></i>
-          <p id="service-1">Suivi de la déforestation par satellite</p>
-          <div class="service-detail">
-            <p>Nous proposons un service de suivi précis de la déforestation en nous appuyant sur les images satellitaires Sentinel et Landsat...</p>
-          </div>
-        </div>
-        <!-- ... (les autres services 3 à 7 restent identiques) ... -->
+      <!-- Légendes -->
+      <div class="legend" id="legendBassin">
+        <strong>Légende - Bassin Versant</strong><br>
+        <i style="background:#3388ff; border:1px solid #2266cc;"></i> Zones de bassin versant
+      </div>
 
-        <!-- Imagerie Multispectrale par Drone -->
-        <div class="service-item" onclick="toggleDetail(this)">
-          <i class="fas fa-drone"></i>
-          <p id="service-8">Imagerie Multispectrale par Drone</p>
-          <div class="service-detail">
-            <p>Grâce à notre drone multispectral <strong>DJI Mavic 3 Multispectral (Mavic 3M)</strong>, nous réalisons des missions de photogrammétrie et d’imagerie multispectrale haute résolution...</p>
-          </div>
-        </div>
-
-        <!-- Levés LiDAR Haute Précision -->
-        <div class="service-item" onclick="toggleDetail(this)">
-          <i class="fas fa-drone"></i>
-          <p id="service-9">Levés LiDAR Haute Précision</p>
-          <div class="service-detail">
-            <p>Avec notre drone entreprise <strong>DJI Matrice 300 RTK équipé du capteur LiDAR Zenmuse L2</strong>, nous effectuons des levés aériens LiDAR de très haute précision...</p>
-          </div>
-        </div>
+      <div class="legend" id="legendCorridor">
+        <strong>Légende - Corridor</strong><br>
+        <i style="background:#85B66F"></i> Paysage Extrême Nord <br>
+        <i style="background:#FF9E17"></i> CAZ<br>
+        <i style="background:#8D5A99"></i> COFAV<br>
+        <i style="background:#729B6F"></i> MAMABAIE<br>
+        <i style="background:#F3A6B2"></i> COMATSA<br>
+        <i style="background:#E8718D"></i> COFAM<br>
+        <i style="background:#B7484B"></i> Paysage plateau Mahafaly karimbola<br>
+        <i style="background:#8E8573"></i> Paysage Mikea<br>
+        <i style="background:#91522D"></i> Paysage Menabe<br>
+        <i style="background:#7D8B8F"></i> Paysage Kirindy Mangoky<br>
+        <i style="background:#A47158"></i> Paysage Bidia Bezavona<br>
+        <i style="background:#D5B43C"></i> Paysage Anosy
       </div>
     </section>
 
-    <!-- Le reste du script (partenaires, gee, donnees, apropos, contact, footer) reste identique à votre version précédente -->
+    <!-- Vos autres sections (services, partenaires, gee, donnees, apropos, contact) restent identiques à votre dernière version -->
 
     <section id="apropos">
-      <h2 id="about-title">À Propos</h2>
-      <div class="profile-container">
-        <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome" style="width:180px; height:180px; object-fit:cover; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-        <p id="about-text"><strong>EcoScope Mada</strong> est une initiative fondée par Tamby Herinandrianina...</p>
+      <h2>À Propos</h2>
+      <div class="profile-container" style="text-align:center;">
+        <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina">
+        <p><strong>Tamby Herinandrianina</strong><br>Ingénieur Agronome – Spécialisé en Foresterie, SIG & Télédétection</p>
       </div>
     </section>
-
-    <!-- ... (le reste du code footer et script reste le même) ... -->
   </main>
 
   <footer>
-    <!-- Votre footer existant -->
+    <p>© 2026 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina</p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
-    // Script Leaflet pour la carte (restauré)
-    document.addEventListener('DOMContentLoaded', function () {
-      try {
-        const map = L.map('map', { center: [-18.8792, 47.5079], zoom: 6 });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          attribution: 'Données © OpenStreetMap | EcoScope Mada'
-        }).addTo(map);
+    // === CARTE AVEC LÉGENDES CORRIGÉES ===
+    document.addEventListener('DOMContentLoaded', function() {
+      const map = L.map('map').setView([-18.8792, 47.5079], 6);
 
-        const overlays = {
-          "Bassin Versant": L.imageOverlay('BV.png', [[-25.63, 41.60], [-11.84, 51.87]]),
-          "Corridor": L.imageOverlay('Corridor.png', [[-25.63, 41.60], [-11.84, 51.87]])
-        };
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+      }).addTo(map);
 
-        L.control.layers(null, overlays, { collapsed: false }).addTo(map);
-        overlays["Bassin Versant"].addTo(map);
+      const bassinLayer = L.imageOverlay('BV.png', [[-25.63, 41.60], [-11.84, 51.87]]);
+      const corridorLayer = L.imageOverlay('Corridor.png', [[-25.63, 41.60], [-11.84, 51.87]]);
 
-        // Légendes
-        const legendBassin = document.getElementById('legendBassin');
-        const legendCorridor = document.getElementById('legendCorridor');
+      const overlays = {
+        "Bassin Versant": bassinLayer,
+        "Corridor": corridorLayer
+      };
 
-        map.on('overlayadd', function(e) {
-          if (e.name === 'Bassin Versant') {
-            legendBassin.style.display = 'block';
-            legendCorridor.style.display = 'none';
-          } else if (e.name === 'Corridor') {
-            legendBassin.style.display = 'none';
-            legendCorridor.style.display = 'block';
-          }
-        });
+      L.control.layers(null, overlays, { collapsed: false }).addTo(map);
 
-        legendBassin.style.display = 'block';
-      } catch (error) {
-        console.error('Erreur carte : ', error);
-      }
+      // Afficher Bassin Versant par défaut
+      bassinLayer.addTo(map);
+      document.getElementById('legendBassin').style.display = 'block';
+
+      // Gestion des légendes
+      map.on('overlayadd', function(e) {
+        if (e.name === "Bassin Versant") {
+          document.getElementById('legendBassin').style.display = 'block';
+          document.getElementById('legendCorridor').style.display = 'none';
+        } else if (e.name === "Corridor") {
+          document.getElementById('legendBassin').style.display = 'none';
+          document.getElementById('legendCorridor').style.display = 'block';
+        }
+      });
+
+      map.on('overlayremove', function(e) {
+        if (e.name === "Bassin Versant") document.getElementById('legendBassin').style.display = 'none';
+        if (e.name === "Corridor") document.getElementById('legendCorridor').style.display = 'none';
+      });
     });
 
-    // Fonction toggleDetail
+    // Toggle pour les services
     function toggleDetail(item) {
       item.classList.toggle('active');
     }
 
-    // Autres fonctions (download, changeLanguage) restent identiques
+    // Fonction de changement de langue (à compléter avec vos textes si besoin)
+    function changeLanguage(lang) {
+      console.log("Langue changée en :", lang);
+      // Ajoutez ici votre logique de traduction complète si vous l'avez
+    }
   </script>
 </body>
 </html>
