@@ -50,35 +50,13 @@
     .btn-secondary:hover { background: white; color: #38a169; }
 
     nav {
-      background: #ffffff; 
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-      position: sticky; 
-      top: 0; 
-      z-index: 1000;
-      padding: 15px 0; 
-      display: flex; 
-      align-items: center; 
-      justify-content: flex-start;
+      background: #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000;
+      padding: 15px 0; display: flex; align-items: center; justify-content: flex-start;
     }
-    nav .logo { 
-      height: 45px; 
-      margin-left: 30px; 
-      margin-right: 50px; 
-      object-fit: contain;
-    }
-    nav ul { 
-      list-style: none; 
-      display: flex; 
-      flex-grow: 1; 
-      justify-content: center; 
-    }
+    nav .logo { height: 45px; margin-left: 30px; margin-right: 50px; object-fit: contain; }
+    nav ul { list-style: none; display: flex; flex-grow: 1; justify-content: center; }
     nav li { margin: 0 20px; }
-    nav a { 
-      text-decoration: none; 
-      color: #2d3748; 
-      font-weight: 500; 
-      transition: color 0.3s; 
-    }
+    nav a { text-decoration: none; color: #2d3748; font-weight: 500; transition: color 0.3s; }
     nav a:hover { color: #38a169; }
 
     section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; animation: fadeIn 1s ease-in; }
@@ -88,71 +66,39 @@
     /* Map */
     #map { height: 550px; width: 100%; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); position: relative; }
     .legend {
-      background: rgba(255,255,255,0.95); 
-      padding: 15px; 
-      border-radius: 10px; 
-      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-      position: absolute; 
-      bottom: 25px; 
-      left: 25px; 
-      z-index: 1000; 
-      font-size: 14px; 
-      max-width: 240px;
+      background: rgba(255,255,255,0.95); padding: 15px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+      position: absolute; bottom: 25px; left: 25px; z-index: 1000; font-size: 14px; max-width: 240px;
     }
     .legend i { width: 22px; height: 22px; display: inline-block; margin-right: 10px; }
 
     /* Services */
     .services-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; padding: 20px 0; }
     .service-item {
-      background: #ffffff; 
-      padding: 25px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      text-align: center; 
-      transition: all 0.3s; 
-      cursor: pointer; 
-      overflow: hidden;
+      background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      text-align: center; transition: all 0.3s; cursor: pointer; overflow: hidden;
     }
     .service-item:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
     .service-item i { font-size: 2.5rem; color: #38a169; margin-bottom: 15px; }
     .service-detail {
-      display: none; 
-      padding: 20px 0 0; 
-      background: #f8fff9; 
-      margin-top: 15px; 
-      border-radius: 8px; 
-      text-align: justify;
+      display: none; padding: 20px 0 0; background: #f8fff9; margin-top: 15px; border-radius: 8px; text-align: justify;
     }
     .service-item.active .service-detail { display: block; animation: slideDown 0.4s ease-in-out; }
     @keyframes slideDown { from { max-height: 0; opacity: 0; } to { max-height: 400px; opacity: 1; } }
 
     /* Partenaires */
     .partners-grid {
-      display: grid; 
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-      gap: 25px; 
-      margin-top: 30px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px;
     }
     .partner-card {
-      background: white; 
-      padding: 25px; 
-      border-radius: 12px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-      text-align: center;
+      background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
     }
     .partner-card h3 { color: #38a169; margin-bottom: 15px; }
 
     /* Données */
     #donnees ul { list-style: none; padding: 0; }
     #donnees .data-item {
-      display: flex; 
-      align-items: center; 
-      padding: 12px; 
-      background: #ffffff; 
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1); 
-      margin-bottom: 12px; 
-      transition: transform 0.3s;
+      display: flex; align-items: center; padding: 12px; background: #ffffff; border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-bottom: 12px; transition: transform 0.3s;
     }
     #donnees .data-item:hover { transform: translateY(-3px); }
     #donnees .data-item i { font-size: 1.6rem; color: #38a169; margin-right: 15px; }
@@ -161,32 +107,19 @@
     #donnees .data-item.gray-note { color: #808080; font-style: italic; cursor: default; }
     #donnees .data-item.gray-note:hover { transform: none; }
 
-    /* À Propos - Photo mieux centrée */
-    .profile-container {
-      text-align: center;
-    }
+    /* À Propos - Photo centrée et tête visible */
+    .profile-container { text-align: center; }
     .profile-container img {
-      width: 190px; 
-      height: 190px; 
-      object-fit: cover; 
-      border-radius: 50%; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-      margin-bottom: 20px;
+      width: 190px; height: 190px; object-fit: cover; border-radius: 50%; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12); margin-bottom: 20px;
     }
 
     /* Footer */
-    footer { 
-      background: #2d3748; 
-      color: white; 
-      text-align: center; 
-      padding: 50px 20px; 
-      font-size: 0.95rem; 
-    }
+    footer { background: #2d3748; color: white; text-align: center; padding: 50px 20px; font-size: 0.95rem; }
     .contact-info p { margin: 8px 0; }
     footer a { color: #38a169; text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
-    /* Responsive */
     @media (max-width: 768px) {
       header { padding: 60px 20px; }
       header h1 { font-size: 2.2rem; }
@@ -213,10 +146,7 @@
   </header>
 
   <nav>
-    <img src="https://raw.githubusercontent.com/Tamby07/ecoscope-mada/main/Logo.png" 
-         alt="EcoScope Mada Logo" 
-         class="logo"
-         onerror="this.src='https://via.placeholder.com/180x48/38a169/ffffff?text=EcoScope';">
+    <img src="https://raw.githubusercontent.com/Tamby07/ecoscope-mada/main/Logo.png" alt="EcoScope Mada Logo" class="logo">
     <ul>
       <li><a href="#accueil" id="nav-home">Accueil</a></li>
       <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
@@ -240,7 +170,7 @@
       <div id="map">
         <div class="legend" id="legendBassin" style="display: none;">
           <strong id="legend-bassin-title">Légende - Bassin Versant</strong><br>
-          <i style="background:#3388ff;"></i> <span id="legend-bassin-text">Zones de bassin</span><br>
+          <i></i> <span id="legend-bassin-text">Zones de bassin</span><br>
         </div>
         <div class="legend" id="legendCorridor" style="display: none;">
           <strong id="legend-corridor-title">Légende - Corridor</strong><br>
@@ -260,68 +190,80 @@
       </div>
     </section>
 
+    <!-- ====================== NOS SERVICES MODIFIÉS ====================== -->
     <section id="services">
       <h2 id="services-title">Nos Services</h2>
       <div class="services-list">
-        <!-- Vos services complets -->
+
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-satellite"></i>
           <p id="service-1">Suivi de la déforestation par satellite</p>
           <div class="service-detail">
-            <p>Nous proposons un service de suivi précis de la déforestation en nous appuyant sur les images satellitaires Sentinel et Landsat...</p>
+            <p>Nous assurons un suivi annuel ultra-précis de la déforestation grâce aux données Sentinel-2 et Landsat-9. Nos analyses détectent les moindres changements d’occupation du sol et fournissent des rapports clairs et exploitables (cartes + tableaux Excel) permettant aux ONG et décideurs de prendre des mesures immédiates pour protéger les forêts malgaches.</p>
           </div>
         </div>
-        <div class="service-item" onclick="toggleDetail(this)">
-          <i class="fas fa-fire"></i>
-          <p id="service-2">Suivi de la propagation des feux</p>
-          <div class="service-detail">
-            <p>Nous assurons un suivi précis des feux grâce aux données thermiques issues de satellites comme MODIS et Sentinel-2...</p>
-          </div>
-        </div>
+
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-tree"></i>
           <p id="service-3">Estimation de la biomasse forestière</p>
           <div class="service-detail">
-            <p>Nous exploitons les données du satellite GEDI...</p>
+            <p>Grâce aux données LiDAR du satellite GEDI, nous calculons avec une précision inégalée la hauteur, la densité et la biomasse aérienne des forêts. Ces résultats, convertis en équivalent carbone, sont indispensables pour les projets REDD+, la compensation carbone et la valorisation des services écosystémiques.</p>
           </div>
         </div>
+
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-map"></i>
           <p id="service-4">Cartographie SIG (occupation du sol, NDVI)</p>
           <div class="service-detail">
-            <p>Nous utilisons les données satellites Landsat et Sentinel pour produire des cartes d’occupation du sol précises...</p>
+            <p>Nous produisons des cartes d’occupation du sol et des indices de végétation (NDVI, NDRE) à partir des images Landsat et Sentinel. Ces cartes thématiques permettent d’analyser les dynamiques territoriales et d’accompagner les stratégies de conservation et d’aménagement durable du territoire.</p>
           </div>
         </div>
+
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-cog"></i>
           <p id="service-5">Assistance technique en SIG et GEE</p>
           <div class="service-detail">
-            <p>Nous proposons des formations et un accompagnement spécialisé sur l’utilisation des outils SIG et de Google Earth Engine...</p>
+            <p>Nous formons vos équipes à l’utilisation avancée de Google Earth Engine et des outils SIG. Vous repartez avec des scripts personnalisés, des tutoriels pratiques et un support technique continu pour traiter vos propres données satellitaires en toute autonomie.</p>
           </div>
         </div>
+
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-handshake"></i>
           <p id="service-6">Collaboration avec ONG et chercheurs</p>
           <div class="service-detail">
-            <p>Nous favorisons des partenariats actifs avec les ONG et les chercheurs...</p>
+            <p>Nous mettons notre expertise et nos données à votre service pour co-construire des projets d’impact. Cartes sur mesure, analyses spatiales, rapports scientifiques : un véritable partenariat technique pour amplifier vos actions de conservation à Madagascar.</p>
           </div>
         </div>
+
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-graduation-cap"></i>
           <p id="service-7">Appui académique</p>
           <div class="service-detail">
-            <p>Nous accompagnons les étudiants en facilitant l’acquisition d’images satellites...</p>
+            <p>Nous accompagnons étudiants et chercheurs en leur fournissant des données spatiales gratuites, des formations pratiques et un soutien technique pour leurs mémoires et thèses sur l’environnement et la gestion des ressources naturelles.</p>
           </div>
         </div>
+
+        <!-- Nouveau service 1 : Imagerie Multispectrale -->
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-drone"></i>
-          <p id="service-8">Photogrammétrie par drone</p>
+          <p id="service-8">Imagerie Multispectrale par Drone</p>
           <div class="service-detail">
-            <p>Nous réalisons des missions de photogrammétrie par drone pour produire des orthophotos ultra haute résolution...</p>
+            <p>Avec notre drone <strong>DJI Mavic 3 Multispectral</strong>, nous réalisons des vols haute résolution (2 cm/pixel) et produisons des orthophotos, cartes NDVI/NDRE/NDWI et modèles 3D. Idéal pour le suivi précis de la santé végétale, la détection de stress hydrique et la planification de reforestation.</p>
           </div>
         </div>
+
+        <!-- Nouveau service 2 : Levés LiDAR -->
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-drone"></i>
+          <p id="service-9">Levés LiDAR par Drone</p>
+          <div class="service-detail">
+            <p>Équipé du <strong>DJI Matrice 300 RTK + Zenmuse L2</strong>, nous effectuons des levés LiDAR de très haute précision. Nous générons des modèles numériques de terrain (MNT), modèles de surface (MNS) et nuages de points 3D même sous couvert forestier dense, parfaits pour le calcul de volumes, la détection de changements topographiques et les études d’impact environnemental.</p>
+          </div>
+        </div>
+
       </div>
     </section>
+    <!-- ====================== FIN NOS SERVICES ====================== -->
 
     <section id="partenaires">
       <h2 id="partners-title">Partenaires & Opportunités de Collaboration</h2>
@@ -344,11 +286,14 @@
           <p>Compensation carbone • RSE • Zéro déforestation nette</p>
         </div>
       </div>
+      <p style="text-align:center; margin-top:40px;">
+        <a href="#contact" class="btn-primary" style="font-size:1.2rem; padding:15px 40px;">Discutons de votre projet →</a>
+      </p>
     </section>
 
     <section id="gee">
       <h2><i class="fas fa-globe"></i> <span id="gee-title">Carte Explorateur</span></h2>
-      <p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine.</p>
+      <p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
       <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="550px" style="border: none; border-radius: 12px;"></iframe>
     </section>
 
@@ -378,51 +323,12 @@
     <section id="contact">
       <h2>Contactez-nous</h2>
       <form name="contact" method="POST" data-netlify="true">
-        <!-- Votre formulaire ici -->
+        <input type="text" name="name" placeholder="Votre nom" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+        <input type="email" name="email" placeholder="Votre email" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+        <textarea name="message" placeholder="Votre message" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc; height:150px;"></textarea>
+        <button type="submit" style="background:#38a169; color:white; padding:14px 40px; border:none; border-radius:50px; cursor:pointer;">Envoyer</button>
       </form>
     </section>
   </main>
 
-  <footer>
-    <p>© 2026 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina</p>
-  </footer>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script>
-    // Carte avec légendes
-    document.addEventListener('DOMContentLoaded', function() {
-      const map = L.map('map').setView([-18.8792, 47.5079], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-      const bassin = L.imageOverlay('BV.png', [[-25.63, 41.60], [-11.84, 51.87]]);
-      const corridor = L.imageOverlay('Corridor.png', [[-25.63, 41.60], [-11.84, 51.87]]);
-
-      L.control.layers(null, {"Bassin Versant": bassin, "Corridor": corridor}, {collapsed: false}).addTo(map);
-      bassin.addTo(map);
-      document.getElementById('legendBassin').style.display = 'block';
-
-      map.on('overlayadd', function(e) {
-        if (e.name === "Bassin Versant") {
-          document.getElementById('legendBassin').style.display = 'block';
-          document.getElementById('legendCorridor').style.display = 'none';
-        } else if (e.name === "Corridor") {
-          document.getElementById('legendBassin').style.display = 'none';
-          document.getElementById('legendCorridor').style.display = 'block';
-        }
-      });
-    });
-
-    function toggleDetail(item) {
-      item.classList.toggle('active');
-    }
-
-    function downloadShapefile(fileId) {
-      window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
-    }
-
-    function changeLanguage(lang) {
-      alert("Langue changée en " + lang + " (fonction à compléter)");
-    }
-  </script>
-</body>
-</html>
+  <foo
