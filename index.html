@@ -331,4 +331,49 @@
     </section>
   </main>
 
-  <foo
+  <footer>
+    <p>© 2026 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina</p>
+    <p class="contact-info">
+      Email : ecoscope.mada@gmail.com<br>
+      WhatsApp : +261 34 32 283 03
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const map = L.map('map').setView([-18.8792, 47.5079], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+      const bassinLayer = L.imageOverlay('BV.png', [[-25.63, 41.60], [-11.84, 51.87]]);
+      const corridorLayer = L.imageOverlay('Corridor.png', [[-25.63, 41.60], [-11.84, 51.87]]);
+
+      L.control.layers(null, {"Bassin Versant": bassinLayer, "Corridor": corridorLayer}, {collapsed: false}).addTo(map);
+      bassinLayer.addTo(map);
+      document.getElementById('legendBassin').style.display = 'block';
+
+      map.on('overlayadd', function(e) {
+        if (e.name === "Bassin Versant") {
+          document.getElementById('legendBassin').style.display = 'block';
+          document.getElementById('legendCorridor').style.display = 'none';
+        } else if (e.name === "Corridor") {
+          document.getElementById('legendBassin').style.display = 'none';
+          document.getElementById('legendCorridor').style.display = 'block';
+        }
+      });
+    });
+
+    function toggleDetail(item) {
+      item.classList.toggle('active');
+    }
+
+    function downloadShapefile(fileId) {
+      window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
+    }
+
+    function changeLanguage(lang) {
+      alert("Langue changée en " + lang + " (à compléter)");
+    }
+  </script>
+</body>
+</html>
