@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="EcoScope Mada : Plateforme de visualisation écologique pour Madagascar, spécialisée en SIG et télédétection." />
-  <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement" />
+  <meta name="keywords" content="EcoScope Mada, SIG, télédétection, Madagascar, conservation, environnement, drone, LiDAR" />
   <meta name="author" content="Tamby Herinandrianina" />
   <title>EcoScope Mada - Surveillance écologique</title>
   <!-- Favicon -->
@@ -180,13 +180,6 @@
           </div>
         </div>
         <div class="service-item" onclick="toggleDetail(this)">
-          <i class="fas fa-fire"></i>
-          <p id="service-2">Suivi de la propagation des feux</p>
-          <div class="service-detail">
-            <p>Nous assurons un suivi précis des feux grâce aux données thermiques issues de satellites comme MODIS et Sentinel-2. L’analyse de ces informations permet de détecter rapidement les points chauds et de cartographier la progression des incendies presque en temps réel. Nous pouvons ainsi estimer l’étendue des zones brûlées, évaluer leurs impacts sur la végétation et les écosystèmes, et fournir des alertes précoces aux gestionnaires afin de faciliter une intervention rapide et ciblée.</p>
-          </div>
-        </div>
-        <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-tree"></i>
           <p id="service-3">Estimation de la biomasse forestière</p>
           <div class="service-detail">
@@ -221,18 +214,27 @@
             <p>Nous accompagnons les étudiants en facilitant l’acquisition d’images satellites Landsat et Sentinel, ainsi que de bases de données SIG. Des formations pratiques sont proposées sur l’analyse de l’occupation du sol et le calcul du NDVI, afin de leur permettre d’illustrer leurs cours, de renforcer leurs compétences techniques et de réaliser des projets de recherche environnementale.</p>
           </div>
         </div>
-        <!-- Nouveau service : Photogrammétrie par drone -->
+
+        <!-- Nouveau : Imagerie Multispectrale par Drone (Mavic 3M) -->
         <div class="service-item" onclick="toggleDetail(this)">
           <i class="fas fa-drone"></i>
-          <p id="service-8">Photogrammétrie par drone</p>
+          <p id="service-8">Imagerie Multispectrale par Drone</p>
           <div class="service-detail">
-            <p>Nous réalisons des missions de photogrammétrie par drone (DJI Mavic, Phantom, etc.) pour produire des orthophotos ultra haute résolution (jusqu’à 2 cm/pixel), des modèles 3D et des MNT/MNH précis. Ces livrables sont utilisés pour le suivi détaillé de sites (aires protégées, mangroves, projets de reforestation), la cartographie fine, le calcul de volumes (érosion, stocks de bois), et la création de jumeaux numériques pour la planification et le suivi de projets environnementaux.</p>
+            <p>Grâce à notre drone multispectral <strong>DJI Mavic 3 Multispectral (Mavic 3M)</strong>, nous réalisons des missions de photogrammétrie et d’imagerie multispectrale haute résolution. Nous produisons des orthophotos, des indices de végétation avancés (NDVI, NDRE, NDWI…) pour évaluer la santé des plantes, détecter le stress hydrique ou nutritionnel, et suivre l’évolution des écosystèmes. Idéal pour la surveillance fine des aires protégées, des projets de reforestation et de l’agriculture de précision.</p>
+          </div>
+        </div>
+
+        <!-- Nouveau : Levés LiDAR (Matrice 300 RTK + Zenmuse L2) -->
+        <div class="service-item" onclick="toggleDetail(this)">
+          <i class="fas fa-drone"></i>
+          <p id="service-9">Levés LiDAR Haute Précision</p>
+          <div class="service-detail">
+            <p>Avec notre drone entreprise <strong>DJI Matrice 300 RTK équipé du capteur LiDAR Zenmuse L2</strong>, nous effectuons des levés aériens LiDAR de très haute précision. Nous générons des modèles numériques de terrain (MNT), des modèles de surface (MNS), des nuages de points 3D denses et des coupes forestières précises, même sous couvert végétal dense. Ces données sont essentielles pour le calcul de volumes, la détection de changements topographiques et les études d’impact environnemental.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Section Partenaires -->
     <section id="partenaires">
       <h2 id="partners-title">Partenaires & Opportunités de Collaboration</h2>
       <p id="partners-text">EcoScope Mada est ouvert à tout partenariat stratégique : ONG, bailleurs de fonds, universités, institutions publiques et privées. Ensemble, accélérons la protection de l’environnement malgache.</p>
@@ -283,6 +285,5 @@
     <section id="apropos">
       <h2 id="about-title">À Propos</h2>
       <div class="profile-container">
-        <!-- Photo redimensionnée -->
         <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome" style="width:180px; height:180px; object-fit:cover; border-radius:50%; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-        <p id="about-text"><strong>EcoScope Mada</strong> est une initiative fondée par Tamby Herinandrianina, ingénieur agronome
+        <p id="about-text"><strong>EcoScope Mada</strong> est une initi
