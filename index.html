@@ -210,11 +210,40 @@
     #donnees .data-item.gray-note { color: #808080; font-style: italic; cursor: default; }
     #donnees .data-item.gray-note:hover { transform: none; }
 
-    /* À Propos - Photo centrée et tête visible */
-    .profile-container { text-align: center; }
-    .profile-container img {
-      width: 190px; height: 190px; object-fit: cover; border-radius: 50%; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12); margin-bottom: 20px;
+    /* À Propos - Design professionnel en deux blocs */
+    .about-flex {
+      display: flex; align-items: stretch; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.15); min-height: 460px;
+    }
+    .about-photo { flex: 0 0 42%; position: relative; overflow: hidden; }
+    .about-photo img { width: 100%; height: 100%; object-fit: cover; display: block; min-height: 460px; }
+    .about-info {
+      flex: 1; background: var(--color-secondary-dark); color: #ffffff;
+      padding: 45px 40px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .about-info h3 { font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+    .about-info .about-role { color: var(--color-accent); font-weight: 600; font-size: 1rem; margin-bottom: 22px; }
+    .about-skills { list-style: none; padding: 0; margin-bottom: 26px; }
+    .about-skills li {
+      display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px;
+      font-size: 0.98rem; color: rgba(255,255,255,0.9); line-height: 1.5;
+    }
+    .about-skills li i { color: var(--color-accent); margin-top: 3px; flex-shrink: 0; }
+    .about-contact-row {
+      display: flex; flex-wrap: wrap; gap: 14px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,0.15);
+    }
+    .about-contact-row a {
+      display: inline-flex; align-items: center; gap: 8px; color: #ffffff; text-decoration: none;
+      background: rgba(255,255,255,0.1); padding: 9px 16px; border-radius: 50px; font-size: 0.9rem;
+      font-weight: 500; transition: background 0.3s;
+    }
+    .about-contact-row a:hover { background: var(--color-accent); }
+
+    @media (max-width: 768px) {
+      .about-flex { flex-direction: column; min-height: auto; }
+      .about-photo { flex-basis: auto; }
+      .about-photo img { min-height: 280px; height: 280px; }
+      .about-info { padding: 32px 25px; }
     }
 
     /* Footer */
@@ -522,9 +551,25 @@
 
     <section id="apropos">
       <h2 id="about-title">À Propos</h2>
-      <div class="profile-container">
-        <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome" style="width:190px; height:190px; object-fit:cover; border-radius:50%; display:block; margin:0 auto 20px auto;">
-        <p id="about-text"><strong>Tamby Herinandrianina</strong><br>Ingénieur Agronome spécialisé en Foresterie, SIG et Télédétection<br>Antananarivo, Madagascar</p>
+      <div class="about-flex">
+        <div class="about-photo">
+          <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome" loading="lazy">
+        </div>
+        <div class="about-info">
+          <h3 id="about-name">Tamby Herinandrianina</h3>
+          <p class="about-role" id="about-role">Ingénieur Agronome — Foresterie, SIG & Télédétection</p>
+          <ul class="about-skills">
+            <li><i class="fas fa-certificate"></i> <span id="about-skill-1">Spécialisé en foresterie, SIG et télédétection appliquées à la gestion durable des ressources</span></li>
+            <li><i class="fas fa-cube"></i> <span id="about-skill-2">Spécialisation en modélisation carbone par LiDAR (biomasse, stocks de carbone forestier)</span></li>
+            <li><i class="fas fa-user-shield"></i> <span id="about-skill-3">Télépilote de drone certifié</span></li>
+            <li><i class="fas fa-map-marker-alt"></i> <span id="about-skill-4">Basé à Antananarivo, Madagascar — interventions dans tout le pays</span></li>
+          </ul>
+          <div class="about-contact-row">
+            <a href="tel:+261343228303"><i class="fas fa-phone"></i> +261 34 32 283 03</a>
+            <a href="https://wa.me/261343228303" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+            <a href="mailto:ecoscope.mada@gmail.com"><i class="fas fa-envelope"></i> Email</a>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -645,7 +690,11 @@
         'data-basin': "Bassin Versant - Prochainement disponible",
         'data-mining': "Carreau Minier - Prochainement disponible",
         'about-title': "À Propos",
-        'about-text': "<strong>Tamby Herinandrianina</strong><br>Ingénieur Agronome spécialisé en Foresterie, SIG et Télédétection<br>Antananarivo, Madagascar",
+        'about-role': "Ingénieur Agronome — Foresterie, SIG & Télédétection",
+        'about-skill-1': "Spécialisé en foresterie, SIG et télédétection appliquées à la gestion durable des ressources",
+        'about-skill-2': "Spécialisation en modélisation carbone par LiDAR (biomasse, stocks de carbone forestier)",
+        'about-skill-3': "Télépilote de drone certifié",
+        'about-skill-4': "Basé à Antananarivo, Madagascar — interventions dans tout le pays",
         'contact-title': "Contactez-nous",
         'contact-name': "Votre nom",
         'contact-email': "Votre email",
@@ -745,7 +794,11 @@
         'data-basin': "Watershed - Coming soon",
         'data-mining': "Mining Grid - Coming soon",
         'about-title': "About",
-        'about-text': "<strong>Tamby Herinandrianina</strong><br>Agricultural Engineer specialized in Forestry, GIS and Remote Sensing<br>Antananarivo, Madagascar",
+        'about-role': "Agricultural Engineer — Forestry, GIS & Remote Sensing",
+        'about-skill-1': "Specialized in forestry, GIS and remote sensing applied to sustainable resource management",
+        'about-skill-2': "Specialization in LiDAR-based carbon modeling (biomass, forest carbon stocks)",
+        'about-skill-3': "Certified drone remote pilot",
+        'about-skill-4': "Based in Antananarivo, Madagascar — operating nationwide",
         'contact-title': "Contact Us",
         'contact-name': "Your name",
         'contact-email': "Your email",
@@ -757,7 +810,7 @@
       }
     };
 
-    const HTML_KEYS = ['welcome-text-1', 'service-8-detail', 'service-9-detail', 'about-text'];
+    const HTML_KEYS = ['welcome-text-1', 'service-8-detail', 'service-9-detail'];
     const PLACEHOLDER_KEYS = ['contact-name', 'contact-email', 'contact-message'];
 
     function applyLanguage(lang) {
