@@ -121,6 +121,27 @@
     .service-item.active .service-detail { display: block; animation: slideDown 0.4s ease-in-out; }
     @keyframes slideDown { from { max-height: 0; opacity: 0; } to { max-height: 400px; opacity: 1; } }
 
+    /* Réalisations / Portfolio */
+    .portfolio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-top: 30px; }
+    .portfolio-card {
+      background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+    }
+    .portfolio-card:hover { transform: translateY(-8px); box-shadow: 0 12px 28px rgba(0,0,0,0.18); }
+    .portfolio-image { position: relative; height: 220px; overflow: hidden; }
+    .portfolio-image img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+    .portfolio-card:hover .portfolio-image img { transform: scale(1.08); }
+    .portfolio-tag {
+      position: absolute; top: 14px; left: 14px; background: var(--color-primary); color: white;
+      font-size: 0.75rem; font-weight: 600; padding: 5px 14px; border-radius: 50px; letter-spacing: 0.3px;
+    }
+    .portfolio-body { padding: 20px 22px 24px; }
+    .portfolio-body h3 { font-family: var(--font-heading); font-size: 1.15rem; color: var(--color-text); margin-bottom: 10px; }
+    .portfolio-body p { font-size: 0.95rem; color: var(--color-text-muted); margin-bottom: 14px; }
+    .portfolio-stats { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.85rem; color: var(--color-secondary); font-weight: 600; }
+    .portfolio-stats span { display: flex; align-items: center; gap: 6px; }
+    .portfolio-cta-wrap { text-align: center; margin-top: 40px; }
+
     /* Partenaires */
     .partners-grid {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 30px;
@@ -224,6 +245,7 @@
       <li><a href="#accueil" id="nav-home">Accueil</a></li>
       <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
       <li><a href="#services" id="nav-services">Services</a></li>
+      <li><a href="#realisations" id="nav-realisations">Réalisations</a></li>
       <li><a href="#partenaires" id="nav-partners">Partenaires</a></li>
       <li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
       <li><a href="#donnees" id="nav-data">Données</a></li>
@@ -337,6 +359,68 @@
       </div>
     </section>
     <!-- ====================== FIN NOS SERVICES ====================== -->
+
+    <!-- ====================== RÉALISATIONS / PORTFOLIO ====================== -->
+    <!-- ⚠️ À PERSONNALISER : remplacez les images (Projet-*.jpg), titres, descriptions et chiffres
+         par vos propres projets réels. Ajoutez vos photos dans le dépôt GitHub au même niveau que index.html -->
+    <section id="realisations">
+      <h2 id="realisations-title">Nos Réalisations</h2>
+      <p style="text-align:center; max-width:800px; margin:0 auto 10px; color: var(--color-text-muted);">
+        Un aperçu de projets menés à Madagascar, combinant télédétection, SIG et prises de vue par drone.
+      </p>
+      <div class="portfolio-grid">
+
+        <div class="portfolio-card">
+          <div class="portfolio-image">
+            <span class="portfolio-tag">Télédétection</span>
+            <img src="Projet-CAZ.jpg" alt="Suivi de la déforestation - Corridor Ankeniheny-Zahamena">
+          </div>
+          <div class="portfolio-body">
+            <h3>Suivi de la déforestation — Corridor CAZ</h3>
+            <p>Analyse multitemporelle Sentinel-2 (2019–2025) pour cartographier la perte de couvert forestier dans le corridor Ankeniheny-Zahamena et appuyer les actions de conservation locales.</p>
+            <div class="portfolio-stats">
+              <span><i class="fas fa-ruler-combined"></i> ~120 000 ha analysés</span>
+              <span><i class="fas fa-calendar"></i> 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-image">
+            <span class="portfolio-tag">Drone LiDAR</span>
+            <img src="Projet-LiDAR-Tana.jpg" alt="Modèle numérique de terrain par LiDAR - région d'Antananarivo">
+          </div>
+          <div class="portfolio-body">
+            <h3>Modèle numérique de terrain par LiDAR</h3>
+            <p>Levé LiDAR haute densité sous couvert forestier pour produire un MNT/MNS précis, utilisé pour l'étude de risques d'érosion et la planification d'aménagement du territoire.</p>
+            <div class="portfolio-stats">
+              <span><i class="fas fa-ruler-combined"></i> Résolution 5 cm</span>
+              <span><i class="fas fa-calendar"></i> 2025</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-image">
+            <span class="portfolio-tag">Imagerie Multispectrale</span>
+            <img src="Projet-NDVI-Itasy.jpg" alt="Suivi NDVI multitemporel - zone agricole Itasy">
+          </div>
+          <div class="portfolio-body">
+            <h3>Suivi NDVI — Zone agricole d'Itasy</h3>
+            <p>Cartographie NDVI/NDRE par drone multispectral pour détecter le stress hydrique et optimiser les pratiques agricoles auprès de coopératives locales.</p>
+            <div class="portfolio-stats">
+              <span><i class="fas fa-ruler-combined"></i> ~85 ha survolés</span>
+              <span><i class="fas fa-calendar"></i> 2026</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <p class="portfolio-cta-wrap">
+        <a href="#contact" class="btn-primary">Discuter de votre projet</a>
+      </p>
+    </section>
+    <!-- ====================== FIN RÉALISATIONS ====================== -->
 
     <section id="partenaires">
       <h2 id="partners-title">Partenaires & Opportunités de Collaboration</h2>
