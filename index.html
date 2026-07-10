@@ -255,9 +255,9 @@
     <h1 id="header-title">EcoScope Mada</h1>
     <p id="header-subtitle">L'œil géospatial sur l'écologie de Madagascar</p>
     <div class="hero-cta">
-      <p>Données satellitaires gratuites • Cartes interactives • Outils SIG pour la conservation et la recherche</p>
-      <a href="#services" class="btn-primary">Découvrir nos services</a>
-      <a href="#partenaires" class="btn-secondary">Devenir partenaire</a>
+      <p id="hero-tagline">Données satellitaires gratuites • Cartes interactives • Outils SIG pour la conservation et la recherche</p>
+      <a href="#services" class="btn-primary" id="btn-discover">Découvrir nos services</a>
+      <a href="#partenaires" class="btn-secondary" id="btn-partner">Devenir partenaire</a>
     </div>
   </header>
 
@@ -319,7 +319,7 @@
           <i class="fas fa-satellite"></i>
           <p id="service-1">Suivi de la déforestation par satellite</p>
           <div class="service-detail">
-            <p>Nous assurons un suivi annuel ultra-précis de la déforestation grâce aux données Sentinel-2 et Landsat-9. Nos analyses détectent les moindres changements d'occupation du sol et fournissent des rapports clairs et exploitables (cartes + tableaux Excel) permettant aux ONG et décideurs de prendre des mesures immédiates pour protéger les forêts malgaches.</p>
+            <p id="service-1-detail">Nous assurons un suivi annuel ultra-précis de la déforestation grâce aux données Sentinel-2 et Landsat-9. Nos analyses détectent les moindres changements d'occupation du sol et fournissent des rapports clairs et exploitables (cartes + tableaux Excel) permettant aux ONG et décideurs de prendre des mesures immédiates pour protéger les forêts malgaches.</p>
           </div>
         </div>
 
@@ -327,7 +327,7 @@
           <i class="fas fa-tree"></i>
           <p id="service-3">Estimation de la biomasse forestière</p>
           <div class="service-detail">
-            <p>Grâce aux données LiDAR du satellite GEDI, nous calculons avec une précision inégalée la hauteur, la densité et la biomasse aérienne des forêts. Ces résultats, convertis en équivalent carbone, sont indispensables pour les projets REDD+, la compensation carbone et la valorisation des services écosystémiques.</p>
+            <p id="service-3-detail">Grâce aux données LiDAR du satellite GEDI, nous calculons avec une précision inégalée la hauteur, la densité et la biomasse aérienne des forêts. Ces résultats, convertis en équivalent carbone, sont indispensables pour les projets REDD+, la compensation carbone et la valorisation des services écosystémiques.</p>
           </div>
         </div>
 
@@ -335,7 +335,7 @@
           <i class="fas fa-map"></i>
           <p id="service-4">Cartographie SIG (occupation du sol, NDVI)</p>
           <div class="service-detail">
-            <p>Nous produisons des cartes d'occupation du sol et des indices de végétation (NDVI, NDRE) à partir des images Landsat et Sentinel. Ces cartes thématiques permettent d'analyser les dynamiques territoriales et d'accompagner les stratégies de conservation et d'aménagement durable du territoire.</p>
+            <p id="service-4-detail">Nous produisons des cartes d'occupation du sol et des indices de végétation (NDVI, NDRE) à partir des images Landsat et Sentinel. Ces cartes thématiques permettent d'analyser les dynamiques territoriales et d'accompagner les stratégies de conservation et d'aménagement durable du territoire.</p>
           </div>
         </div>
 
@@ -343,7 +343,7 @@
           <i class="fas fa-cog"></i>
           <p id="service-5">Assistance technique en SIG et GEE</p>
           <div class="service-detail">
-            <p>Nous formons vos équipes à l'utilisation avancée de Google Earth Engine et des outils SIG. Vous repartez avec des scripts personnalisés, des tutoriels pratiques et un support technique continu pour traiter vos propres données satellitaires en toute autonomie.</p>
+            <p id="service-5-detail">Nous formons vos équipes à l'utilisation avancée de Google Earth Engine et des outils SIG. Vous repartez avec des scripts personnalisés, des tutoriels pratiques et un support technique continu pour traiter vos propres données satellitaires en toute autonomie.</p>
           </div>
         </div>
 
@@ -351,7 +351,7 @@
           <i class="fas fa-handshake"></i>
           <p id="service-6">Collaboration avec ONG et chercheurs</p>
           <div class="service-detail">
-            <p>Nous mettons notre expertise et nos données à votre service pour co-construire des projets d'impact. Cartes sur mesure, analyses spatiales, rapports scientifiques : un véritable partenariat technique pour amplifier vos actions de conservation à Madagascar.</p>
+            <p id="service-6-detail">Nous mettons notre expertise et nos données à votre service pour co-construire des projets d'impact. Cartes sur mesure, analyses spatiales, rapports scientifiques : un véritable partenariat technique pour amplifier vos actions de conservation à Madagascar.</p>
           </div>
         </div>
 
@@ -359,7 +359,7 @@
           <i class="fas fa-graduation-cap"></i>
           <p id="service-7">Appui académique</p>
           <div class="service-detail">
-            <p>Nous accompagnons étudiants et chercheurs en leur fournissant des données spatiales gratuites, des formations pratiques et un soutien technique pour leurs mémoires et thèses sur l'environnement et la gestion des ressources naturelles.</p>
+            <p id="service-7-detail">Nous accompagnons étudiants et chercheurs en leur fournissant des données spatiales gratuites, des formations pratiques et un soutien technique pour leurs mémoires et thèses sur l'environnement et la gestion des ressources naturelles.</p>
           </div>
         </div>
 
@@ -368,7 +368,7 @@
           <i class="fas fa-satellite-dish"></i>
           <p id="service-8">Imagerie Multispectrale par Drone</p>
           <div class="service-detail">
-            <p>Avec notre drone <strong>DJI Mavic 3 Multispectral</strong>, nous réalisons des vols haute résolution (2 cm/pixel) et produisons des orthophotos, cartes NDVI/NDRE/NDWI et modèles 3D. Idéal pour le suivi précis de la santé végétale, la détection de stress hydrique et la planification de reforestation.</p>
+            <p id="service-8-detail">Avec notre drone <strong>DJI Mavic 3 Multispectral</strong>, nous réalisons des vols haute résolution (2 cm/pixel) et produisons des orthophotos, cartes NDVI/NDRE/NDWI et modèles 3D. Idéal pour le suivi précis de la santé végétale, la détection de stress hydrique et la planification de reforestation.</p>
           </div>
         </div>
 
@@ -377,7 +377,7 @@
           <i class="fas fa-cube"></i>
           <p id="service-9">Levés LiDAR par Drone</p>
           <div class="service-detail">
-            <p>Équipé du <strong>DJI Matrice 300 RTK + Zenmuse L2</strong>, nous effectuons des levés LiDAR de très haute précision. Nous générons des modèles numériques de terrain (MNT), modèles de surface (MNS) et nuages de points 3D même sous couvert forestier dense, parfaits pour le calcul de volumes, la détection de changements topographiques et les études d'impact environnemental.</p>
+            <p id="service-9-detail">Équipé du <strong>DJI Matrice 300 RTK + Zenmuse L2</strong>, nous effectuons des levés LiDAR de très haute précision. Nous générons des modèles numériques de terrain (MNT), modèles de surface (MNS) et nuages de points 3D même sous couvert forestier dense, parfaits pour le calcul de volumes, la détection de changements topographiques et les études d'impact environnemental.</p>
           </div>
         </div>
 
@@ -391,36 +391,36 @@
          Pour le projet LiDAR Kivalo, une capture de votre vue 3D (nuage de points ou rendu) fonctionnera très bien. -->
     <section id="realisations">
       <h2 id="realisations-title">Nos Réalisations</h2>
-      <p style="text-align:center; max-width:800px; margin:0 auto 10px; color: var(--color-text-muted);">
+      <p id="realisations-intro" style="text-align:center; max-width:800px; margin:0 auto 10px; color: var(--color-text-muted);">
         Un aperçu de projets menés à Madagascar, combinant télédétection, SIG et prises de vue par drone.
       </p>
       <div class="portfolio-grid">
 
         <div class="portfolio-card">
           <div class="portfolio-image">
-            <span class="portfolio-tag">Télédétection / SIG</span>
+            <span class="portfolio-tag" id="real-1-tag">Télédétection / SIG</span>
             <img src="Projet-Atsimo-Andrefana.jpg" alt="Dynamique de l'occupation du sol - Région Atsimo Andrefana 1990-2025">
           </div>
           <div class="portfolio-body">
-            <h3>Dynamique de l'occupation du sol — Région Atsimo Andrefana</h3>
-            <p>Analyse diachronique de l'occupation du sol sur 35 ans (1990–2025, pas de 5 ans) à partir d'images satellite multi-dates, afin de caractériser l'évolution du couvert végétal et les pressions sur les ressources naturelles de la région.</p>
+            <h3 id="real-1-title">Dynamique de l'occupation du sol — Région Atsimo Andrefana</h3>
+            <p id="real-1-text">Analyse diachronique de l'occupation du sol sur 35 ans (1990–2025, pas de 5 ans) à partir d'images satellite multi-dates, afin de caractériser l'évolution du couvert végétal et les pressions sur les ressources naturelles de la région.</p>
             <div class="portfolio-stats">
               <span><i class="fas fa-calendar"></i> 1990–2025</span>
-              <span><i class="fas fa-layer-group"></i> 8 dates analysées</span>
+              <span><i class="fas fa-layer-group"></i> <span id="real-1-stat2">8 dates analysées</span></span>
             </div>
           </div>
         </div>
 
         <div class="portfolio-card">
           <div class="portfolio-image">
-            <span class="portfolio-tag">Drone LiDAR</span>
+            <span class="portfolio-tag" id="real-2-tag">Drone LiDAR</span>
             <img src="Projet-LiDAR-Kivalo.jpg" alt="Levé LiDAR 3D de la mangrove de Kivalo, Madagascar">
           </div>
           <div class="portfolio-body">
-            <h3>Levé LiDAR 3D — Mangrove de Kivalo</h3>
-            <p>Cartographie tridimensionnelle par drone LiDAR de la mangrove de Kivalo : nuage de points haute densité permettant d'analyser la structure de la canopée, la hauteur des palétuviers et la topographie du site, même sous couvert dense.</p>
+            <h3 id="real-2-title">Levé LiDAR 3D — Mangrove de Kivalo</h3>
+            <p id="real-2-text">Cartographie tridimensionnelle par drone LiDAR de la mangrove de Kivalo : nuage de points haute densité permettant d'analyser la structure de la canopée, la hauteur des palétuviers et la topographie du site, même sous couvert dense.</p>
             <div class="portfolio-stats">
-              <span><i class="fas fa-cube"></i> Nuage de points 3D</span>
+              <span><i class="fas fa-cube"></i> <span id="real-2-stat1">Nuage de points 3D</span></span>
               <span><i class="fas fa-map-marker-alt"></i> Kivalo, Madagascar</span>
             </div>
           </div>
@@ -428,22 +428,22 @@
 
         <div class="portfolio-card">
           <div class="portfolio-image">
-            <span class="portfolio-tag">Imagerie Multispectrale</span>
+            <span class="portfolio-tag" id="real-3-tag">Imagerie Multispectrale</span>
             <img src="Projet-Mangrove-Menabe.jpg" alt="Suivi multispectral de la restauration des mangroves, région Menabe">
           </div>
           <div class="portfolio-body">
-            <h3>Suivi multispectral — Restauration des mangroves, Menabe</h3>
-            <p>Suivi par imagerie multispectrale (NDVI/NDRE) de l'état de santé et de la dynamique de restauration des mangroves dans la région Menabe, pour évaluer l'efficacité des actions de reboisement et détecter les zones de stress végétal.</p>
+            <h3 id="real-3-title">Suivi multispectral — Restauration des mangroves, Menabe</h3>
+            <p id="real-3-text">Suivi par imagerie multispectrale (NDVI/NDRE) de l'état de santé et de la dynamique de restauration des mangroves dans la région Menabe, pour évaluer l'efficacité des actions de reboisement et détecter les zones de stress végétal.</p>
             <div class="portfolio-stats">
-              <span><i class="fas fa-seedling"></i> Suivi de restauration</span>
-              <span><i class="fas fa-map-marker-alt"></i> Région Menabe</span>
+              <span><i class="fas fa-seedling"></i> <span id="real-3-stat1">Suivi de restauration</span></span>
+              <span><i class="fas fa-map-marker-alt"></i> <span id="real-3-stat2">Région Menabe</span></span>
             </div>
           </div>
         </div>
 
       </div>
       <p class="portfolio-cta-wrap">
-        <a href="#contact" class="btn-primary">Discuter de votre projet</a>
+        <a href="#contact" class="btn-primary" id="btn-realisations-contact">Discuter de votre projet</a>
       </p>
     </section>
     <!-- ====================== FIN RÉALISATIONS ====================== -->
@@ -453,24 +453,24 @@
       <p id="partners-text">EcoScope Mada est ouvert à tout partenariat stratégique : ONG, bailleurs de fonds, universités, institutions publiques et privées. Ensemble, accélérons la protection de l'environnement malgache.</p>
       <div class="partners-grid">
         <div class="partner-card">
-          <h3>Recherche & Universités</h3>
-          <p>Accès privilégié aux données brutes • Co-publications • Stages et thèses</p>
+          <h3 id="partner-1-title">Recherche & Universités</h3>
+          <p id="partner-1-text">Accès privilégié aux données brutes • Co-publications • Stages et thèses</p>
         </div>
         <div class="partner-card">
-          <h3>ONG & Associations</h3>
-          <p>Cartes personnalisées • Rapports annuels • Suivi de projets terrain</p>
+          <h3 id="partner-2-title">ONG & Associations</h3>
+          <p id="partner-2-text">Cartes personnalisées • Rapports annuels • Suivi de projets terrain</p>
         </div>
         <div class="partner-card">
-          <h3>Bailleurs & Institutions</h3>
-          <p>Tableaux de bord • Indicateurs REDD+ • Suivi carbone • Rapports d'impact</p>
+          <h3 id="partner-3-title">Bailleurs & Institutions</h3>
+          <p id="partner-3-text">Tableaux de bord • Indicateurs REDD+ • Suivi carbone • Rapports d'impact</p>
         </div>
         <div class="partner-card">
-          <h3>Entreprises responsables</h3>
-          <p>Compensation carbone • RSE • Zéro déforestation nette</p>
+          <h3 id="partner-4-title">Entreprises responsables</h3>
+          <p id="partner-4-text">Compensation carbone • RSE • Zéro déforestation nette</p>
         </div>
       </div>
       <p style="text-align:center; margin-top:40px;">
-        <a href="#contact" class="btn-primary" style="font-size:1.2rem; padding:15px 40px;">Discutons de votre projet →</a>
+        <a href="#contact" class="btn-primary" id="btn-partners-contact" style="font-size:1.2rem; padding:15px 40px;">Discutons de votre projet →</a>
       </p>
     </section>
 
@@ -484,14 +484,14 @@
       <h2 id="data-title">Données</h2>
       <p id="data-text">Téléchargez les shapefiles des limites administratives de Madagascar :</p>
       <ul>
-        <li class="data-item"><i class="fas fa-globe"></i> <a href="#" onclick="downloadShapefile('1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu'); return false;">Limite Région</a></li>
-        <li class="data-item"><i class="fas fa-layer-group"></i> <a href="#" onclick="downloadShapefile('1HaxwViLMSKmonJ5VuhqKW_WGGYmGa-a6'); return false;">Limite District</a></li>
-        <li class="data-item"><i class="fas fa-map-marker-alt"></i> <a href="#" onclick="downloadShapefile('1wO6POWt0XZR6Vc-pcAZVYvoIPeJw2Htm'); return false;">Limite Commune</a></li>
-        <li class="data-item"><i class="fas fa-home"></i> <a href="#" onclick="downloadShapefile('1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCdQ'); return false;">Limite Fokontany</a></li>
-        <li class="data-item gray-note"><i class="fas fa-map-pin"></i> Localité (village) - Prochainement disponible</li>
-        <li class="data-item gray-note"><i class="fas fa-water"></i> Hydrographie - Prochainement disponible</li>
-        <li class="data-item gray-note"><i class="fas fa-tint"></i> Bassin Versant - Prochainement disponible</li>
-        <li class="data-item gray-note"><i class="fas fa-gem"></i> Carreau Minier - Prochainement disponible</li>
+        <li class="data-item"><i class="fas fa-globe"></i> <a href="#" id="data-region" onclick="downloadShapefile('1-B4LF4Lva2bhI-09vVAs2a9zqLQC8AOu'); return false;">Limite Région</a></li>
+        <li class="data-item"><i class="fas fa-layer-group"></i> <a href="#" id="data-district" onclick="downloadShapefile('1HaxwViLMSKmonJ5VuhqKW_WGGYmGa-a6'); return false;">Limite District</a></li>
+        <li class="data-item"><i class="fas fa-map-marker-alt"></i> <a href="#" id="data-commune" onclick="downloadShapefile('1wO6POWt0XZR6Vc-pcAZVYvoIPeJw2Htm'); return false;">Limite Commune</a></li>
+        <li class="data-item"><i class="fas fa-home"></i> <a href="#" id="data-fokontany" onclick="downloadShapefile('1r5TeK-r8bYqPTRItgnBvWGIsa8SOZCdQ'); return false;">Limite Fokontany</a></li>
+        <li class="data-item gray-note"><i class="fas fa-map-pin"></i> <span id="data-locality">Localité (village) - Prochainement disponible</span></li>
+        <li class="data-item gray-note"><i class="fas fa-water"></i> <span id="data-hydro">Hydrographie - Prochainement disponible</span></li>
+        <li class="data-item gray-note"><i class="fas fa-tint"></i> <span id="data-basin">Bassin Versant - Prochainement disponible</span></li>
+        <li class="data-item gray-note"><i class="fas fa-gem"></i> <span id="data-mining">Carreau Minier - Prochainement disponible</span></li>
       </ul>
     </section>
 
@@ -499,31 +499,259 @@
       <h2 id="about-title">À Propos</h2>
       <div class="profile-container">
         <img src="IMG_20250716_074119.jpg" alt="Tamby Herinandrianina, ingénieur agronome" style="width:190px; height:190px; object-fit:cover; border-radius:50%; display:block; margin:0 auto 20px auto;">
-        <p><strong>Tamby Herinandrianina</strong><br>Ingénieur Agronome spécialisé en Foresterie, SIG et Télédétection<br>Antananarivo, Madagascar</p>
+        <p id="about-text"><strong>Tamby Herinandrianina</strong><br>Ingénieur Agronome spécialisé en Foresterie, SIG et Télédétection<br>Antananarivo, Madagascar</p>
       </div>
     </section>
 
     <section id="contact">
-      <h2>Contactez-nous</h2>
+      <h2 id="contact-title">Contactez-nous</h2>
       <form name="contact" method="POST" data-netlify="true">
-        <input type="text" name="name" placeholder="Votre nom" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
-        <input type="email" name="email" placeholder="Votre email" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
-        <textarea name="message" placeholder="Votre message" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc; height:150px;"></textarea>
-        <button type="submit" style="background:#38a169; color:white; padding:14px 40px; border:none; border-radius:50px; cursor:pointer;">Envoyer</button>
+        <input type="text" name="name" id="contact-name" placeholder="Votre nom" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+        <input type="email" name="email" id="contact-email" placeholder="Votre email" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc;">
+        <textarea name="message" id="contact-message" placeholder="Votre message" required style="width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc; height:150px;"></textarea>
+        <button type="submit" id="contact-submit" style="background:#38a169; color:white; padding:14px 40px; border:none; border-radius:50px; cursor:pointer;">Envoyer</button>
       </form>
     </section>
   </main>
 
   <footer>
-    <p>© 2026 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina</p>
+    <p id="footer-copyright">© 2026 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina</p>
     <p class="contact-info">
-      Email : ecoscope.mada@gmail.com<br>
-      WhatsApp : +261 34 32 283 03
+      <span id="footer-email-label">Email :</span> ecoscope.mada@gmail.com<br>
+      <span id="footer-whatsapp-label">WhatsApp :</span> +261 34 32 283 03
     </p>
   </footer>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script>
+    // ============ TRADUCTIONS FR / EN ============
+    const translations = {
+      fr: {
+        'header-subtitle': "L'œil géospatial sur l'écologie de Madagascar",
+        'hero-tagline': "Données satellitaires gratuites • Cartes interactives • Outils SIG pour la conservation et la recherche",
+        'btn-discover': "Découvrir nos services",
+        'btn-partner': "Devenir partenaire",
+        'nav-home': "Accueil",
+        'nav-maps': "Cartes des données",
+        'nav-services': "Services",
+        'nav-realisations': "Réalisations",
+        'nav-partners': "Partenaires",
+        'nav-explorer': "Carte Explorateur",
+        'nav-data': "Données",
+        'nav-contact': "Contact",
+        'welcome-title': "Bienvenue sur EcoScope Mada",
+        'welcome-text-1': "Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.",
+        'welcome-text-2': "Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.",
+        'map-title': "Cartes des données sur Madagascar",
+        'legend-bassin-title': "Légende - Bassin Versant",
+        'legend-bassin-text': "Zones de bassin",
+        'legend-corridor-title': "Légende - Corridor",
+        'legend-corridor-1': "Paysage Extrême Nord",
+        'legend-corridor-2': "CAZ",
+        'legend-corridor-3': "COFAV",
+        'legend-corridor-4': "MAMABAIE",
+        'legend-corridor-5': "COMATSA",
+        'legend-corridor-6': "COFAM",
+        'legend-corridor-7': "Paysage plateau Mahafaly karimbola",
+        'legend-corridor-8': "Paysage Mikea",
+        'legend-corridor-9': "Paysage Menabe",
+        'legend-corridor-10': "Paysage Kirindy Mangoky",
+        'legend-corridor-11': "Paysage Bidia Bezavona",
+        'legend-corridor-12': "Paysage Anosy",
+        'services-title': "Nos Services",
+        'service-1': "Suivi de la déforestation par satellite",
+        'service-1-detail': "Nous assurons un suivi annuel ultra-précis de la déforestation grâce aux données Sentinel-2 et Landsat-9. Nos analyses détectent les moindres changements d'occupation du sol et fournissent des rapports clairs et exploitables (cartes + tableaux Excel) permettant aux ONG et décideurs de prendre des mesures immédiates pour protéger les forêts malgaches.",
+        'service-3': "Estimation de la biomasse forestière",
+        'service-3-detail': "Grâce aux données LiDAR du satellite GEDI, nous calculons avec une précision inégalée la hauteur, la densité et la biomasse aérienne des forêts. Ces résultats, convertis en équivalent carbone, sont indispensables pour les projets REDD+, la compensation carbone et la valorisation des services écosystémiques.",
+        'service-4': "Cartographie SIG (occupation du sol, NDVI)",
+        'service-4-detail': "Nous produisons des cartes d'occupation du sol et des indices de végétation (NDVI, NDRE) à partir des images Landsat et Sentinel. Ces cartes thématiques permettent d'analyser les dynamiques territoriales et d'accompagner les stratégies de conservation et d'aménagement durable du territoire.",
+        'service-5': "Assistance technique en SIG et GEE",
+        'service-5-detail': "Nous formons vos équipes à l'utilisation avancée de Google Earth Engine et des outils SIG. Vous repartez avec des scripts personnalisés, des tutoriels pratiques et un support technique continu pour traiter vos propres données satellitaires en toute autonomie.",
+        'service-6': "Collaboration avec ONG et chercheurs",
+        'service-6-detail': "Nous mettons notre expertise et nos données à votre service pour co-construire des projets d'impact. Cartes sur mesure, analyses spatiales, rapports scientifiques : un véritable partenariat technique pour amplifier vos actions de conservation à Madagascar.",
+        'service-7': "Appui académique",
+        'service-7-detail': "Nous accompagnons étudiants et chercheurs en leur fournissant des données spatiales gratuites, des formations pratiques et un soutien technique pour leurs mémoires et thèses sur l'environnement et la gestion des ressources naturelles.",
+        'service-8': "Imagerie Multispectrale par Drone",
+        'service-8-detail': "Avec notre drone <strong>DJI Mavic 3 Multispectral</strong>, nous réalisons des vols haute résolution (2 cm/pixel) et produisons des orthophotos, cartes NDVI/NDRE/NDWI et modèles 3D. Idéal pour le suivi précis de la santé végétale, la détection de stress hydrique et la planification de reforestation.",
+        'service-9': "Levés LiDAR par Drone",
+        'service-9-detail': "Équipé du <strong>DJI Matrice 300 RTK + Zenmuse L2</strong>, nous effectuons des levés LiDAR de très haute précision. Nous générons des modèles numériques de terrain (MNT), modèles de surface (MNS) et nuages de points 3D même sous couvert forestier dense, parfaits pour le calcul de volumes, la détection de changements topographiques et les études d'impact environnemental.",
+        'realisations-title': "Nos Réalisations",
+        'realisations-intro': "Un aperçu de projets menés à Madagascar, combinant télédétection, SIG et prises de vue par drone.",
+        'real-1-tag': "Télédétection / SIG",
+        'real-1-title': "Dynamique de l'occupation du sol — Région Atsimo Andrefana",
+        'real-1-text': "Analyse diachronique de l'occupation du sol sur 35 ans (1990–2025, pas de 5 ans) à partir d'images satellite multi-dates, afin de caractériser l'évolution du couvert végétal et les pressions sur les ressources naturelles de la région.",
+        'real-1-stat2': "8 dates analysées",
+        'real-2-tag': "Drone LiDAR",
+        'real-2-title': "Levé LiDAR 3D — Mangrove de Kivalo",
+        'real-2-text': "Cartographie tridimensionnelle par drone LiDAR de la mangrove de Kivalo : nuage de points haute densité permettant d'analyser la structure de la canopée, la hauteur des palétuviers et la topographie du site, même sous couvert dense.",
+        'real-2-stat1': "Nuage de points 3D",
+        'real-3-tag': "Imagerie Multispectrale",
+        'real-3-title': "Suivi multispectral — Restauration des mangroves, Menabe",
+        'real-3-text': "Suivi par imagerie multispectrale (NDVI/NDRE) de l'état de santé et de la dynamique de restauration des mangroves dans la région Menabe, pour évaluer l'efficacité des actions de reboisement et détecter les zones de stress végétal.",
+        'real-3-stat1': "Suivi de restauration",
+        'real-3-stat2': "Région Menabe",
+        'btn-realisations-contact': "Discuter de votre projet",
+        'partners-title': "Partenaires & Opportunités de Collaboration",
+        'partners-text': "EcoScope Mada est ouvert à tout partenariat stratégique : ONG, bailleurs de fonds, universités, institutions publiques et privées. Ensemble, accélérons la protection de l'environnement malgache.",
+        'partner-1-title': "Recherche & Universités",
+        'partner-1-text': "Accès privilégié aux données brutes • Co-publications • Stages et thèses",
+        'partner-2-title': "ONG & Associations",
+        'partner-2-text': "Cartes personnalisées • Rapports annuels • Suivi de projets terrain",
+        'partner-3-title': "Bailleurs & Institutions",
+        'partner-3-text': "Tableaux de bord • Indicateurs REDD+ • Suivi carbone • Rapports d'impact",
+        'partner-4-title': "Entreprises responsables",
+        'partner-4-text': "Compensation carbone • RSE • Zéro déforestation nette",
+        'btn-partners-contact': "Discutons de votre projet →",
+        'gee-title': "Carte Explorateur",
+        'gee-text': "Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.",
+        'data-title': "Données",
+        'data-text': "Téléchargez les shapefiles des limites administratives de Madagascar :",
+        'data-region': "Limite Région",
+        'data-district': "Limite District",
+        'data-commune': "Limite Commune",
+        'data-fokontany': "Limite Fokontany",
+        'data-locality': "Localité (village) - Prochainement disponible",
+        'data-hydro': "Hydrographie - Prochainement disponible",
+        'data-basin': "Bassin Versant - Prochainement disponible",
+        'data-mining': "Carreau Minier - Prochainement disponible",
+        'about-title': "À Propos",
+        'about-text': "<strong>Tamby Herinandrianina</strong><br>Ingénieur Agronome spécialisé en Foresterie, SIG et Télédétection<br>Antananarivo, Madagascar",
+        'contact-title': "Contactez-nous",
+        'contact-name': "Votre nom",
+        'contact-email': "Votre email",
+        'contact-message': "Votre message",
+        'contact-submit': "Envoyer",
+        'footer-copyright': "© 2026 EcoScope Mada - Tous droits réservés. Développé par Tamby Herinandrianina",
+        'footer-email-label': "Email :",
+        'footer-whatsapp-label': "WhatsApp :"
+      },
+      en: {
+        'header-subtitle': "The geospatial eye on Madagascar's ecology",
+        'hero-tagline': "Free satellite data • Interactive maps • GIS tools for conservation and research",
+        'btn-discover': "Discover our services",
+        'btn-partner': "Become a partner",
+        'nav-home': "Home",
+        'nav-maps': "Data Maps",
+        'nav-services': "Services",
+        'nav-realisations': "Projects",
+        'nav-partners': "Partners",
+        'nav-explorer': "Map Explorer",
+        'nav-data': "Data",
+        'nav-contact': "Contact",
+        'welcome-title': "Welcome to EcoScope Mada",
+        'welcome-text-1': "Founded by <strong>Tamby Herinandrianina</strong>, an agricultural engineer specialized in forestry, GIS and remote sensing, <strong>EcoScope Mada</strong> is an innovative platform dedicated to ecological monitoring and sustainable resource management in Madagascar.",
+        'welcome-text-2': "Explore our interactive maps and discover how our data can support environmental projects and NGOs.",
+        'map-title': "Madagascar Data Maps",
+        'legend-bassin-title': "Legend - Watershed",
+        'legend-bassin-text': "Watershed zones",
+        'legend-corridor-title': "Legend - Corridor",
+        'legend-corridor-1': "Extreme North Landscape",
+        'legend-corridor-2': "CAZ",
+        'legend-corridor-3': "COFAV",
+        'legend-corridor-4': "MAMABAIE",
+        'legend-corridor-5': "COMATSA",
+        'legend-corridor-6': "COFAM",
+        'legend-corridor-7': "Mahafaly Karimbola Plateau Landscape",
+        'legend-corridor-8': "Mikea Landscape",
+        'legend-corridor-9': "Menabe Landscape",
+        'legend-corridor-10': "Kirindy Mangoky Landscape",
+        'legend-corridor-11': "Bidia Bezavona Landscape",
+        'legend-corridor-12': "Anosy Landscape",
+        'services-title': "Our Services",
+        'service-1': "Satellite deforestation monitoring",
+        'service-1-detail': "We provide highly precise annual deforestation monitoring using Sentinel-2 and Landsat-9 data. Our analyses detect the smallest changes in land cover and deliver clear, actionable reports (maps + Excel tables) enabling NGOs and decision-makers to take immediate action to protect Madagascar's forests.",
+        'service-3': "Forest biomass estimation",
+        'service-3-detail': "Using LiDAR data from the GEDI satellite, we calculate forest height, density and above-ground biomass with unmatched precision. These results, converted into carbon equivalents, are essential for REDD+ projects, carbon offsetting and ecosystem service valuation.",
+        'service-4': "GIS mapping (land cover, NDVI)",
+        'service-4-detail': "We produce land cover maps and vegetation indices (NDVI, NDRE) from Landsat and Sentinel imagery. These thematic maps help analyze territorial dynamics and support conservation and sustainable land-use planning strategies.",
+        'service-5': "Technical support in GIS and GEE",
+        'service-5-detail': "We train your teams in the advanced use of Google Earth Engine and GIS tools. You leave with custom scripts, hands-on tutorials and ongoing technical support to process your own satellite data independently.",
+        'service-6': "Collaboration with NGOs and researchers",
+        'service-6-detail': "We put our expertise and data at your service to co-build impactful projects. Custom maps, spatial analyses, scientific reports: a genuine technical partnership to amplify your conservation actions in Madagascar.",
+        'service-7': "Academic support",
+        'service-7-detail': "We support students and researchers by providing free spatial data, hands-on training and technical support for their theses and dissertations on the environment and natural resource management.",
+        'service-8': "Multispectral Drone Imagery",
+        'service-8-detail': "With our <strong>DJI Mavic 3 Multispectral</strong> drone, we conduct high-resolution flights (2 cm/pixel) and produce orthophotos, NDVI/NDRE/NDWI maps and 3D models. Ideal for precise vegetation health monitoring, water stress detection and reforestation planning.",
+        'service-9': "Drone LiDAR Surveys",
+        'service-9-detail': "Equipped with the <strong>DJI Matrice 300 RTK + Zenmuse L2</strong>, we carry out very high-precision LiDAR surveys. We generate digital terrain models (DTM), surface models (DSM) and 3D point clouds even under dense forest cover, ideal for volume calculations, topographic change detection and environmental impact studies.",
+        'realisations-title': "Our Projects",
+        'realisations-intro': "A selection of projects carried out in Madagascar, combining remote sensing, GIS and drone imagery.",
+        'real-1-tag': "Remote Sensing / GIS",
+        'real-1-title': "Land Cover Dynamics — Atsimo Andrefana Region",
+        'real-1-text': "Diachronic land cover analysis over 35 years (1990–2025, 5-year intervals) using multi-date satellite imagery, to characterize vegetation cover changes and pressures on the region's natural resources.",
+        'real-1-stat2': "8 dates analyzed",
+        'real-2-tag': "Drone LiDAR",
+        'real-2-title': "3D LiDAR Survey — Kivalo Mangrove",
+        'real-2-text': "Three-dimensional mapping of the Kivalo mangrove by drone LiDAR: a high-density point cloud enabling analysis of canopy structure, mangrove tree height and site topography, even under dense cover.",
+        'real-2-stat1': "3D point cloud",
+        'real-3-tag': "Multispectral Imagery",
+        'real-3-title': "Multispectral Monitoring — Mangrove Restoration, Menabe",
+        'real-3-text': "Multispectral imagery monitoring (NDVI/NDRE) of mangrove health and restoration dynamics in the Menabe region, to assess the effectiveness of reforestation efforts and detect areas of vegetation stress.",
+        'real-3-stat1': "Restoration monitoring",
+        'real-3-stat2': "Menabe Region",
+        'btn-realisations-contact': "Discuss your project",
+        'partners-title': "Partners & Collaboration Opportunities",
+        'partners-text': "EcoScope Mada is open to any strategic partnership: NGOs, funders, universities, public and private institutions. Together, let's accelerate the protection of Madagascar's environment.",
+        'partner-1-title': "Research & Universities",
+        'partner-1-text': "Priority access to raw data • Co-publications • Internships and theses",
+        'partner-2-title': "NGOs & Associations",
+        'partner-2-text': "Custom maps • Annual reports • Field project monitoring",
+        'partner-3-title': "Donors & Institutions",
+        'partner-3-text': "Dashboards • REDD+ indicators • Carbon monitoring • Impact reports",
+        'partner-4-title': "Responsible Businesses",
+        'partner-4-text': "Carbon offsetting • CSR • Zero net deforestation",
+        'btn-partners-contact': "Let's discuss your project →",
+        'gee-title': "Map Explorer",
+        'gee-text': "Discover a detailed analysis of Madagascar's land cover, annual rainfall totals, and vegetation index (NDVI) powered by Google Earth Engine. This data is essential for monitoring deforestation, assessing ecosystem health, and planning sustainable environmental interventions.",
+        'data-title': "Data",
+        'data-text': "Download shapefiles of Madagascar's administrative boundaries:",
+        'data-region': "Region Boundary",
+        'data-district': "District Boundary",
+        'data-commune': "Commune Boundary",
+        'data-fokontany': "Fokontany Boundary",
+        'data-locality': "Locality (village) - Coming soon",
+        'data-hydro': "Hydrography - Coming soon",
+        'data-basin': "Watershed - Coming soon",
+        'data-mining': "Mining Grid - Coming soon",
+        'about-title': "About",
+        'about-text': "<strong>Tamby Herinandrianina</strong><br>Agricultural Engineer specialized in Forestry, GIS and Remote Sensing<br>Antananarivo, Madagascar",
+        'contact-title': "Contact Us",
+        'contact-name': "Your name",
+        'contact-email': "Your email",
+        'contact-message': "Your message",
+        'contact-submit': "Send",
+        'footer-copyright': "© 2026 EcoScope Mada - All rights reserved. Developed by Tamby Herinandrianina",
+        'footer-email-label': "Email:",
+        'footer-whatsapp-label': "WhatsApp:"
+      }
+    };
+
+    const HTML_KEYS = ['welcome-text-1', 'service-8-detail', 'service-9-detail', 'about-text'];
+    const PLACEHOLDER_KEYS = ['contact-name', 'contact-email', 'contact-message'];
+
+    function applyLanguage(lang) {
+      const dict = translations[lang] || translations.fr;
+      Object.keys(dict).forEach(function (id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (PLACEHOLDER_KEYS.indexOf(id) !== -1) {
+          el.setAttribute('placeholder', dict[id]);
+        } else if (HTML_KEYS.indexOf(id) !== -1) {
+          el.innerHTML = dict[id];
+        } else {
+          el.textContent = dict[id];
+        }
+      });
+      document.documentElement.setAttribute('lang', lang);
+      document.querySelector('.lang-fr').classList.toggle('active', lang === 'fr');
+      document.querySelector('.lang-en').classList.toggle('active', lang === 'en');
+      try { localStorage.setItem('ecoscope-lang', lang); } catch (e) {}
+    }
+
+    function changeLanguage(lang) {
+      applyLanguage(lang);
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       const map = L.map('map').setView([-18.8792, 47.5079], 6);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
@@ -574,6 +802,11 @@
           navToggle.innerHTML = '<i class="fas fa-bars"></i>';
         }
       });
+
+      // ============ LANGUE : appliquer la préférence mémorisée ============
+      let savedLang = 'fr';
+      try { savedLang = localStorage.getItem('ecoscope-lang') || 'fr'; } catch (e) {}
+      applyLanguage(savedLang);
     });
 
     function toggleDetail(item) {
@@ -582,10 +815,6 @@
 
     function downloadShapefile(fileId) {
       window.open(`https://drive.google.com/uc?export=download&id=${fileId}`, '_blank');
-    }
-
-    function changeLanguage(lang) {
-      alert("Langue changée en " + lang + " (à compléter)");
     }
   </script>
 </body>
