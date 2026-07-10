@@ -136,6 +136,42 @@
     }
     .legend i { width: 22px; height: 22px; display: inline-block; margin-right: 10px; }
 
+    .map-hint {
+      display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 12px 18px;
+      background: var(--color-primary-light); color: var(--color-primary-dark); border-radius: 10px;
+      font-size: 0.92rem; font-weight: 500;
+    }
+    .map-hint i { color: var(--color-primary); }
+
+    /* Carte Explorateur GEE */
+    .gee-frame {
+      position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      background: #eef1f3;
+    }
+    .gee-frame iframe { display: block; }
+    .gee-loading {
+      position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; background: #eef1f3; z-index: 2; transition: opacity 0.4s ease;
+    }
+    .gee-loading.hidden { opacity: 0; pointer-events: none; }
+    .gee-spinner {
+      width: 42px; height: 42px; border: 4px solid rgba(31,122,77,0.15); border-top-color: var(--color-primary);
+      border-radius: 50%; animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .gee-loading span { color: var(--color-text-muted); font-size: 0.95rem; font-weight: 500; }
+
+    .gee-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 18px; }
+    .gee-actions button, .gee-actions a {
+      display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 50px;
+      font-family: var(--font-body); font-weight: 500; font-size: 0.92rem; cursor: pointer; text-decoration: none;
+      border: 1px solid var(--color-primary); background: transparent; color: var(--color-primary); transition: all 0.3s;
+    }
+    .gee-actions button:hover, .gee-actions a:hover { background: var(--color-primary); color: white; }
+
+    .gee-frame:fullscreen { background: #000; display: flex; align-items: center; justify-content: center; }
+    .gee-frame:fullscreen iframe { height: 100vh !important; width: 100vw !important; }
+
     /* Services */
     .services-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; padding: 20px 0; }
     .service-item {
@@ -322,10 +358,10 @@
     <ul id="navMenu">
       <li><a href="#accueil" id="nav-home">Accueil</a></li>
       <li><a href="#carte" id="nav-maps">Cartes des données</a></li>
+      <li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
       <li><a href="#services" id="nav-services">Services</a></li>
       <li><a href="#realisations" id="nav-realisations">Réalisations</a></li>
       <li><a href="#partenaires" id="nav-partners">Partenaires</a></li>
-      <li><a href="#gee" id="nav-explorer">Carte Explorateur</a></li>
       <li><a href="#donnees" id="nav-data">Données</a></li>
       <li><a href="#apropos" id="nav-about">À Propos</a></li>
       <li><a href="#contact" id="nav-contact">Contact</a></li>
@@ -361,6 +397,24 @@
           <i style="background:#A47158"></i> <span id="legend-corridor-11">Paysage Bidia Bezavona</span><br>
           <i style="background:#D5B43C"></i> <span id="legend-corridor-12">Paysage Anosy</span><br>
         </div>
+      </div>
+      <p class="map-hint"><i class="fas fa-hand-pointer"></i> <span id="map-hint">Astuce : utilisez le sélecteur en haut à droite de la carte pour basculer entre les couches « Bassin Versant » et « Corridor ».</span></p>
+    </section>
+
+    <!-- ====================== CARTE EXPLORATEUR GEE ====================== -->
+    <section id="gee">
+      <h2><i class="fas fa-globe"></i> <span id="gee-title">Carte Explorateur</span></h2>
+      <p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
+      <div class="gee-frame" id="geeFrame">
+        <div class="gee-loading" id="geeLoading">
+          <div class="gee-spinner"></div>
+          <span id="gee-loading-text">Chargement de la carte interactive…</span>
+        </div>
+        <iframe id="geeIframe" src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="550px" style="border: none;" title="Explorateur Google Earth Engine - EcoScope Mada"></iframe>
+      </div>
+      <div class="gee-actions">
+        <button type="button" id="geeFullscreenBtn"><i class="fas fa-expand"></i> <span id="gee-fullscreen-label">Ouvrir en plein écran</span></button>
+        <a href="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" target="_blank" rel="noopener" id="gee-newtab-link"><i class="fas fa-external-link-alt"></i> <span id="gee-newtab-label">Ouvrir dans un nouvel onglet</span></a>
       </div>
     </section>
 
@@ -528,12 +582,6 @@
       </p>
     </section>
 
-    <section id="gee">
-      <h2><i class="fas fa-globe"></i> <span id="gee-title">Carte Explorateur</span></h2>
-      <p id="gee-text">Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.</p>
-      <iframe src="https://valid-actor-439910-r4.projects.earthengine.app/view/ecoscope" width="100%" height="550px" style="border: none; border-radius: 12px;" title="Explorateur Google Earth Engine - EcoScope Mada" loading="lazy"></iframe>
-    </section>
-
     <section id="donnees">
       <h2 id="data-title">Données</h2>
       <p id="data-text">Téléchargez les shapefiles des limites administratives de Madagascar :</p>
@@ -618,6 +666,7 @@
         'welcome-text-1': "Fondée par <strong>Tamby Herinandrianina</strong>, ingénieur agronome spécialisé en foresterie, SIG et télédétection, <strong>EcoScope Mada</strong> est une plateforme innovante dédiée à la surveillance écologique et à la gestion durable des ressources à Madagascar.",
         'welcome-text-2': "Explorez nos cartes interactives et découvrez comment nos données peuvent soutenir les projets environnementaux et les ONG.",
         'map-title': "Cartes des données sur Madagascar",
+        'map-hint': "Astuce : utilisez le sélecteur en haut à droite de la carte pour basculer entre les couches « Bassin Versant » et « Corridor ».",
         'legend-bassin-title': "Légende - Bassin Versant",
         'legend-bassin-text': "Zones de bassin",
         'legend-corridor-title': "Légende - Corridor",
@@ -679,6 +728,9 @@
         'btn-partners-contact': "Discutons de votre projet →",
         'gee-title': "Carte Explorateur",
         'gee-text': "Découvrez une analyse détaillée de l'occupation du sol de Madagascar, les sommes des précipitations annuelles, et l'indice de végétation (NDVI) grâce à Google Earth Engine. Ces données sont essentielles pour surveiller la déforestation, évaluer la santé des écosystèmes, et planifier des interventions environnementales durables.",
+        'gee-loading-text': "Chargement de la carte interactive…",
+        'gee-fullscreen-label': "Ouvrir en plein écran",
+        'gee-newtab-label': "Ouvrir dans un nouvel onglet",
         'data-title': "Données",
         'data-text': "Téléchargez les shapefiles des limites administratives de Madagascar :",
         'data-region': "Limite Région",
@@ -722,6 +774,7 @@
         'welcome-text-1': "Founded by <strong>Tamby Herinandrianina</strong>, an agricultural engineer specialized in forestry, GIS and remote sensing, <strong>EcoScope Mada</strong> is an innovative platform dedicated to ecological monitoring and sustainable resource management in Madagascar.",
         'welcome-text-2': "Explore our interactive maps and discover how our data can support environmental projects and NGOs.",
         'map-title': "Madagascar Data Maps",
+        'map-hint': "Tip: use the selector in the top-right corner of the map to switch between the \"Watershed\" and \"Corridor\" layers.",
         'legend-bassin-title': "Legend - Watershed",
         'legend-bassin-text': "Watershed zones",
         'legend-corridor-title': "Legend - Corridor",
@@ -783,6 +836,9 @@
         'btn-partners-contact': "Let's discuss your project →",
         'gee-title': "Map Explorer",
         'gee-text': "Discover a detailed analysis of Madagascar's land cover, annual rainfall totals, and vegetation index (NDVI) powered by Google Earth Engine. This data is essential for monitoring deforestation, assessing ecosystem health, and planning sustainable environmental interventions.",
+        'gee-loading-text': "Loading interactive map…",
+        'gee-fullscreen-label': "Open in fullscreen",
+        'gee-newtab-label': "Open in new tab",
         'data-title': "Data",
         'data-text': "Download shapefiles of Madagascar's administrative boundaries:",
         'data-region': "Region Boundary",
@@ -926,6 +982,31 @@
       backToTopBtn.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       });
+
+      // ============ CARTE EXPLORATEUR GEE : chargement + plein écran ============
+      const geeIframe = document.getElementById('geeIframe');
+      const geeLoading = document.getElementById('geeLoading');
+      const geeFrame = document.getElementById('geeFrame');
+      const geeFullscreenBtn = document.getElementById('geeFullscreenBtn');
+
+      if (geeIframe && geeLoading) {
+        geeIframe.addEventListener('load', function () {
+          geeLoading.classList.add('hidden');
+        });
+      }
+
+      if (geeFullscreenBtn && geeFrame) {
+        geeFullscreenBtn.addEventListener('click', function () {
+          if (geeFrame.requestFullscreen) {
+            geeFrame.requestFullscreen();
+          } else if (geeFrame.webkitRequestFullscreen) {
+            geeFrame.webkitRequestFullscreen();
+          } else {
+            // Pas de support plein écran (ex. certains navigateurs iOS) : ouvre dans un nouvel onglet
+            window.open(geeIframe.src, '_blank');
+          }
+        });
+      }
     });
 
     function toggleDetail(item) {
