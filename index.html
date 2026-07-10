@@ -12,17 +12,33 @@
   <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Tamby07/ecoscope-mada/main/Logo.png" />
 
   <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
+    :root {
+      --color-primary: #1F7A4D;
+      --color-primary-dark: #145C38;
+      --color-primary-light: #E8F5EC;
+      --color-secondary: #1B4B66;
+      --color-secondary-dark: #123549;
+      --color-accent: #D97D3D;
+      --color-accent-dark: #B8632A;
+      --color-text: #1F2937;
+      --color-text-muted: #5B6472;
+      --color-bg: #F7F9FA;
+      --color-bg-alt: #EEF3F1;
+      --color-white: #FFFFFF;
+      --font-heading: 'Poppins', sans-serif;
+      --font-body: 'Roboto', sans-serif;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Roboto', sans-serif; background-color: #f5f7fa; color: #2d3748; line-height: 1.6; }
+    body { font-family: var(--font-body); background-color: var(--color-bg); color: var(--color-text); line-height: 1.6; }
 
     header {
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('Mangrove.jpg') center/cover no-repeat;
+      background: linear-gradient(rgba(18,53,73,0.75), rgba(20,92,56,0.75)), url('Mangrove.jpg') center/cover no-repeat;
       padding: 80px 20px;
       text-align: center;
       color: white;
@@ -35,19 +51,19 @@
     }
     .language-switch { position: absolute; top: 10px; right: 10px; }
     .language-switch img { width: 20px; height: 15px; margin-left: 5px; cursor: pointer; border: 2px solid transparent; transition: border-color 0.3s; }
-    .language-switch img.active { border-color: #38a169; }
+    .language-switch img.active { border-color: var(--color-accent); }
 
-    header h1 { font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; }
+    header h1 { font-family: var(--font-heading); font-size: 2.8rem; font-weight: 700; margin-bottom: 15px; letter-spacing: -0.5px; }
     header p { font-size: 1.3rem; max-width: 800px; margin: 0 auto; }
 
     .hero-cta { margin-top: 20px; }
     .btn-primary, .btn-secondary {
-      display: inline-block; padding: 12px 30px; margin: 10px; border-radius: 50px; font-weight: 600; text-decoration: none; transition: all 0.3s;
+      display: inline-block; padding: 12px 30px; margin: 10px; border-radius: 50px; font-family: var(--font-heading); font-weight: 600; text-decoration: none; transition: all 0.3s;
     }
-    .btn-primary { background: #38a169; color: white; }
-    .btn-primary:hover { background: #2f855a; transform: scale(1.05); }
-    .btn-secondary { background: transparent; color: white; border: 2px solid white; }
-    .btn-secondary:hover { background: white; color: #38a169; }
+    .btn-primary { background: var(--color-primary); color: white; }
+    .btn-primary:hover { background: var(--color-primary-dark); transform: scale(1.05); }
+    .btn-secondary { background: transparent; color: white; border: 2px solid var(--color-accent); }
+    .btn-secondary:hover { background: var(--color-accent); color: white; transform: scale(1.05); }
 
     /* ============ NAVIGATION (avec menu mobile) ============ */
     nav {
@@ -57,8 +73,8 @@
     nav .logo { height: 45px; margin-left: 30px; margin-right: 50px; object-fit: contain; }
     nav ul { list-style: none; display: flex; flex-grow: 1; justify-content: center; }
     nav li { margin: 0 20px; }
-    nav a { text-decoration: none; color: #2d3748; font-weight: 500; transition: color 0.3s; }
-    nav a:hover { color: #38a169; }
+    nav a { text-decoration: none; color: var(--color-text); font-weight: 500; transition: color 0.3s; }
+    nav a:hover { color: var(--color-primary); }
 
     /* Bouton hamburger : caché sur desktop */
     .nav-toggle {
@@ -66,18 +82,21 @@
       background: none;
       border: none;
       font-size: 1.6rem;
-      color: #2d3748;
+      color: var(--color-text);
       cursor: pointer;
       margin-right: 20px;
       margin-left: auto;
       padding: 6px 10px;
       z-index: 1100;
     }
-    .nav-toggle:hover { color: #38a169; }
+    .nav-toggle:hover { color: var(--color-primary); }
 
-    section { padding: 60px 20px; max-width: 1200px; margin: 0 auto; animation: fadeIn 1s ease-in; }
+    section { padding: 60px 20px; animation: fadeIn 1s ease-in; }
+    section > *:not(.legend):not(#map):not(iframe) { max-width: 1200px; margin-left: auto; margin-right: auto; }
+    #map, #gee iframe { max-width: 1200px; margin-left: auto; margin-right: auto; display: block; }
+    #carte, #partenaires, #donnees { background: var(--color-bg-alt); }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    h2 { font-size: 2.2rem; color: #2d3748; margin-bottom: 30px; text-align: center; }
+    h2 { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700; color: var(--color-text); margin-bottom: 30px; text-align: center; }
 
     /* Map */
     #map { height: 550px; width: 100%; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.15); position: relative; }
@@ -94,9 +113,10 @@
       text-align: center; transition: all 0.3s; cursor: pointer; overflow: hidden;
     }
     .service-item:hover { transform: translateY(-8px); box-shadow: 0 10px 25px rgba(0,0,0,0.15); }
-    .service-item i { font-size: 2.5rem; color: #38a169; margin-bottom: 15px; }
+    .service-item i { font-size: 2.5rem; color: var(--color-primary); margin-bottom: 15px; }
+    .service-item > p { font-family: var(--font-heading); font-weight: 600; color: var(--color-text); }
     .service-detail {
-      display: none; padding: 20px 0 0; background: #f8fff9; margin-top: 15px; border-radius: 8px; text-align: justify;
+      display: none; padding: 20px 0 0; background: var(--color-primary-light); margin-top: 15px; border-radius: 8px; text-align: justify;
     }
     .service-item.active .service-detail { display: block; animation: slideDown 0.4s ease-in-out; }
     @keyframes slideDown { from { max-height: 0; opacity: 0; } to { max-height: 400px; opacity: 1; } }
@@ -108,7 +128,7 @@
     .partner-card {
       background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center;
     }
-    .partner-card h3 { color: #38a169; margin-bottom: 15px; }
+    .partner-card h3 { font-family: var(--font-heading); color: var(--color-secondary); margin-bottom: 15px; }
 
     /* Données */
     #donnees ul { list-style: none; padding: 0; }
@@ -117,9 +137,9 @@
       box-shadow: 0 3px 10px rgba(0,0,0,0.1); margin-bottom: 12px; transition: transform 0.3s;
     }
     #donnees .data-item:hover { transform: translateY(-3px); }
-    #donnees .data-item i { font-size: 1.6rem; color: #38a169; margin-right: 15px; }
-    #donnees .data-item a { text-decoration: none; color: #2d3748; font-weight: 500; flex-grow: 1; }
-    #donnees .data-item a:hover { color: #38a169; }
+    #donnees .data-item i { font-size: 1.6rem; color: var(--color-primary); margin-right: 15px; }
+    #donnees .data-item a { text-decoration: none; color: var(--color-text); font-weight: 500; flex-grow: 1; }
+    #donnees .data-item a:hover { color: var(--color-primary); }
     #donnees .data-item.gray-note { color: #808080; font-style: italic; cursor: default; }
     #donnees .data-item.gray-note:hover { transform: none; }
 
@@ -131,9 +151,9 @@
     }
 
     /* Footer */
-    footer { background: #2d3748; color: white; text-align: center; padding: 50px 20px; font-size: 0.95rem; }
+    footer { background: var(--color-secondary-dark); color: white; text-align: center; padding: 50px 20px; font-size: 0.95rem; }
     .contact-info p { margin: 8px 0; }
-    footer a { color: #38a169; text-decoration: none; }
+    footer a { color: var(--color-accent); text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
     /* ============ RESPONSIVE / MENU MOBILE ============ */
