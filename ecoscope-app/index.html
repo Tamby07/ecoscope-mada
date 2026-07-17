@@ -145,6 +145,24 @@
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
   }
 
+  .individu-names-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .individu-names-grid input { padding: 10px; font-size: 0.88rem; }
+  .individu-names-grid label {
+    font-size: 0.72rem; color: var(--color-text-muted); font-weight: 600; margin-bottom: 3px; display: block;
+  }
+  .ind-match-info {
+    font-size: 0.76rem; margin: -2px 0 8px; padding: 6px 10px; border-radius: 8px; display: none;
+  }
+  .ind-match-info.found { display: block; background: var(--color-primary-light); color: var(--color-primary-dark); }
+  .ind-match-info.notfound { display: block; background: #FEF3C7; color: #92400E; }
+
+  .plot-total-card {
+    background: var(--color-secondary-dark); color: white; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
+  }
+  .plot-total-label { font-size: 0.78rem; font-weight: 600; opacity: 0.85; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .plot-total-value { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--color-accent); }
+  .plot-total-hint { font-size: 0.72rem; opacity: 0.7; margin-top: 4px; }
+
   /* ===== Map view ===== */
   #leafletMap { flex: 1; width: 100%; z-index: 1; }
   .map-toolbar {
@@ -260,8 +278,16 @@
           <button type="button" class="add-individu-btn" id="addIndividuBtn"><i class="fas fa-plus"></i> Ajouter un individu</button>
         </div>
 
+        <div class="plot-total-card" id="plotTotalCard">
+          <div class="plot-total-label"><i class="fas fa-calculator"></i> Biomasse / carbone de la placette (Chave et al. 2014)</div>
+          <div class="plot-total-value" id="plotTotalAGB">0 kg AGB · 0 kg C</div>
+          <div class="plot-total-hint">Calcul automatique dès qu'espèce, DHP, hauteur et densité sont renseignés</div>
+        </div>
+
         <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Enregistrer la placette</button>
       </form>
+
+      <datalist id="vernaculaireList"></datalist>
     </section>
 
     <!-- ============ VUE 2 : CARTE / DÉLIMITATION ============ -->
@@ -301,6 +327,7 @@
 
   <div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toastMsg"></span></div>
 
+  <script src="species-data.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
@@ -497,7 +524,11 @@
           '<span class="individu-row-label">Individu #' + individuRowCounter + '</span>' +
           '<button type="button" class="remove-individu-btn"><i class="fas fa-trash"></i></button>' +
         '</div>' +
-        '<input type="text" class="ind-espece individu-espece" placeholder="Espèce *">' +
+        '<div class="individu-names-grid">' +
+          '<div><label>Nom local</label><input type="text" class="ind-nomlocal" placeholder="Nom local *"></div>' +
+          '<div><label>Nom vernaculaire (base MEDD)</label><input type="text" class="ind-vernaculaire" list="vernaculaireList" placeholder="Rechercher…"></div>' +
+        '</div>' +
+        '<div class="ind-match-info"></div>' +
         '<div class="individu-numeric-grid">' +
           '<div><label>DHP (cm)</label><input type="number" class="ind-dhp" step="0.1" min="0" placeholder="0.0"></div>' +
           '<div><label>Hauteur tot. (m)</label><input type="number" class="ind-hauteur" step="0.1" min="0" placeholder="0.0"></div>' +
@@ -510,9 +541,86 @@
           return;
         }
         row.remove();
+        updatePlotTotal();
+      });
+
+      var vernInput = row.querySelector('.ind-vernaculaire');
+      var densiteInput = row.querySelector('.ind-densite');
+      var matchInfo = row.querySelector('.ind-match-info');
+      var nomLocalInput = row.querySelector('.ind-nomlocal');
+
+      vernInput.addEventListener('input', function () {
+        var query = vernInput.value.trim().toLowerCase();
+        var match = (typeof WOOD_DENSITY_DB !== 'undefined') ? WOOD_DENSITY_DB.find(function (sp) {
+          return sp.vernaculaire.toLowerCase() === query;
+        }) : null;
+
+        if (match) {
+          densiteInput.value = match.densite;
+          matchInfo.className = 'ind-match-info found';
+          matchInfo.innerHTML = '<i class="fas fa-check-circle"></i> ' + escapeHtml(match.scientifique) +
+            ' · ' + match.densite + ' g/cm³ · ' + escapeHtml(match.categorie) + ' (' + match.ecoregion + ')';
+          if (!nomLocalInput.value.trim()) { nomLocalInput.value = vernInput.value.trim(); }
+        } else if (query.length > 0) {
+          matchInfo.className = 'ind-match-info notfound';
+          matchInfo.innerHTML = '<i class="fas fa-info-circle"></i> Non trouvé dans la base — saisissez la densité manuellement';
+        } else {
+          matchInfo.className = 'ind-match-info';
+          matchInfo.innerHTML = '';
+        }
+        updatePlotTotal();
+      });
+
+      row.querySelectorAll('.ind-dhp, .ind-hauteur, .ind-densite, .ind-nomlocal').forEach(function (input) {
+        input.addEventListener('input', updatePlotTotal);
       });
 
       list.appendChild(row);
+    }
+
+    // ============================================================
+    // CALCUL BIOMASSE / CARBONE — Chave et al. 2014 (équation pantropicale)
+    // AGB (kg) = 0.0673 × (densité × DHP² × Hauteur)^0.976
+    // Carbone = AGB × 0.47 (fraction de carbone standard IPCC)
+    // ============================================================
+    function computeChaveAGB(densite, dhp, hauteur) {
+      if (!densite || !dhp || !hauteur) return null;
+      return 0.0673 * Math.pow(densite * dhp * dhp * hauteur, 0.976);
+    }
+
+    function updatePlotTotal() {
+      var rows = document.querySelectorAll('#individusList .individu-row');
+      var totalAGB = 0;
+      var countValid = 0;
+
+      rows.forEach(function (row) {
+        var dhp = parseFloat(row.querySelector('.ind-dhp').value);
+        var hauteur = parseFloat(row.querySelector('.ind-hauteur').value);
+        var densite = parseFloat(row.querySelector('.ind-densite').value);
+        var agb = computeChaveAGB(densite, dhp, hauteur);
+        if (agb !== null) {
+          totalAGB += agb;
+          countValid++;
+        }
+      });
+
+      var totalC = totalAGB * 0.47;
+      var totalCard = document.getElementById('plotTotalAGB');
+      if (countValid === 0) {
+        totalCard.textContent = '0 kg AGB · 0 kg C';
+      } else {
+        totalCard.textContent = totalAGB.toFixed(1) + ' kg AGB · ' + totalC.toFixed(1) + ' kg C (' + countValid + ' individu(s) calculé(s))';
+      }
+    }
+
+    // Remplit le datalist des noms vernaculaires connus
+    if (typeof WOOD_DENSITY_DB !== 'undefined') {
+      var datalistEl = document.getElementById('vernaculaireList');
+      WOOD_DENSITY_DB.forEach(function (sp) {
+        var opt = document.createElement('option');
+        opt.value = sp.vernaculaire;
+        datalistEl.appendChild(opt);
+      });
     }
 
     document.getElementById('addIndividuBtn').addEventListener('click', addIndividuRow);
@@ -529,27 +637,37 @@
         var rows = document.querySelectorAll('#individusList .individu-row');
         var individus = [];
         var hasError = false;
+        var totalAGB = 0;
 
         rows.forEach(function (row) {
-          var espece = row.querySelector('.ind-espece').value.trim();
+          var nomLocal = row.querySelector('.ind-nomlocal').value.trim();
+          var vernaculaire = row.querySelector('.ind-vernaculaire').value.trim();
           var dhp = row.querySelector('.ind-dhp').value;
           var hauteur = row.querySelector('.ind-hauteur').value;
           var densite = row.querySelector('.ind-densite').value;
 
-          if (!espece && !dhp && !hauteur && !densite) return; // ligne vide, ignorée
+          if (!nomLocal && !vernaculaire && !dhp && !hauteur && !densite) return; // ligne vide, ignorée
 
-          if (!espece) { hasError = true; return; }
+          if (!nomLocal) { hasError = true; return; }
+
+          var dhpVal = dhp ? parseFloat(dhp) : null;
+          var hauteurVal = hauteur ? parseFloat(hauteur) : null;
+          var densiteVal = densite ? parseFloat(densite) : null;
+          var agbChave = computeChaveAGB(densiteVal, dhpVal, hauteurVal);
+          if (agbChave !== null) { totalAGB += agbChave; }
 
           individus.push({
-            espece: espece,
-            dhp: dhp ? parseFloat(dhp) : null,
-            hauteurTotale: hauteur ? parseFloat(hauteur) : null,
-            densite: densite ? parseFloat(densite) : null
+            nomLocal: nomLocal,
+            vernaculaire: vernaculaire || null,
+            dhp: dhpVal,
+            hauteurTotale: hauteurVal,
+            densite: densiteVal,
+            agbChave_kg: agbChave !== null ? Math.round(agbChave * 100) / 100 : null
           });
         });
 
         if (hasError) {
-          showToast('Chaque individu doit avoir une espèce renseignée', 'fa-triangle-exclamation');
+          showToast('Chaque individu doit avoir un nom local renseigné', 'fa-triangle-exclamation');
           return;
         }
         if (individus.length === 0) {
@@ -562,6 +680,8 @@
           position: capturedPosition,
           observateur: document.getElementById('observateur').value.trim(),
           individus: individus,
+          totalAGB_kg: Math.round(totalAGB * 100) / 100,
+          totalCarbone_kg: Math.round(totalAGB * 0.47 * 100) / 100,
           dateHeure: new Date().toISOString()
         };
 
@@ -571,6 +691,7 @@
           document.getElementById('individusList').innerHTML = '';
           individuRowCounter = 0;
           addIndividuRow();
+          updatePlotTotal();
           capturedPosition = null;
           document.getElementById('gpsReadout').textContent = 'Aucune position capturée';
           document.getElementById('gpsReadout').classList.remove('filled');
@@ -719,14 +840,18 @@
 
           if (currentDataTab === 'placettes') {
             var nbInd = item.individus ? item.individus.length : 0;
-            var especesApercu = item.individus ? item.individus.slice(0, 2).map(function (i) { return i.espece; }).join(', ') : '';
+            var especesApercu = item.individus ? item.individus.slice(0, 2).map(function (i) { return i.nomLocal; }).join(', ') : '';
             var coords = item.position ? item.position.lat.toFixed(5) + ', ' + item.position.lng.toFixed(5) : 'Sans position';
+            var totalInfo = (item.totalAGB_kg !== undefined && item.totalAGB_kg !== null)
+              ? item.totalAGB_kg + ' kg AGB · ' + item.totalCarbone_kg + ' kg C'
+              : 'Total non calculé';
             card.innerHTML =
               '<div class="data-icon"><i class="fas fa-tree"></i></div>' +
               '<div class="data-body">' +
                 '<div class="data-title">' + escapeHtml(item.nomPlacette) + '</div>' +
                 '<div class="data-meta">' + nbInd + ' individu(s)' + (especesApercu ? ' · ' + escapeHtml(especesApercu) : '') + '</div>' +
                 '<div class="data-meta">' + coords + ' · ' + formatDate(item.dateHeure) + '</div>' +
+                '<div class="data-meta" style="color:var(--color-primary);font-weight:700;">' + totalInfo + '</div>' +
               '</div>' +
               '<div class="data-actions"><button class="delete-btn" data-id="' + item.id + '" data-store="placettes"><i class="fas fa-trash"></i></button></div>';
           } else {
@@ -783,7 +908,9 @@
     document.getElementById('exportFichesBtn').addEventListener('click', function () {
       dbGetAll('placettes').then(function (placettes) {
         if (placettes.length === 0) { showToast('Aucune placette à exporter', 'fa-triangle-exclamation'); return; }
-        var headers = ['Placette_ID', 'Nom_placette', 'Date', 'Latitude', 'Longitude', 'Precision_GPS_m', 'Observateur', 'Espece', 'DHP_cm', 'Hauteur_totale_m', 'Densite_g_cm3'];
+        var headers = ['Placette_ID', 'Nom_placette', 'Date', 'Latitude', 'Longitude', 'Precision_GPS_m', 'Observateur',
+          'Nom_local', 'Nom_vernaculaire', 'DHP_cm', 'Hauteur_totale_m', 'Densite_g_cm3', 'AGB_Chave2014_kg',
+          'Placette_Total_AGB_kg', 'Placette_Total_Carbone_kg'];
         var rows = [];
         placettes.forEach(function (p) {
           var lat = p.position ? p.position.lat : '';
@@ -792,7 +919,8 @@
           (p.individus || []).forEach(function (ind) {
             rows.push([
               p.id, p.nomPlacette, p.dateHeure, lat, lng, acc, p.observateur,
-              ind.espece, ind.dhp, ind.hauteurTotale, ind.densite
+              ind.nomLocal, ind.vernaculaire, ind.dhp, ind.hauteurTotale, ind.densite, ind.agbChave_kg,
+              p.totalAGB_kg, p.totalCarbone_kg
             ].map(function (v) { return '"' + String(v === null || v === undefined ? '' : v).replace(/"/g, '""') + '"'; }).join(','));
           });
         });
