@@ -3,7 +3,7 @@
 // pour permettre la saisie de fiches et l'usage de la carte hors-ligne
 // (les tuiles de fond de carte non encore visitées nécessitent toujours une connexion).
 
-const CACHE_NAME = 'ecoscope-app-v3';
+const CACHE_NAME = 'ecoscope-app-v4';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -21,6 +21,7 @@ const ASSETS_TO_CACHE = [
   'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
   'https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css',
   'https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js',
+  'https://unpkg.com/shp-write@0.3.2/shpwrite.js',
   'https://unpkg.com/@turf/turf@6/turf.min.js'
 ];
 
