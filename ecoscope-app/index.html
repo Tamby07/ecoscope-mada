@@ -356,7 +356,6 @@
   <div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toastMsg"></span></div>
 
   <script src="species-data.js"></script>
-  <script src="https://unpkg.com/shp-write@0.3.2/shpwrite.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
@@ -1081,6 +1080,23 @@
       });
     });
 
+    function loadShpWriteLib() {
+      if (typeof shpwrite !== 'undefined') { return Promise.resolve(); }
+      return new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = 'https://unpkg.com/shp-write@0.3.2/shpwrite.js';
+        script.onload = function () {
+          if (typeof shpwrite === 'undefined') {
+            reject(new Error('Le script a chargé mais n\'expose pas l\'objet attendu (shpwrite).'));
+          } else {
+            resolve();
+          }
+        };
+        script.onerror = function () { reject(new Error('Impossible de charger la librairie Shapefile (connexion internet requise).')); };
+        document.head.appendChild(script);
+      });
+    }
+
     document.getElementById('exportPlacettesShpBtn').addEventListener('click', function () {
       dbGetAll('placettes').then(function (placettes) {
         if (placettes.length === 0) { showToast('Aucune placette à exporter', 'fa-triangle-exclamation'); return; }
@@ -1089,20 +1105,17 @@
           showToast('Aucune géométrie de placette disponible', 'fa-triangle-exclamation');
           return;
         }
-        try {
-          if (typeof shpwrite === 'undefined') {
-            showErrorBanner('La librairie d\'export Shapefile n\'a pas pu se charger (connexion internet requise au premier chargement). Utilisez l\'export GeoJSON en attendant, il s\'ouvre aussi directement dans QGIS.');
-            return;
-          }
+        showToast('Préparation du Shapefile…', 'fa-file-archive');
+        loadShpWriteLib().then(function () {
           shpwrite.download(result.featureCollection, {
             outputType: 'blob',
             compression: 'DEFLATE',
             types: { polygon: 'placettes_polygones', polyline: 'placettes_transects', point: 'placettes_points' }
           });
           showToast('Export Shapefile téléchargé (.zip)', 'fa-file-archive');
-        } catch (err) {
+        }).catch(function (err) {
           showErrorBanner('Échec de l\'export Shapefile : ' + err.message + '. Utilisez l\'export GeoJSON à la place, il fonctionne aussi bien dans QGIS.');
-        }
+        });
       });
     });
 
