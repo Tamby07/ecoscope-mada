@@ -1,102 +1,806 @@
-// ============ SERVICE WORKER — EcoScope App ============
-// Stratégie : cache-first pour l'app shell + les librairies externes,
-// pour permettre la saisie de fiches et l'usage de la carte hors-ligne
-// (les tuiles de fond de carte non encore visitées nécessitent toujours une connexion).
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="description" content="EcoScope App — outil de collecte terrain faune/flore et délimitation SIG" />
+<title>EcoScope App</title>
 
-const CACHE_NAME = 'ecoscope-app-v2';
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#1F7A4D" />
+<link rel="icon" type="image/png" href="icon-192.png" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-const ASSETS_TO_CACHE = [
-  './',
-  './index.html',
-  './manifest.json',
-  './icon-192.png',
-  './icon-192-maskable.png',
-  './icon-512.png',
-  './icon-512-maskable.png',
-  './apple-touch-icon.png',
-  'https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
-  'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js',
-  'https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css',
-  'https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js',
-  'https://unpkg.com/@turf/turf@6/turf.min.js'
-];
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
 
-self.addEventListener('install', function (event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function (cache) {
-      return Promise.all(
-        ASSETS_TO_CACHE.map(function (url) {
-          return cache.add(url).catch(function (err) {
-            console.warn('Échec de mise en cache :', url, err);
-          });
-        })
-      );
-    }).then(function () {
-      return self.skipWaiting();
-    })
-  );
-});
-
-self.addEventListener('activate', function (event) {
-  event.waitUntil(
-    caches.keys().then(function (keys) {
-      return Promise.all(
-        keys.filter(function (key) { return key !== CACHE_NAME; })
-            .map(function (key) { return caches.delete(key); })
-      );
-    }).then(function () {
-      return self.clients.claim();
-    })
-  );
-});
-
-self.addEventListener('fetch', function (event) {
-  // Ne pas intercepter les requêtes vers les tuiles de carte (trop nombreuses/variables pour un cache simple)
-  if (event.request.url.indexOf('tile.openstreetmap.org') !== -1) {
-    return;
+<style>
+  :root {
+    --color-primary: #1F7A4D;
+    --color-primary-dark: #145C38;
+    --color-primary-light: #E8F5EC;
+    --color-secondary: #1B4B66;
+    --color-secondary-dark: #123549;
+    --color-accent: #D97D3D;
+    --color-text: #1F2937;
+    --color-text-muted: #5B6472;
+    --color-bg: #F7F9FA;
+    --color-border: #E2E6E9;
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Roboto', sans-serif;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; overscroll-behavior-y: contain; }
+  body {
+    font-family: var(--font-body); background: var(--color-bg); color: var(--color-text);
+    display: flex; flex-direction: column; line-height: 1.5;
   }
 
-  var url = event.request.url;
-  var isAppShell = event.request.mode === 'navigate' ||
-    url.indexOf('index.html') !== -1 ||
-    url.indexOf('manifest.json') !== -1;
+  /* ===== Header ===== */
+  .app-header {
+    background: var(--color-secondary-dark); color: white; padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 500; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .app-header .app-title { font-family: var(--font-heading); font-weight: 700; font-size: 1.15rem; }
+  .app-header .app-title strong { color: var(--color-accent); font-weight: 800; }
+  .status-pill {
+    display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600;
+    background: rgba(255,255,255,0.1); padding: 5px 10px; border-radius: 50px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ADE80; }
+  .status-dot.offline { background: #F87171; }
 
-  if (isAppShell) {
-    // RÉSEAU D'ABORD : on veut toujours la dernière version de l'app quand la connexion est disponible.
-    // Le cache ne sert que de secours si l'utilisateur est hors-ligne.
-    event.respondWith(
-      fetch(event.request).then(function (networkResponse) {
-        var clone = networkResponse.clone();
-        caches.open(CACHE_NAME).then(function (cache) { cache.put(event.request, clone); });
-        return networkResponse;
-      }).catch(function () {
-        return caches.match(event.request);
-      })
-    );
-    return;
+  /* ===== Main / Views ===== */
+  main { flex: 1; overflow-y: auto; padding-bottom: calc(78px + var(--safe-bottom)); }
+  .view { display: none; padding: 18px; max-width: 640px; margin: 0 auto; }
+  .view.active { display: block; }
+  #view-map.active { display: flex; flex-direction: column; padding: 0; max-width: none; }
+
+  h2.view-title {
+    font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;
+  }
+  .view-subtitle { color: var(--color-text-muted); font-size: 0.88rem; margin-bottom: 20px; }
+
+  /* ===== Form ===== */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 6px; color: var(--color-text);
+  }
+  .field .hint { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 4px; }
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%; padding: 12px 14px; border: 1.5px solid var(--color-border); border-radius: 10px;
+    font-family: var(--font-body); font-size: 0.95rem; background: white; color: var(--color-text);
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-primary); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  .radio-group { display: flex; gap: 10px; }
+  .radio-group label {
+    flex: 1; text-align: center; padding: 12px; border: 1.5px solid var(--color-border); border-radius: 10px;
+    cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; color: var(--color-text-muted);
+  }
+  .radio-group input { display: none; }
+  .radio-group input:checked + span { color: white; }
+  .radio-group label:has(input:checked) { background: var(--color-primary); border-color: var(--color-primary); color: white; }
+
+  .gps-row { display: flex; gap: 10px; align-items: center; }
+  .gps-btn {
+    flex-shrink: 0; background: var(--color-secondary); color: white; border: none; border-radius: 10px;
+    padding: 12px 16px; font-weight: 600; font-size: 0.88rem; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  }
+  .gps-btn:active { background: var(--color-secondary-dark); }
+  .gps-readout {
+    flex: 1; font-size: 0.82rem; color: var(--color-text-muted); background: white;
+    border: 1.5px solid var(--color-border); border-radius: 10px; padding: 10px 12px;
+  }
+  .gps-readout.filled { color: var(--color-text); font-weight: 600; }
+
+  .photo-input-wrap { position: relative; }
+  .photo-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
+    padding: 18px; border: 2px dashed var(--color-border); border-radius: 12px; background: white;
+    color: var(--color-text-muted); font-weight: 600; cursor: pointer;
+  }
+  .photo-preview { margin-top: 10px; position: relative; display: none; }
+  .photo-preview.filled { display: block; }
+  .photo-preview img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 10px; }
+  .photo-preview .remove-photo {
+    position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.6); color: white; border: none;
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
   }
 
-  // CACHE D'ABORD pour tout le reste (librairies externes, icônes, polices) : elles changent rarement,
-  // donc autant les servir instantanément depuis le cache et les rafraîchir en arrière-plan.
-  event.respondWith(
-    caches.match(event.request).then(function (cachedResponse) {
-      if (cachedResponse) {
-        return cachedResponse;
+  .btn-submit {
+    width: 100%; background: var(--color-primary); color: white; border: none; border-radius: 12px;
+    padding: 16px; font-family: var(--font-heading); font-weight: 700; font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 8px;
+  }
+  .btn-submit:active { background: var(--color-primary-dark); }
+
+  /* ===== Map view ===== */
+  #leafletMap { flex: 1; width: 100%; z-index: 1; }
+  .map-toolbar {
+    background: white; padding: 14px 18px; border-top: 1px solid var(--color-border);
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .map-toolbar .area-readout { font-size: 0.85rem; color: var(--color-text-muted); }
+  .map-toolbar .area-readout strong { color: var(--color-primary); font-size: 1.05rem; }
+  .map-hint-banner {
+    background: var(--color-primary-light); color: var(--color-primary-dark); font-size: 0.8rem;
+    padding: 10px 18px; text-align: center; font-weight: 500;
+  }
+
+  /* ===== Data view ===== */
+  .data-tabs { display: flex; gap: 8px; margin-bottom: 18px; }
+  .data-tab {
+    flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--color-border); background: white;
+    font-weight: 600; font-size: 0.88rem; color: var(--color-text-muted); cursor: pointer;
+  }
+  .data-tab.active { background: var(--color-secondary-dark); color: white; border-color: var(--color-secondary-dark); }
+
+  .data-card {
+    background: white; border-radius: 12px; padding: 14px 16px; margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06); display: flex; gap: 12px; align-items: flex-start;
+  }
+  .data-card img { width: 54px; height: 54px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+  .data-card .data-icon {
+    width: 54px; height: 54px; border-radius: 8px; background: var(--color-primary-light); color: var(--color-primary);
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+  }
+  .data-card .data-body { flex: 1; min-width: 0; }
+  .data-card .data-title { font-weight: 700; font-size: 0.94rem; margin-bottom: 2px; }
+  .data-card .data-meta { font-size: 0.78rem; color: var(--color-text-muted); }
+  .data-card .data-actions { display: flex; flex-direction: column; gap: 6px; }
+  .data-card .data-actions button {
+    background: none; border: none; color: var(--color-text-muted); cursor: pointer; font-size: 0.95rem; padding: 4px;
+  }
+  .data-card .data-actions button.delete-btn:active { color: #DC2626; }
+
+  .empty-state { text-align: center; padding: 50px 20px; color: var(--color-text-muted); }
+  .empty-state i { font-size: 2.2rem; margin-bottom: 12px; color: var(--color-border); }
+
+  .export-buttons { display: flex; gap: 10px; margin-top: 22px; }
+  .export-buttons button {
+    flex: 1; padding: 13px; border-radius: 10px; border: 1.5px solid var(--color-primary);
+    background: transparent; color: var(--color-primary); font-weight: 600; font-size: 0.85rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .export-buttons button:active { background: var(--color-primary); color: white; }
+
+  /* ===== Bottom nav ===== */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--color-border);
+    display: flex; z-index: 600; padding-bottom: var(--safe-bottom);
+  }
+  .nav-btn {
+    flex: 1; background: none; border: none; padding: 10px 4px 8px; display: flex; flex-direction: column;
+    align-items: center; gap: 4px; color: var(--color-text-muted); cursor: pointer; font-family: var(--font-body);
+  }
+  .nav-btn i { font-size: 1.15rem; }
+  .nav-btn span { font-size: 0.68rem; font-weight: 600; }
+  .nav-btn.active { color: var(--color-primary); }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed; bottom: calc(90px + var(--safe-bottom)); left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--color-secondary-dark); color: white; padding: 12px 22px; border-radius: 50px;
+    font-size: 0.88rem; font-weight: 600; opacity: 0; visibility: hidden; transition: all 0.3s; z-index: 900;
+    display: flex; align-items: center; gap: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+  .toast.visible { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+  .toast i { color: var(--color-accent); }
+
+  /* Leaflet draw toolbar tweak for touch */
+  .leaflet-draw-toolbar a { width: 36px !important; height: 36px !important; line-height: 36px !important; }
+</style>
+</head>
+<body>
+
+  <header class="app-header">
+    <span class="app-title">EcoScope <strong>App</strong></span>
+    <span class="status-pill"><span class="status-dot" id="statusDot"></span><span id="statusText">En ligne</span></span>
+  </header>
+
+  <main>
+    <!-- ============ VUE 1 : NOUVELLE FICHE ============ -->
+    <section id="view-form" class="view active">
+      <h2 class="view-title">Nouvelle fiche d'observation</h2>
+      <p class="view-subtitle">Inventaire faune / flore — les fiches sont enregistrées sur l'appareil, même hors-ligne.</p>
+
+      <form id="ficheForm">
+        <div class="field">
+          <label>Type d'observation</label>
+          <div class="radio-group">
+            <label><input type="radio" name="obsType" value="Faune" checked><span>🐾 Faune</span></label>
+            <label><input type="radio" name="obsType" value="Flore"><span>🌿 Flore</span></label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="especeNom">Nom de l'espèce *</label>
+          <input type="text" id="especeNom" placeholder="Ex : Lémurien à front roux" required>
+        </div>
+
+        <div class="field">
+          <label for="especeSci">Nom scientifique</label>
+          <input type="text" id="especeSci" placeholder="Ex : Eulemur rufifrons">
+        </div>
+
+        <div class="field">
+          <label for="nbIndividus">Nombre d'individus</label>
+          <input type="number" id="nbIndividus" min="1" value="1">
+        </div>
+
+        <div class="field">
+          <label for="stade">Stade / type d'indice</label>
+          <select id="stade">
+            <option value="Observation directe">Observation directe</option>
+            <option value="Adulte">Adulte</option>
+            <option value="Juvénile">Juvénile</option>
+            <option value="Trace / indice">Trace / indice (empreinte, crotte…)</option>
+            <option value="Inconnu">Inconnu</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Position GPS</label>
+          <div class="gps-row">
+            <button type="button" class="gps-btn" id="captureGpsBtn"><i class="fas fa-location-crosshairs"></i> Capturer</button>
+            <div class="gps-readout" id="gpsReadout">Aucune position capturée</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Photo</label>
+          <div class="photo-input-wrap">
+            <label class="photo-btn" for="photoInput"><i class="fas fa-camera"></i> Prendre / choisir une photo</label>
+            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
+          </div>
+          <div class="photo-preview" id="photoPreview">
+            <img id="photoPreviewImg" alt="Aperçu photo">
+            <button type="button" class="remove-photo" id="removePhotoBtn"><i class="fas fa-times"></i></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="habitatNotes">Habitat / Notes</label>
+          <textarea id="habitatNotes" placeholder="Description du milieu, comportement observé, contexte…"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="observateur">Observateur</label>
+          <input type="text" id="observateur" placeholder="Votre nom">
+        </div>
+
+        <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Enregistrer la fiche</button>
+      </form>
+    </section>
+
+    <!-- ============ VUE 2 : CARTE / DÉLIMITATION ============ -->
+    <section id="view-map" class="view">
+      <div class="map-hint-banner"><i class="fas fa-draw-polygon"></i> Utilisez l'outil polygone (à droite de la carte) pour délimiter une zone. La surface se calcule automatiquement.</div>
+      <div id="leafletMap"></div>
+      <div class="map-toolbar">
+        <div class="area-readout" id="areaReadout">Aucune zone dessinée</div>
+        <button type="button" class="gps-btn" id="locateBtn"><i class="fas fa-crosshairs"></i></button>
+      </div>
+    </section>
+
+    <!-- ============ VUE 3 : MES DONNÉES ============ -->
+    <section id="view-data" class="view">
+      <h2 class="view-title">Mes données</h2>
+      <p class="view-subtitle">Fiches et zones enregistrées sur cet appareil.</p>
+
+      <div class="data-tabs">
+        <button class="data-tab active" data-tab="fiches">📋 Fiches (<span id="countFiches">0</span>)</button>
+        <button class="data-tab" data-tab="polygones">🗺️ Zones (<span id="countPolygones">0</span>)</button>
+      </div>
+
+      <div id="dataList"></div>
+
+      <div class="export-buttons">
+        <button type="button" id="exportFichesBtn"><i class="fas fa-file-csv"></i> Exporter fiches (CSV)</button>
+        <button type="button" id="exportPolygonesBtn"><i class="fas fa-file-export"></i> Exporter zones (GeoJSON)</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-view="view-form"><i class="fas fa-feather-pointed"></i><span>Fiche</span></button>
+    <button class="nav-btn" data-view="view-map"><i class="fas fa-draw-polygon"></i><span>Carte</span></button>
+    <button class="nav-btn" data-view="view-data"><i class="fas fa-database"></i><span>Données</span></button>
+  </nav>
+
+  <div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toastMsg"></span></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+  <script>
+    // ============================================================
+    // DIAGNOSTIC : affiche toute erreur JS directement à l'écran
+    // (utile en l'absence d'accès à la console développeur sur mobile)
+    // ============================================================
+    function showErrorBanner(message) {
+      var banner = document.getElementById('errorBanner');
+      if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'errorBanner';
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#DC2626;color:white;' +
+          'padding:12px 16px;font-family:sans-serif;font-size:0.8rem;z-index:9999;' +
+          'max-height:40vh;overflow-y:auto;white-space:pre-wrap;word-break:break-word;box-shadow:0 4px 10px rgba(0,0,0,0.3);';
+        var closeBtn = document.createElement('button');
+        closeBtn.textContent = '✕ Fermer';
+        closeBtn.style.cssText = 'display:block;margin-top:8px;background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 14px;border-radius:6px;font-weight:bold;';
+        closeBtn.onclick = function () { banner.remove(); };
+        banner.appendChild(document.createElement('div')).id = 'errorBannerText';
+        banner.appendChild(closeBtn);
+        document.body.appendChild(banner);
       }
-      return fetch(event.request).then(function (networkResponse) {
-        if (networkResponse && networkResponse.status === 200) {
-          var responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(function (cache) {
-            cache.put(event.request, responseClone);
+      var textEl = document.getElementById('errorBannerText');
+      textEl.textContent += (textEl.textContent ? '\n\n' : '') + message;
+    }
+
+    window.addEventListener('error', function (e) {
+      showErrorBanner('Erreur JS : ' + e.message + '\n(fichier : ' + (e.filename || '?') + ', ligne : ' + (e.lineno || '?') + ')');
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      var reason = e.reason && e.reason.message ? e.reason.message : String(e.reason);
+      showErrorBanner('Erreur (promesse) : ' + reason);
+    });
+
+    // ============================================================
+    // TOAST
+    // ============================================================
+    function showToast(msg, icon) {
+      var toast = document.getElementById('toast');
+      var toastMsg = document.getElementById('toastMsg');
+      var toastIcon = toast.querySelector('i');
+      toastIcon.className = 'fas ' + (icon || 'fa-circle-check');
+      toastMsg.textContent = msg;
+      toast.classList.add('visible');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(function () { toast.classList.remove('visible'); }, 2600);
+    }
+
+    // ============================================================
+    // STATUT EN LIGNE / HORS-LIGNE
+    // ============================================================
+    function updateOnlineStatus() {
+      var dot = document.getElementById('statusDot');
+      var text = document.getElementById('statusText');
+      if (navigator.onLine) {
+        dot.classList.remove('offline');
+        text.textContent = 'En ligne';
+      } else {
+        dot.classList.add('offline');
+        text.textContent = 'Hors-ligne';
+      }
+    }
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+    updateOnlineStatus();
+
+    // ============================================================
+    // BASE DE DONNÉES LOCALE (IndexedDB)
+    // ============================================================
+    var DB_NAME = 'ecoscopeAppDB';
+    var DB_VERSION = 1;
+    var dbPromise = new Promise(function (resolve, reject) {
+      try {
+        if (!window.indexedDB) {
+          showErrorBanner('Le stockage hors-ligne (IndexedDB) n\'est pas disponible sur ce navigateur. Essayez avec Chrome ou Safari à jour, hors mode navigation privée.');
+          reject(new Error('IndexedDB non disponible'));
+          return;
+        }
+        var request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = function (e) {
+          var db = e.target.result;
+          if (!db.objectStoreNames.contains('fiches')) {
+            db.createObjectStore('fiches', { keyPath: 'id', autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains('polygones')) {
+            db.createObjectStore('polygones', { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        request.onsuccess = function (e) { resolve(e.target.result); };
+        request.onerror = function (e) {
+          showErrorBanner('Erreur d\'ouverture du stockage local : ' + (e.target.error ? e.target.error.message : 'inconnue'));
+          reject(e);
+        };
+      } catch (err) {
+        showErrorBanner('Exception lors de l\'initialisation du stockage : ' + err.message);
+        reject(err);
+      }
+    });
+
+    function dbAdd(storeName, data) {
+      return dbPromise.then(function (db) {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(storeName, 'readwrite');
+          var req = tx.objectStore(storeName).add(data);
+          req.onsuccess = function () { resolve(req.result); };
+          req.onerror = function (e) { reject(e); };
+        });
+      });
+    }
+
+    function dbGetAll(storeName) {
+      return dbPromise.then(function (db) {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(storeName, 'readonly');
+          var req = tx.objectStore(storeName).getAll();
+          req.onsuccess = function () { resolve(req.result); };
+          req.onerror = function (e) { reject(e); };
+        });
+      });
+    }
+
+    function dbDelete(storeName, id) {
+      return dbPromise.then(function (db) {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(storeName, 'readwrite');
+          var req = tx.objectStore(storeName).delete(id);
+          req.onsuccess = function () { resolve(); };
+          req.onerror = function (e) { reject(e); };
+        });
+      });
+    }
+
+    // ============================================================
+    // NAVIGATION ENTRE VUES
+    // ============================================================
+    var navButtons = document.querySelectorAll('.nav-btn');
+    var views = document.querySelectorAll('.view');
+    var leafletMapInstance = null;
+
+    navButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var targetId = btn.getAttribute('data-view');
+        navButtons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        views.forEach(function (v) { v.classList.remove('active'); });
+        document.getElementById(targetId).classList.add('active');
+
+        if (targetId === 'view-map') {
+          initMapIfNeeded();
+          setTimeout(function () { if (leafletMapInstance) leafletMapInstance.invalidateSize(); }, 50);
+        }
+        if (targetId === 'view-data') {
+          renderDataList();
+        }
+      });
+    });
+
+    // ============================================================
+    // FORMULAIRE : capture GPS + photo + soumission
+    // ============================================================
+    var capturedPosition = null;
+    var capturedPhotoBlob = null;
+
+    document.getElementById('captureGpsBtn').addEventListener('click', function () {
+      var readout = document.getElementById('gpsReadout');
+      if (!navigator.geolocation) {
+        showToast('Géolocalisation non disponible sur cet appareil', 'fa-triangle-exclamation');
+        return;
+      }
+      readout.textContent = 'Localisation en cours…';
+      navigator.geolocation.getCurrentPosition(function (pos) {
+        capturedPosition = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
+        readout.textContent = capturedPosition.lat.toFixed(5) + ', ' + capturedPosition.lng.toFixed(5) + ' (±' + Math.round(capturedPosition.accuracy) + 'm)';
+        readout.classList.add('filled');
+        showToast('Position capturée', 'fa-location-crosshairs');
+      }, function (err) {
+        readout.textContent = 'Échec de la localisation';
+        showToast('Impossible d\'obtenir la position (' + err.message + ')', 'fa-triangle-exclamation');
+      }, { enableHighAccuracy: true, timeout: 15000 });
+    });
+
+    document.getElementById('photoInput').addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      capturedPhotoBlob = file;
+      var url = URL.createObjectURL(file);
+      document.getElementById('photoPreviewImg').src = url;
+      document.getElementById('photoPreview').classList.add('filled');
+    });
+
+    document.getElementById('removePhotoBtn').addEventListener('click', function () {
+      capturedPhotoBlob = null;
+      document.getElementById('photoInput').value = '';
+      document.getElementById('photoPreview').classList.remove('filled');
+    });
+
+    document.getElementById('ficheForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      try {
+        var especeNom = document.getElementById('especeNom').value.trim();
+        if (!especeNom) { showToast('Le nom de l\'espèce est requis', 'fa-triangle-exclamation'); return; }
+
+        var fiche = {
+          obsType: document.querySelector('input[name="obsType"]:checked').value,
+          especeNom: especeNom,
+          especeSci: document.getElementById('especeSci').value.trim(),
+          nbIndividus: document.getElementById('nbIndividus').value || 1,
+          stade: document.getElementById('stade').value,
+          position: capturedPosition,
+          photo: capturedPhotoBlob,
+          habitatNotes: document.getElementById('habitatNotes').value.trim(),
+          observateur: document.getElementById('observateur').value.trim(),
+          dateHeure: new Date().toISOString()
+        };
+
+        dbAdd('fiches', fiche).then(function () {
+          showToast('Fiche enregistrée', 'fa-circle-check');
+          document.getElementById('ficheForm').reset();
+          capturedPosition = null;
+          capturedPhotoBlob = null;
+          document.getElementById('gpsReadout').textContent = 'Aucune position capturée';
+          document.getElementById('gpsReadout').classList.remove('filled');
+          document.getElementById('photoPreview').classList.remove('filled');
+        }).catch(function (err) {
+          showToast('Erreur lors de l\'enregistrement', 'fa-triangle-exclamation');
+          showErrorBanner('Échec de l\'enregistrement de la fiche : ' + (err && err.message ? err.message : JSON.stringify(err)));
+        });
+      } catch (err) {
+        showErrorBanner('Exception au moment de l\'enregistrement : ' + err.message);
+      }
+    });
+
+    // ============================================================
+    // CARTE + DESSIN DE POLYGONES
+    // ============================================================
+    var drawnItemsLayer = null;
+
+    function initMapIfNeeded() {
+      if (leafletMapInstance) return;
+
+      if (typeof L === 'undefined') {
+        showErrorBanner('La bibliothèque de cartographie (Leaflet) n\'a pas pu se charger. Vérifiez votre connexion internet et rechargez la page.');
+        document.getElementById('leafletMap').innerHTML =
+          '<div style="padding:40px 20px;text-align:center;color:#5B6472;">' +
+          '<i class="fas fa-triangle-exclamation" style="font-size:2rem;margin-bottom:12px;color:#D97D3D;"></i>' +
+          '<p>La carte n\'a pas pu charger. Vérifiez votre connexion et rechargez la page.</p></div>';
+        return;
+      }
+
+      try {
+        leafletMapInstance = L.map('leafletMap').setView([-18.8792, 47.5079], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '© OpenStreetMap'
+        }).addTo(leafletMapInstance);
+
+        drawnItemsLayer = new L.FeatureGroup();
+        leafletMapInstance.addLayer(drawnItemsLayer);
+
+        if (typeof L.Control.Draw === 'undefined') {
+          showErrorBanner('L\'outil de dessin (Leaflet.Draw) n\'a pas pu charger. La carte s\'affiche mais le dessin de zones ne fonctionnera pas. Rechargez la page.');
+        } else {
+          var drawControl = new L.Control.Draw({
+            draw: {
+              polygon: { allowIntersection: false, showArea: false, shapeOptions: { color: '#1F7A4D' } },
+              marker: true,
+              polyline: false,
+              circle: false,
+              circlemarker: false,
+              rectangle: { shapeOptions: { color: '#1F7A4D' } }
+            },
+            edit: { featureGroup: drawnItemsLayer }
+          });
+          leafletMapInstance.addControl(drawControl);
+
+          leafletMapInstance.on(L.Draw.Event.CREATED, function (event) {
+            var layer = event.layer;
+            drawnItemsLayer.addLayer(layer);
+
+            if (event.layerType === 'polygon' || event.layerType === 'rectangle') {
+              var geojson = layer.toGeoJSON();
+              var areaM2 = (typeof turf !== 'undefined') ? turf.area(geojson) : 0;
+              var areaHa = areaM2 / 10000;
+              document.getElementById('areaReadout').innerHTML =
+                'Dernière zone : <strong>' + areaHa.toFixed(2) + ' ha</strong> (' + Math.round(areaM2).toLocaleString('fr-FR') + ' m²)';
+
+              var label = window.prompt('Nom de cette zone (ex : Parcelle Nord, Site de restauration…) :', '');
+              if (label === null) { drawnItemsLayer.removeLayer(layer); return; }
+
+              var polygone = {
+                label: label || 'Zone sans nom',
+                geojson: geojson,
+                areaM2: areaM2,
+                areaHa: areaHa,
+                dateHeure: new Date().toISOString()
+              };
+              dbAdd('polygones', polygone).then(function () {
+                showToast('Zone enregistrée (' + areaHa.toFixed(2) + ' ha)', 'fa-draw-polygon');
+                layer.bindPopup('<strong>' + polygone.label + '</strong><br>' + areaHa.toFixed(2) + ' ha');
+              }).catch(function (err) {
+                showErrorBanner('Échec de l\'enregistrement de la zone : ' + err.message);
+              });
+            } else if (event.layerType === 'marker') {
+              var label2 = window.prompt('Nom de ce point :', '');
+              layer.bindPopup('<strong>' + (label2 || 'Point') + '</strong>');
+            }
           });
         }
-        return networkResponse;
-      }).catch(function () {
-        // Hors-ligne et pas en cache : on ne peut rien faire de plus pour cette ressource
-        return new Response('', { status: 408, statusText: 'Hors-ligne et non mis en cache' });
+
+        loadSavedPolygonesOnMap();
+      } catch (err) {
+        showErrorBanner('Erreur lors de l\'initialisation de la carte : ' + err.message);
+      }
+    }
+
+    function loadSavedPolygonesOnMap() {
+      dbGetAll('polygones').then(function (list) {
+        list.forEach(function (p) {
+          var layer = L.geoJSON(p.geojson, { style: { color: '#1F7A4D' } });
+          layer.bindPopup('<strong>' + p.label + '</strong><br>' + p.areaHa.toFixed(2) + ' ha');
+          layer.addTo(drawnItemsLayer);
+        });
       });
-    })
-  );
-});
+    }
+
+    document.getElementById('locateBtn').addEventListener('click', function () {
+      if (!leafletMapInstance) return;
+      leafletMapInstance.locate({ setView: true, maxZoom: 14 });
+    });
+
+    // ============================================================
+    // VUE DONNÉES : liste + suppression + export
+    // ============================================================
+    var currentDataTab = 'fiches';
+
+    document.querySelectorAll('.data-tab').forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        document.querySelectorAll('.data-tab').forEach(function (t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        currentDataTab = tab.getAttribute('data-tab');
+        renderDataList();
+      });
+    });
+
+    function renderDataList() {
+      var container = document.getElementById('dataList');
+
+      Promise.all([dbGetAll('fiches'), dbGetAll('polygones')]).then(function (results) {
+        var fiches = results[0].sort(function (a, b) { return new Date(b.dateHeure) - new Date(a.dateHeure); });
+        var polygones = results[1].sort(function (a, b) { return new Date(b.dateHeure) - new Date(a.dateHeure); });
+
+        document.getElementById('countFiches').textContent = fiches.length;
+        document.getElementById('countPolygones').textContent = polygones.length;
+
+        container.innerHTML = '';
+        var items = currentDataTab === 'fiches' ? fiches : polygones;
+
+        if (items.length === 0) {
+          container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Aucune donnée pour l\'instant.</p></div>';
+          return;
+        }
+
+        items.forEach(function (item) {
+          var card = document.createElement('div');
+          card.className = 'data-card';
+
+          if (currentDataTab === 'fiches') {
+            var thumb = '';
+            if (item.photo) {
+              var url = URL.createObjectURL(item.photo);
+              thumb = '<img src="' + url + '" alt="">';
+            } else {
+              thumb = '<div class="data-icon"><i class="fas ' + (item.obsType === 'Flore' ? 'fa-leaf' : 'fa-paw') + '"></i></div>';
+            }
+            card.innerHTML =
+              thumb +
+              '<div class="data-body">' +
+                '<div class="data-title">' + escapeHtml(item.especeNom) + '</div>' +
+                '<div class="data-meta">' + item.obsType + ' · ' + (item.nbIndividus || 1) + ' ind. · ' + formatDate(item.dateHeure) + '</div>' +
+              '</div>' +
+              '<div class="data-actions"><button class="delete-btn" data-id="' + item.id + '" data-store="fiches"><i class="fas fa-trash"></i></button></div>';
+          } else {
+            card.innerHTML =
+              '<div class="data-icon"><i class="fas fa-draw-polygon"></i></div>' +
+              '<div class="data-body">' +
+                '<div class="data-title">' + escapeHtml(item.label) + '</div>' +
+                '<div class="data-meta">' + item.areaHa.toFixed(2) + ' ha · ' + formatDate(item.dateHeure) + '</div>' +
+              '</div>' +
+              '<div class="data-actions"><button class="delete-btn" data-id="' + item.id + '" data-store="polygones"><i class="fas fa-trash"></i></button></div>';
+          }
+          container.appendChild(card);
+        });
+
+        container.querySelectorAll('.delete-btn').forEach(function (btn) {
+          btn.addEventListener('click', function () {
+            var id = parseInt(btn.getAttribute('data-id'), 10);
+            var store = btn.getAttribute('data-store');
+            dbDelete(store, id).then(function () {
+              showToast('Élément supprimé', 'fa-trash');
+              renderDataList();
+            });
+          });
+        });
+      }).catch(function (err) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-triangle-exclamation"></i><p>Impossible de charger les données enregistrées.</p></div>';
+        showErrorBanner('Échec du chargement des données : ' + (err && err.message ? err.message : JSON.stringify(err)));
+      });
+    }
+
+    function formatDate(iso) {
+      var d = new Date(iso);
+      return d.toLocaleDateString('fr-FR') + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function escapeHtml(str) {
+      var div = document.createElement('div');
+      div.textContent = str || '';
+      return div.innerHTML;
+    }
+
+    // ============================================================
+    // EXPORT DES DONNÉES
+    // ============================================================
+    function downloadBlob(content, filename, mime) {
+      var blob = new Blob([content], { type: mime });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = filename;
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('exportFichesBtn').addEventListener('click', function () {
+      dbGetAll('fiches').then(function (fiches) {
+        if (fiches.length === 0) { showToast('Aucune fiche à exporter', 'fa-triangle-exclamation'); return; }
+        var headers = ['Date', 'Type', 'Espece', 'Nom_scientifique', 'Nb_individus', 'Stade', 'Latitude', 'Longitude', 'Habitat_Notes', 'Observateur'];
+        var rows = fiches.map(function (f) {
+          return [
+            f.dateHeure, f.obsType, f.especeNom, f.especeSci, f.nbIndividus, f.stade,
+            f.position ? f.position.lat : '', f.position ? f.position.lng : '',
+            (f.habitatNotes || '').replace(/[\r\n]+/g, ' '), f.observateur
+          ].map(function (v) { return '"' + String(v || '').replace(/"/g, '""') + '"'; }).join(',');
+        });
+        var csv = headers.join(',') + '\n' + rows.join('\n');
+        downloadBlob('\uFEFF' + csv, 'ecoscope-fiches-' + Date.now() + '.csv', 'text/csv;charset=utf-8');
+        showToast('Export CSV téléchargé', 'fa-file-csv');
+      });
+    });
+
+    document.getElementById('exportPolygonesBtn').addEventListener('click', function () {
+      dbGetAll('polygones').then(function (polygones) {
+        if (polygones.length === 0) { showToast('Aucune zone à exporter', 'fa-triangle-exclamation'); return; }
+        var featureCollection = {
+          type: 'FeatureCollection',
+          features: polygones.map(function (p) {
+            var f = JSON.parse(JSON.stringify(p.geojson));
+            f.properties = { label: p.label, areaHa: p.areaHa, dateHeure: p.dateHeure };
+            return f;
+          })
+        };
+        downloadBlob(JSON.stringify(featureCollection, null, 2), 'ecoscope-zones-' + Date.now() + '.geojson', 'application/geo+json');
+        showToast('Export GeoJSON téléchargé', 'fa-file-export');
+      });
+    });
+
+    // ============================================================
+    // SERVICE WORKER
+    // ============================================================
+    if ('serviceWorker' in navigator) {
+      var refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (refreshing) return;
+        refreshing = true;
+        window.location.reload();
+      });
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function (err) {
+          console.warn('Échec d\'enregistrement du service worker :', err);
+        });
+      });
+    }
+
+    renderDataList();
+  </script>
+</body>
+</html>
