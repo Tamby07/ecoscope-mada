@@ -3,7 +3,7 @@
 // pour permettre la saisie de fiches et l'usage de la carte hors-ligne
 // (les tuiles de fond de carte non encore visitées nécessitent toujours une connexion).
 
-const CACHE_NAME = 'ecoscope-app-v1';
+const CACHE_NAME = 'ecoscope-app-v2';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -58,96 +58,34 @@ self.addEventListener('fetch', function (event) {
     return;
   }
 
-  event.respondWith(
-    caches.match(event.request).then(function (cachedResponse) {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then(function (networkResponse) {
-        // Met en cache les nouvelles ressources récupérées avec succès (même origine ou CORS ouvert)
-        if (networkResponse && networkResponse.status === 200) {
-          var responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(function (cache) {
-            cache.put(event.request, responseClone);
-          });
-        }
+  var url = event.request.url;
+  var isAppShell = event.request.mode === 'navigate' ||
+    url.indexOf('index.html') !== -1 ||
+    url.indexOf('manifest.json') !== -1;
+
+  if (isAppShell) {
+    // RÉSEAU D'ABORD : on veut toujours la dernière version de l'app quand la connexion est disponible.
+    // Le cache ne sert que de secours si l'utilisateur est hors-ligne.
+    event.respondWith(
+      fetch(event.request).then(function (networkResponse) {
+        var clone = networkResponse.clone();
+        caches.open(CACHE_NAME).then(function (cache) { cache.put(event.request, clone); });
         return networkResponse;
       }).catch(function () {
-        // Hors-ligne et pas en cache : on ne peut rien faire de plus pour cette ressource
-        return new Response('', { status: 408, statusText: 'Hors-ligne et non mis en cache' });
-      });
-    })
-  );
-});
-});
-
-self.addEventListener('activate', function (event) {
-  event.waitUntil(
-    caches.keys().then(function (keys) {
-      return Promise.all(
-        keys.filter(function (key) { return key !== CACHE_NAME; })
-            .map(function (key) { return caches.delete(key); })
-      );
-    }).then(function () {
-      return self.clients.claim();
-    })
-  );
-});
-
-self.addEventListener('fetch', function (event) {
-  // Ne pas intercepter les requêtes vers les tuiles de carte (trop nombreuses/variables pour un cache simple)
-  if (event.request.url.indexOf('tile.openstreetmap.org') !== -1) {
+        return caches.match(event.request);
+      })
+    );
     return;
   }
 
+  // CACHE D'ABORD pour tout le reste (librairies externes, icônes, polices) : elles changent rarement,
+  // donc autant les servir instantanément depuis le cache et les rafraîchir en arrière-plan.
   event.respondWith(
     caches.match(event.request).then(function (cachedResponse) {
       if (cachedResponse) {
         return cachedResponse;
       }
       return fetch(event.request).then(function (networkResponse) {
-        // Met en cache les nouvelles ressources récupérées avec succès (même origine ou CORS ouvert)
-        if (networkResponse && networkResponse.status === 200) {
-          var responseClone = networkResponse.clone();
-          caches.open(CACHE_NAME).then(function (cache) {
-            cache.put(event.request, responseClone);
-          });
-        }
-        return networkResponse;
-      }).catch(function () {
-        // Hors-ligne et pas en cache : on ne peut rien faire de plus pour cette ressource
-        return new Response('', { status: 408, statusText: 'Hors-ligne et non mis en cache' });
-      });
-    })
-  );
-});});
-
-self.addEventListener('activate', function (event) {
-  event.waitUntil(
-    caches.keys().then(function (keys) {
-      return Promise.all(
-        keys.filter(function (key) { return key !== CACHE_NAME; })
-            .map(function (key) { return caches.delete(key); })
-      );
-    }).then(function () {
-      return self.clients.claim();
-    })
-  );
-});
-
-self.addEventListener('fetch', function (event) {
-  // Ne pas intercepter les requêtes vers les tuiles de carte (trop nombreuses/variables pour un cache simple)
-  if (event.request.url.indexOf('tile.openstreetmap.org') !== -1) {
-    return;
-  }
-
-  event.respondWith(
-    caches.match(event.request).then(function (cachedResponse) {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).then(function (networkResponse) {
-        // Met en cache les nouvelles ressources récupérées avec succès (même origine ou CORS ouvert)
         if (networkResponse && networkResponse.status === 200) {
           var responseClone = networkResponse.clone();
           caches.open(CACHE_NAME).then(function (cache) {
