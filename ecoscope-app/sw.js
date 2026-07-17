@@ -3,12 +3,13 @@
 // pour permettre la saisie de fiches et l'usage de la carte hors-ligne
 // (les tuiles de fond de carte non encore visitées nécessitent toujours une connexion).
 
-const CACHE_NAME = 'ecoscope-app-v2';
+const CACHE_NAME = 'ecoscope-app-v3';
 
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.json',
+  './species-data.js',
   './icon-192.png',
   './icon-192-maskable.png',
   './icon-512.png',
@@ -61,7 +62,8 @@ self.addEventListener('fetch', function (event) {
   var url = event.request.url;
   var isAppShell = event.request.mode === 'navigate' ||
     url.indexOf('index.html') !== -1 ||
-    url.indexOf('manifest.json') !== -1;
+    url.indexOf('manifest.json') !== -1 ||
+    url.indexOf('species-data.js') !== -1;
 
   if (isAppShell) {
     // RÉSEAU D'ABORD : on veut toujours la dernière version de l'app quand la connexion est disponible.
