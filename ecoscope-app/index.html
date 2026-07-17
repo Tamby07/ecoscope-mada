@@ -120,6 +120,31 @@
   }
   .btn-submit:active { background: var(--color-primary-dark); }
 
+  .individu-row {
+    background: white; border: 1.5px solid var(--color-border); border-radius: 12px;
+    padding: 14px; margin-bottom: 12px;
+  }
+  .individu-row-header {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+  }
+  .individu-row-label { font-weight: 700; font-size: 0.85rem; color: var(--color-primary); }
+  .remove-individu-btn {
+    background: none; border: none; color: var(--color-text-muted); cursor: pointer; font-size: 0.95rem; padding: 4px 8px;
+  }
+  .remove-individu-btn:active { color: #DC2626; }
+  .individu-espece { margin-bottom: 8px; }
+  .individu-numeric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .individu-numeric-grid label {
+    font-size: 0.72rem; color: var(--color-text-muted); font-weight: 600; margin-bottom: 3px; display: block;
+  }
+  .individu-numeric-grid input { padding: 10px; font-size: 0.88rem; }
+
+  .add-individu-btn {
+    width: 100%; padding: 13px; border-radius: 10px; border: 1.5px dashed var(--color-primary);
+    background: var(--color-primary-light); color: var(--color-primary-dark); font-weight: 600; font-size: 0.88rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
   /* ===== Map view ===== */
   #leafletMap { flex: 1; width: 100%; z-index: 1; }
   .map-toolbar {
@@ -207,46 +232,17 @@
   <main>
     <!-- ============ VUE 1 : NOUVELLE FICHE ============ -->
     <section id="view-form" class="view active">
-      <h2 class="view-title">Nouvelle fiche d'observation</h2>
-      <p class="view-subtitle">Inventaire faune / flore — les fiches sont enregistrées sur l'appareil, même hors-ligne.</p>
+      <h2 class="view-title">Nouvelle placette</h2>
+      <p class="view-subtitle">Inventaire floristique à l'échelle de la placette — une position GPS, plusieurs individus.</p>
 
-      <form id="ficheForm">
+      <form id="placetteForm">
         <div class="field">
-          <label>Type d'observation</label>
-          <div class="radio-group">
-            <label><input type="radio" name="obsType" value="Faune" checked><span>🐾 Faune</span></label>
-            <label><input type="radio" name="obsType" value="Flore"><span>🌿 Flore</span></label>
-          </div>
+          <label for="nomPlacette">Nom / identifiant de la placette</label>
+          <input type="text" id="nomPlacette" placeholder="Ex : PL-01">
         </div>
 
         <div class="field">
-          <label for="especeNom">Nom de l'espèce *</label>
-          <input type="text" id="especeNom" placeholder="Ex : Lémurien à front roux" required>
-        </div>
-
-        <div class="field">
-          <label for="especeSci">Nom scientifique</label>
-          <input type="text" id="especeSci" placeholder="Ex : Eulemur rufifrons">
-        </div>
-
-        <div class="field">
-          <label for="nbIndividus">Nombre d'individus</label>
-          <input type="number" id="nbIndividus" min="1" value="1">
-        </div>
-
-        <div class="field">
-          <label for="stade">Stade / type d'indice</label>
-          <select id="stade">
-            <option value="Observation directe">Observation directe</option>
-            <option value="Adulte">Adulte</option>
-            <option value="Juvénile">Juvénile</option>
-            <option value="Trace / indice">Trace / indice (empreinte, crotte…)</option>
-            <option value="Inconnu">Inconnu</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label>Position GPS</label>
+          <label>Position GPS (centre de la placette) *</label>
           <div class="gps-row">
             <button type="button" class="gps-btn" id="captureGpsBtn"><i class="fas fa-location-crosshairs"></i> Capturer</button>
             <div class="gps-readout" id="gpsReadout">Aucune position capturée</div>
@@ -254,28 +250,17 @@
         </div>
 
         <div class="field">
-          <label>Photo</label>
-          <div class="photo-input-wrap">
-            <label class="photo-btn" for="photoInput"><i class="fas fa-camera"></i> Prendre / choisir une photo</label>
-            <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none;">
-          </div>
-          <div class="photo-preview" id="photoPreview">
-            <img id="photoPreviewImg" alt="Aperçu photo">
-            <button type="button" class="remove-photo" id="removePhotoBtn"><i class="fas fa-times"></i></button>
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="habitatNotes">Habitat / Notes</label>
-          <textarea id="habitatNotes" placeholder="Description du milieu, comportement observé, contexte…"></textarea>
-        </div>
-
-        <div class="field">
           <label for="observateur">Observateur</label>
           <input type="text" id="observateur" placeholder="Votre nom">
         </div>
 
-        <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Enregistrer la fiche</button>
+        <div class="field">
+          <label>Individus recensés dans la placette *</label>
+          <div id="individusList"></div>
+          <button type="button" class="add-individu-btn" id="addIndividuBtn"><i class="fas fa-plus"></i> Ajouter un individu</button>
+        </div>
+
+        <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Enregistrer la placette</button>
       </form>
     </section>
 
@@ -295,21 +280,21 @@
       <p class="view-subtitle">Fiches et zones enregistrées sur cet appareil.</p>
 
       <div class="data-tabs">
-        <button class="data-tab active" data-tab="fiches">📋 Fiches (<span id="countFiches">0</span>)</button>
+        <button class="data-tab active" data-tab="placettes">🌿 Placettes (<span id="countFiches">0</span>)</button>
         <button class="data-tab" data-tab="polygones">🗺️ Zones (<span id="countPolygones">0</span>)</button>
       </div>
 
       <div id="dataList"></div>
 
       <div class="export-buttons">
-        <button type="button" id="exportFichesBtn"><i class="fas fa-file-csv"></i> Exporter fiches (CSV)</button>
+        <button type="button" id="exportFichesBtn"><i class="fas fa-file-csv"></i> Exporter placettes (CSV)</button>
         <button type="button" id="exportPolygonesBtn"><i class="fas fa-file-export"></i> Exporter zones (GeoJSON)</button>
       </div>
     </section>
   </main>
 
   <nav class="bottom-nav">
-    <button class="nav-btn active" data-view="view-form"><i class="fas fa-feather-pointed"></i><span>Fiche</span></button>
+    <button class="nav-btn active" data-view="view-form"><i class="fas fa-feather-pointed"></i><span>Placette</span></button>
     <button class="nav-btn" data-view="view-map"><i class="fas fa-draw-polygon"></i><span>Carte</span></button>
     <button class="nav-btn" data-view="view-data"><i class="fas fa-database"></i><span>Données</span></button>
   </nav>
@@ -388,7 +373,7 @@
     // BASE DE DONNÉES LOCALE (IndexedDB)
     // ============================================================
     var DB_NAME = 'ecoscopeAppDB';
-    var DB_VERSION = 1;
+    var DB_VERSION = 2;
     var dbPromise = new Promise(function (resolve, reject) {
       try {
         if (!window.indexedDB) {
@@ -401,6 +386,9 @@
           var db = e.target.result;
           if (!db.objectStoreNames.contains('fiches')) {
             db.createObjectStore('fiches', { keyPath: 'id', autoIncrement: true });
+          }
+          if (!db.objectStoreNames.contains('placettes')) {
+            db.createObjectStore('placettes', { keyPath: 'id', autoIncrement: true });
           }
           if (!db.objectStoreNames.contains('polygones')) {
             db.createObjectStore('polygones', { keyPath: 'id', autoIncrement: true });
@@ -476,10 +464,10 @@
     });
 
     // ============================================================
-    // FORMULAIRE : capture GPS + photo + soumission
+    // FORMULAIRE PLACETTE : capture GPS + liste dynamique d'individus
     // ============================================================
     var capturedPosition = null;
-    var capturedPhotoBlob = null;
+    var individuRowCounter = 0;
 
     document.getElementById('captureGpsBtn').addEventListener('click', function () {
       var readout = document.getElementById('gpsReadout');
@@ -490,7 +478,7 @@
       readout.textContent = 'Localisation en cours…';
       navigator.geolocation.getCurrentPosition(function (pos) {
         capturedPosition = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy };
-        readout.textContent = capturedPosition.lat.toFixed(5) + ', ' + capturedPosition.lng.toFixed(5) + ' (±' + Math.round(capturedPosition.accuracy) + 'm)';
+        readout.textContent = capturedPosition.lat.toFixed(6) + ', ' + capturedPosition.lng.toFixed(6) + ' (±' + Math.round(capturedPosition.accuracy) + 'm)';
         readout.classList.add('filled');
         showToast('Position capturée', 'fa-location-crosshairs');
       }, function (err) {
@@ -499,51 +487,96 @@
       }, { enableHighAccuracy: true, timeout: 15000 });
     });
 
-    document.getElementById('photoInput').addEventListener('change', function (e) {
-      var file = e.target.files[0];
-      if (!file) return;
-      capturedPhotoBlob = file;
-      var url = URL.createObjectURL(file);
-      document.getElementById('photoPreviewImg').src = url;
-      document.getElementById('photoPreview').classList.add('filled');
-    });
+    function addIndividuRow() {
+      individuRowCounter++;
+      var list = document.getElementById('individusList');
+      var row = document.createElement('div');
+      row.className = 'individu-row';
+      row.innerHTML =
+        '<div class="individu-row-header">' +
+          '<span class="individu-row-label">Individu #' + individuRowCounter + '</span>' +
+          '<button type="button" class="remove-individu-btn"><i class="fas fa-trash"></i></button>' +
+        '</div>' +
+        '<input type="text" class="ind-espece individu-espece" placeholder="Espèce *">' +
+        '<div class="individu-numeric-grid">' +
+          '<div><label>DHP (cm)</label><input type="number" class="ind-dhp" step="0.1" min="0" placeholder="0.0"></div>' +
+          '<div><label>Hauteur tot. (m)</label><input type="number" class="ind-hauteur" step="0.1" min="0" placeholder="0.0"></div>' +
+          '<div><label>Densité (g/cm³)</label><input type="number" class="ind-densite" step="0.01" min="0" placeholder="0.00"></div>' +
+        '</div>';
 
-    document.getElementById('removePhotoBtn').addEventListener('click', function () {
-      capturedPhotoBlob = null;
-      document.getElementById('photoInput').value = '';
-      document.getElementById('photoPreview').classList.remove('filled');
-    });
+      row.querySelector('.remove-individu-btn').addEventListener('click', function () {
+        if (list.children.length <= 1) {
+          showToast('Une placette doit contenir au moins un individu', 'fa-triangle-exclamation');
+          return;
+        }
+        row.remove();
+      });
 
-    document.getElementById('ficheForm').addEventListener('submit', function (e) {
+      list.appendChild(row);
+    }
+
+    document.getElementById('addIndividuBtn').addEventListener('click', addIndividuRow);
+    addIndividuRow(); // une première ligne pré-remplie au chargement
+
+    document.getElementById('placetteForm').addEventListener('submit', function (e) {
       e.preventDefault();
       try {
-        var especeNom = document.getElementById('especeNom').value.trim();
-        if (!especeNom) { showToast('Le nom de l\'espèce est requis', 'fa-triangle-exclamation'); return; }
+        if (!capturedPosition) {
+          showToast('Capturez la position GPS de la placette avant d\'enregistrer', 'fa-triangle-exclamation');
+          return;
+        }
 
-        var fiche = {
-          obsType: document.querySelector('input[name="obsType"]:checked').value,
-          especeNom: especeNom,
-          especeSci: document.getElementById('especeSci').value.trim(),
-          nbIndividus: document.getElementById('nbIndividus').value || 1,
-          stade: document.getElementById('stade').value,
+        var rows = document.querySelectorAll('#individusList .individu-row');
+        var individus = [];
+        var hasError = false;
+
+        rows.forEach(function (row) {
+          var espece = row.querySelector('.ind-espece').value.trim();
+          var dhp = row.querySelector('.ind-dhp').value;
+          var hauteur = row.querySelector('.ind-hauteur').value;
+          var densite = row.querySelector('.ind-densite').value;
+
+          if (!espece && !dhp && !hauteur && !densite) return; // ligne vide, ignorée
+
+          if (!espece) { hasError = true; return; }
+
+          individus.push({
+            espece: espece,
+            dhp: dhp ? parseFloat(dhp) : null,
+            hauteurTotale: hauteur ? parseFloat(hauteur) : null,
+            densite: densite ? parseFloat(densite) : null
+          });
+        });
+
+        if (hasError) {
+          showToast('Chaque individu doit avoir une espèce renseignée', 'fa-triangle-exclamation');
+          return;
+        }
+        if (individus.length === 0) {
+          showToast('Ajoutez au moins un individu à la placette', 'fa-triangle-exclamation');
+          return;
+        }
+
+        var placette = {
+          nomPlacette: document.getElementById('nomPlacette').value.trim() || ('Placette ' + new Date().toLocaleDateString('fr-FR')),
           position: capturedPosition,
-          photo: capturedPhotoBlob,
-          habitatNotes: document.getElementById('habitatNotes').value.trim(),
           observateur: document.getElementById('observateur').value.trim(),
+          individus: individus,
           dateHeure: new Date().toISOString()
         };
 
-        dbAdd('fiches', fiche).then(function () {
-          showToast('Fiche enregistrée', 'fa-circle-check');
-          document.getElementById('ficheForm').reset();
+        dbAdd('placettes', placette).then(function () {
+          showToast(individus.length + ' individu(s) enregistré(s)', 'fa-circle-check');
+          document.getElementById('placetteForm').reset();
+          document.getElementById('individusList').innerHTML = '';
+          individuRowCounter = 0;
+          addIndividuRow();
           capturedPosition = null;
-          capturedPhotoBlob = null;
           document.getElementById('gpsReadout').textContent = 'Aucune position capturée';
           document.getElementById('gpsReadout').classList.remove('filled');
-          document.getElementById('photoPreview').classList.remove('filled');
         }).catch(function (err) {
           showToast('Erreur lors de l\'enregistrement', 'fa-triangle-exclamation');
-          showErrorBanner('Échec de l\'enregistrement de la fiche : ' + (err && err.message ? err.message : JSON.stringify(err)));
+          showErrorBanner('Échec de l\'enregistrement de la placette : ' + (err && err.message ? err.message : JSON.stringify(err)));
         });
       } catch (err) {
         showErrorBanner('Exception au moment de l\'enregistrement : ' + err.message);
@@ -651,7 +684,7 @@
     // ============================================================
     // VUE DONNÉES : liste + suppression + export
     // ============================================================
-    var currentDataTab = 'fiches';
+    var currentDataTab = 'placettes';
 
     document.querySelectorAll('.data-tab').forEach(function (tab) {
       tab.addEventListener('click', function () {
@@ -665,15 +698,15 @@
     function renderDataList() {
       var container = document.getElementById('dataList');
 
-      Promise.all([dbGetAll('fiches'), dbGetAll('polygones')]).then(function (results) {
-        var fiches = results[0].sort(function (a, b) { return new Date(b.dateHeure) - new Date(a.dateHeure); });
+      Promise.all([dbGetAll('placettes'), dbGetAll('polygones')]).then(function (results) {
+        var placettes = results[0].sort(function (a, b) { return new Date(b.dateHeure) - new Date(a.dateHeure); });
         var polygones = results[1].sort(function (a, b) { return new Date(b.dateHeure) - new Date(a.dateHeure); });
 
-        document.getElementById('countFiches').textContent = fiches.length;
+        document.getElementById('countFiches').textContent = placettes.length;
         document.getElementById('countPolygones').textContent = polygones.length;
 
         container.innerHTML = '';
-        var items = currentDataTab === 'fiches' ? fiches : polygones;
+        var items = currentDataTab === 'placettes' ? placettes : polygones;
 
         if (items.length === 0) {
           container.innerHTML = '<div class="empty-state"><i class="fas fa-inbox"></i><p>Aucune donnée pour l\'instant.</p></div>';
@@ -684,21 +717,18 @@
           var card = document.createElement('div');
           card.className = 'data-card';
 
-          if (currentDataTab === 'fiches') {
-            var thumb = '';
-            if (item.photo) {
-              var url = URL.createObjectURL(item.photo);
-              thumb = '<img src="' + url + '" alt="">';
-            } else {
-              thumb = '<div class="data-icon"><i class="fas ' + (item.obsType === 'Flore' ? 'fa-leaf' : 'fa-paw') + '"></i></div>';
-            }
+          if (currentDataTab === 'placettes') {
+            var nbInd = item.individus ? item.individus.length : 0;
+            var especesApercu = item.individus ? item.individus.slice(0, 2).map(function (i) { return i.espece; }).join(', ') : '';
+            var coords = item.position ? item.position.lat.toFixed(5) + ', ' + item.position.lng.toFixed(5) : 'Sans position';
             card.innerHTML =
-              thumb +
+              '<div class="data-icon"><i class="fas fa-tree"></i></div>' +
               '<div class="data-body">' +
-                '<div class="data-title">' + escapeHtml(item.especeNom) + '</div>' +
-                '<div class="data-meta">' + item.obsType + ' · ' + (item.nbIndividus || 1) + ' ind. · ' + formatDate(item.dateHeure) + '</div>' +
+                '<div class="data-title">' + escapeHtml(item.nomPlacette) + '</div>' +
+                '<div class="data-meta">' + nbInd + ' individu(s)' + (especesApercu ? ' · ' + escapeHtml(especesApercu) : '') + '</div>' +
+                '<div class="data-meta">' + coords + ' · ' + formatDate(item.dateHeure) + '</div>' +
               '</div>' +
-              '<div class="data-actions"><button class="delete-btn" data-id="' + item.id + '" data-store="fiches"><i class="fas fa-trash"></i></button></div>';
+              '<div class="data-actions"><button class="delete-btn" data-id="' + item.id + '" data-store="placettes"><i class="fas fa-trash"></i></button></div>';
           } else {
             card.innerHTML =
               '<div class="data-icon"><i class="fas fa-draw-polygon"></i></div>' +
@@ -751,18 +781,23 @@
     }
 
     document.getElementById('exportFichesBtn').addEventListener('click', function () {
-      dbGetAll('fiches').then(function (fiches) {
-        if (fiches.length === 0) { showToast('Aucune fiche à exporter', 'fa-triangle-exclamation'); return; }
-        var headers = ['Date', 'Type', 'Espece', 'Nom_scientifique', 'Nb_individus', 'Stade', 'Latitude', 'Longitude', 'Habitat_Notes', 'Observateur'];
-        var rows = fiches.map(function (f) {
-          return [
-            f.dateHeure, f.obsType, f.especeNom, f.especeSci, f.nbIndividus, f.stade,
-            f.position ? f.position.lat : '', f.position ? f.position.lng : '',
-            (f.habitatNotes || '').replace(/[\r\n]+/g, ' '), f.observateur
-          ].map(function (v) { return '"' + String(v || '').replace(/"/g, '""') + '"'; }).join(',');
+      dbGetAll('placettes').then(function (placettes) {
+        if (placettes.length === 0) { showToast('Aucune placette à exporter', 'fa-triangle-exclamation'); return; }
+        var headers = ['Placette_ID', 'Nom_placette', 'Date', 'Latitude', 'Longitude', 'Precision_GPS_m', 'Observateur', 'Espece', 'DHP_cm', 'Hauteur_totale_m', 'Densite_g_cm3'];
+        var rows = [];
+        placettes.forEach(function (p) {
+          var lat = p.position ? p.position.lat : '';
+          var lng = p.position ? p.position.lng : '';
+          var acc = p.position ? Math.round(p.position.accuracy) : '';
+          (p.individus || []).forEach(function (ind) {
+            rows.push([
+              p.id, p.nomPlacette, p.dateHeure, lat, lng, acc, p.observateur,
+              ind.espece, ind.dhp, ind.hauteurTotale, ind.densite
+            ].map(function (v) { return '"' + String(v === null || v === undefined ? '' : v).replace(/"/g, '""') + '"'; }).join(','));
+          });
         });
         var csv = headers.join(',') + '\n' + rows.join('\n');
-        downloadBlob('\uFEFF' + csv, 'ecoscope-fiches-' + Date.now() + '.csv', 'text/csv;charset=utf-8');
+        downloadBlob('\uFEFF' + csv, 'ecoscope-placettes-' + Date.now() + '.csv', 'text/csv;charset=utf-8');
         showToast('Export CSV téléchargé', 'fa-file-csv');
       });
     });
