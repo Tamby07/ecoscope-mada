@@ -205,9 +205,9 @@
   .empty-state { text-align: center; padding: 50px 20px; color: var(--color-text-muted); }
   .empty-state i { font-size: 2.2rem; margin-bottom: 12px; color: var(--color-border); }
 
-  .export-buttons { display: flex; gap: 10px; margin-top: 22px; }
+  .export-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
   .export-buttons button {
-    flex: 1; padding: 13px; border-radius: 10px; border: 1.5px solid var(--color-primary);
+    flex: 1 1 calc(50% - 5px); padding: 13px; border-radius: 10px; border: 1.5px solid var(--color-primary);
     background: transparent; color: var(--color-primary); font-weight: 600; font-size: 0.85rem;
     cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
   }
@@ -268,6 +268,32 @@
         </div>
 
         <div class="field">
+          <label for="plotShape">Forme de la placette</label>
+          <select id="plotShape">
+            <option value="carre">Carré</option>
+            <option value="circulaire">Circulaire</option>
+            <option value="transect">Transect (ligne)</option>
+          </select>
+        </div>
+
+        <div class="field" id="dimsCarre">
+          <label for="plotSide">Côté (m)</label>
+          <input type="number" id="plotSide" min="0" step="0.1" value="20">
+        </div>
+
+        <div class="field" id="dimsCirculaire" style="display:none;">
+          <label for="plotRadius">Rayon (m)</label>
+          <input type="number" id="plotRadius" min="0" step="0.1" value="12.62">
+        </div>
+
+        <div class="field" id="dimsTransect" style="display:none;">
+          <label for="plotLength">Longueur du transect (m)</label>
+          <input type="number" id="plotLength" min="0" step="0.1" value="50">
+          <label for="plotAzimuth" style="margin-top:10px;">Azimut depuis le Nord (°)</label>
+          <input type="number" id="plotAzimuth" min="0" max="360" step="1" value="0">
+        </div>
+
+        <div class="field">
           <label for="observateur">Observateur</label>
           <input type="text" id="observateur" placeholder="Votre nom">
         </div>
@@ -313,8 +339,10 @@
       <div id="dataList"></div>
 
       <div class="export-buttons">
-        <button type="button" id="exportFichesBtn"><i class="fas fa-file-csv"></i> Exporter placettes (CSV)</button>
-        <button type="button" id="exportPolygonesBtn"><i class="fas fa-file-export"></i> Exporter zones (GeoJSON)</button>
+        <button type="button" id="exportFichesBtn"><i class="fas fa-file-csv"></i> Placettes (CSV)</button>
+        <button type="button" id="exportPlacettesGeoJsonBtn"><i class="fas fa-draw-polygon"></i> Placettes (GeoJSON)</button>
+        <button type="button" id="exportPlacettesShpBtn"><i class="fas fa-file-archive"></i> Placettes (Shapefile)</button>
+        <button type="button" id="exportPolygonesBtn"><i class="fas fa-file-export"></i> Zones (GeoJSON)</button>
       </div>
     </section>
   </main>
@@ -328,6 +356,7 @@
   <div class="toast" id="toast"><i class="fas fa-circle-check"></i><span id="toastMsg"></span></div>
 
   <script src="species-data.js"></script>
+  <script src="https://unpkg.com/shp-write@0.3.2/shpwrite.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
   <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
@@ -623,6 +652,65 @@
       });
     }
 
+    // ============================================================
+    // FORME DE LA PLACETTE : bascule des champs de dimensions
+    // ============================================================
+    document.getElementById('plotShape').addEventListener('change', function () {
+      var shape = this.value;
+      document.getElementById('dimsCarre').style.display = shape === 'carre' ? 'block' : 'none';
+      document.getElementById('dimsCirculaire').style.display = shape === 'circulaire' ? 'block' : 'none';
+      document.getElementById('dimsTransect').style.display = shape === 'transect' ? 'block' : 'none';
+    });
+
+    // ============================================================
+    // GÉOMÉTRIE DU PLACETTE : conversion mètres → degrés autour du centre GPS
+    // Approximation planaire, valable pour de petites surfaces (placettes forestières)
+    // ============================================================
+    function metersToDegrees(centerLat) {
+      var metersPerDegLat = 111320;
+      var metersPerDegLng = 111320 * Math.cos(centerLat * Math.PI / 180);
+      return { lat: metersPerDegLat, lng: metersPerDegLng };
+    }
+
+    function computePlotGeometry(shape, dims, centerLat, centerLng) {
+      var m = metersToDegrees(centerLat);
+
+      function offset(dxMeters, dyMeters) {
+        return [centerLng + dxMeters / m.lng, centerLat + dyMeters / m.lat];
+      }
+
+      if (shape === 'carre') {
+        var half = dims.side / 2;
+        var coords = [
+          offset(-half, half), offset(half, half), offset(half, -half), offset(-half, -half), offset(-half, half)
+        ];
+        return { type: 'Polygon', coordinates: [coords] };
+      }
+
+      if (shape === 'circulaire') {
+        var coords2 = [];
+        var steps = 32;
+        for (var i = 0; i <= steps; i++) {
+          var angle = (i / steps) * 2 * Math.PI;
+          var dx = dims.radius * Math.sin(angle);
+          var dy = dims.radius * Math.cos(angle);
+          coords2.push(offset(dx, dy));
+        }
+        return { type: 'Polygon', coordinates: [coords2] };
+      }
+
+      if (shape === 'transect') {
+        var half2 = dims.length / 2;
+        var rad = dims.azimuth * Math.PI / 180;
+        var dxF = half2 * Math.sin(rad), dyF = half2 * Math.cos(rad);
+        var p1 = offset(-dxF, -dyF);
+        var p2 = offset(dxF, dyF);
+        return { type: 'LineString', coordinates: [p1, p2] };
+      }
+
+      return null;
+    }
+
     document.getElementById('addIndividuBtn').addEventListener('click', addIndividuRow);
     addIndividuRow(); // une première ligne pré-remplie au chargement
 
@@ -685,9 +773,26 @@
           dateHeure: new Date().toISOString()
         };
 
+        var shape = document.getElementById('plotShape').value;
+        var dims = {};
+        if (shape === 'carre') {
+          dims.side = parseFloat(document.getElementById('plotSide').value) || 0;
+        } else if (shape === 'circulaire') {
+          dims.radius = parseFloat(document.getElementById('plotRadius').value) || 0;
+        } else if (shape === 'transect') {
+          dims.length = parseFloat(document.getElementById('plotLength').value) || 0;
+          dims.azimuth = parseFloat(document.getElementById('plotAzimuth').value) || 0;
+        }
+        placette.plotShape = shape;
+        placette.plotDimensions = dims;
+        placette.plotGeometry = computePlotGeometry(shape, dims, capturedPosition.lat, capturedPosition.lng);
+
         dbAdd('placettes', placette).then(function () {
           showToast(individus.length + ' individu(s) enregistré(s)', 'fa-circle-check');
           document.getElementById('placetteForm').reset();
+          document.getElementById('dimsCarre').style.display = 'block';
+          document.getElementById('dimsCirculaire').style.display = 'none';
+          document.getElementById('dimsTransect').style.display = 'none';
           document.getElementById('individusList').innerHTML = '';
           individuRowCounter = 0;
           addIndividuRow();
@@ -927,6 +1032,77 @@
         var csv = headers.join(',') + '\n' + rows.join('\n');
         downloadBlob('\uFEFF' + csv, 'ecoscope-placettes-' + Date.now() + '.csv', 'text/csv;charset=utf-8');
         showToast('Export CSV téléchargé', 'fa-file-csv');
+      });
+    });
+
+    // ============================================================
+    // EXPORT GÉOSPATIAL DES PLACETTES (GeoJSON + Shapefile)
+    // ============================================================
+    function buildPlacettesFeatureCollection(placettes) {
+      var features = [];
+      var skipped = 0;
+
+      placettes.forEach(function (p) {
+        var geometry = p.plotGeometry;
+        if (!geometry && p.position) {
+          // Repli : placette sans forme définie (anciennes données) -> point simple
+          geometry = { type: 'Point', coordinates: [p.position.lng, p.position.lat] };
+        }
+        if (!geometry) { skipped++; return; }
+
+        features.push({
+          type: 'Feature',
+          geometry: geometry,
+          properties: {
+            nom_placette: p.nomPlacette,
+            date: p.dateHeure,
+            observateur: p.observateur || '',
+            forme: p.plotShape || 'point',
+            nb_individus: p.individus ? p.individus.length : 0,
+            total_agb_kg: p.totalAGB_kg || 0,
+            total_carbone_kg: p.totalCarbone_kg || 0
+          }
+        });
+      });
+
+      return { featureCollection: { type: 'FeatureCollection', features: features }, skipped: skipped };
+    }
+
+    document.getElementById('exportPlacettesGeoJsonBtn').addEventListener('click', function () {
+      dbGetAll('placettes').then(function (placettes) {
+        if (placettes.length === 0) { showToast('Aucune placette à exporter', 'fa-triangle-exclamation'); return; }
+        var result = buildPlacettesFeatureCollection(placettes);
+        if (result.featureCollection.features.length === 0) {
+          showToast('Aucune géométrie de placette disponible', 'fa-triangle-exclamation');
+          return;
+        }
+        downloadBlob(JSON.stringify(result.featureCollection, null, 2), 'ecoscope-placettes-' + Date.now() + '.geojson', 'application/geo+json');
+        showToast('Export GeoJSON téléchargé' + (result.skipped ? ' (' + result.skipped + ' ignorée(s))' : ''), 'fa-draw-polygon');
+      });
+    });
+
+    document.getElementById('exportPlacettesShpBtn').addEventListener('click', function () {
+      dbGetAll('placettes').then(function (placettes) {
+        if (placettes.length === 0) { showToast('Aucune placette à exporter', 'fa-triangle-exclamation'); return; }
+        var result = buildPlacettesFeatureCollection(placettes);
+        if (result.featureCollection.features.length === 0) {
+          showToast('Aucune géométrie de placette disponible', 'fa-triangle-exclamation');
+          return;
+        }
+        try {
+          if (typeof shpwrite === 'undefined') {
+            showErrorBanner('La librairie d\'export Shapefile n\'a pas pu se charger (connexion internet requise au premier chargement). Utilisez l\'export GeoJSON en attendant, il s\'ouvre aussi directement dans QGIS.');
+            return;
+          }
+          shpwrite.download(result.featureCollection, {
+            outputType: 'blob',
+            compression: 'DEFLATE',
+            types: { polygon: 'placettes_polygones', polyline: 'placettes_transects', point: 'placettes_points' }
+          });
+          showToast('Export Shapefile téléchargé (.zip)', 'fa-file-archive');
+        } catch (err) {
+          showErrorBanner('Échec de l\'export Shapefile : ' + err.message + '. Utilisez l\'export GeoJSON à la place, il fonctionne aussi bien dans QGIS.');
+        }
       });
     });
 
