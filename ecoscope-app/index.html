@@ -529,18 +529,41 @@
     var views = document.querySelectorAll('.view');
     var leafletMapInstance = null;
 
+    function activateMapView(afterReady) {
+      navButtons.forEach(function (b) { b.classList.remove('active'); });
+      document.querySelector('.nav-btn[data-view="view-map"]').classList.add('active');
+      views.forEach(function (v) { v.classList.remove('active'); });
+      document.getElementById('view-map').classList.add('active');
+
+      // Double requestAnimationFrame : garantit que le navigateur a fini de recalculer
+      // la mise en page (l'onglet est vraiment visible et dimensionné) avant d'initialiser Leaflet,
+      // qui sinon capture une taille de 0 pixel et affiche une carte vide.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          initMapIfNeeded();
+          if (leafletMapInstance) {
+            leafletMapInstance.invalidateSize();
+            setTimeout(function () { leafletMapInstance.invalidateSize(); }, 200);
+          }
+          if (typeof afterReady === 'function') { afterReady(); }
+        });
+      });
+    }
+
     navButtons.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var targetId = btn.getAttribute('data-view');
+
+        if (targetId === 'view-map') {
+          activateMapView();
+          return;
+        }
+
         navButtons.forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
         views.forEach(function (v) { v.classList.remove('active'); });
         document.getElementById(targetId).classList.add('active');
 
-        if (targetId === 'view-map') {
-          initMapIfNeeded();
-          setTimeout(function () { if (leafletMapInstance) leafletMapInstance.invalidateSize(); }, 50);
-        }
         if (targetId === 'view-data') {
           renderDataList();
         }
@@ -1026,18 +1049,10 @@
       }
       var geometry = computePlotGeometry(shape, dims, capturedPosition.lat, capturedPosition.lng);
 
-      // Basculer vers la vue Carte
-      document.querySelectorAll('.nav-btn').forEach(function (b) { b.classList.remove('active'); });
-      document.querySelector('.nav-btn[data-view="view-map"]').classList.add('active');
-      document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
-      document.getElementById('view-map').classList.add('active');
-
-      initMapIfNeeded();
-      setTimeout(function () {
-        if (leafletMapInstance) leafletMapInstance.invalidateSize();
+      activateMapView(function () {
         showPlotBoundaryOnMap(geometry);
         startFieldTracking();
-      }, 100);
+      });
     });
 
     // ============================================================
