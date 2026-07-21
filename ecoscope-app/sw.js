@@ -3,7 +3,7 @@
 // pour permettre la saisie de fiches et l'usage de la carte hors-ligne
 // (les tuiles de fond de carte non encore visitées nécessitent toujours une connexion).
 
-const CACHE_NAME = 'ecoscope-app-v6';
+const CACHE_NAME = 'ecoscope-app-v7';
 
 const ASSETS_TO_CACHE = [
   './',
