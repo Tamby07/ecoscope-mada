@@ -99,6 +99,16 @@
   }
   .gps-readout.filled { color: var(--color-text); font-weight: 600; }
 
+  .manual-gps-toggle {
+    background: none; border: none; color: var(--color-secondary); font-size: 0.8rem; font-weight: 600;
+    padding: 8px 0 0; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .manual-gps-fields {
+    display: none; margin-top: 10px; padding: 12px; background: white; border: 1.5px solid var(--color-border); border-radius: 10px;
+  }
+  .manual-gps-fields.visible { display: block; }
+  .manual-gps-fields input { padding: 10px; font-size: 0.88rem; }
+
   .photo-input-wrap { position: relative; }
   .photo-btn {
     display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;
@@ -285,6 +295,14 @@
           <div class="gps-row">
             <button type="button" class="gps-btn" id="captureGpsBtn"><i class="fas fa-location-crosshairs"></i> Capturer</button>
             <div class="gps-readout" id="gpsReadout">Aucune position capturée</div>
+          </div>
+          <button type="button" class="manual-gps-toggle" id="manualGpsToggle"><i class="fas fa-keyboard"></i> Saisir des coordonnées précises manuellement (RTK)</button>
+          <div class="manual-gps-fields" id="manualGpsFields">
+            <div class="individu-numeric-grid" style="grid-template-columns: 1fr 1fr;">
+              <div><label>Latitude (degrés décimaux)</label><input type="number" id="manualLat" step="0.000001" placeholder="Ex : -18.879200"></div>
+              <div><label>Longitude (degrés décimaux)</label><input type="number" id="manualLng" step="0.000001" placeholder="Ex : 47.507900"></div>
+            </div>
+            <button type="button" class="gps-btn" id="applyManualGpsBtn" style="margin-top:8px; width:100%;"><i class="fas fa-check"></i> Utiliser ces coordonnées</button>
           </div>
         </div>
 
@@ -593,6 +611,33 @@
         readout.textContent = 'Échec de la localisation';
         showToast('Impossible d\'obtenir la position (' + err.message + ')', 'fa-triangle-exclamation');
       }, { enableHighAccuracy: true, timeout: 15000 });
+    });
+
+    // ============================================================
+    // SAISIE MANUELLE DES COORDONNÉES (ex : relevé RTK lu depuis SW Maps)
+    // ============================================================
+    document.getElementById('manualGpsToggle').addEventListener('click', function () {
+      document.getElementById('manualGpsFields').classList.toggle('visible');
+    });
+
+    document.getElementById('applyManualGpsBtn').addEventListener('click', function () {
+      var lat = parseFloat(document.getElementById('manualLat').value);
+      var lng = parseFloat(document.getElementById('manualLng').value);
+
+      if (isNaN(lat) || isNaN(lng)) {
+        showToast('Entrez une latitude et une longitude valides', 'fa-triangle-exclamation');
+        return;
+      }
+      if (lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+        showToast('Coordonnées hors limites — vérifiez le format (degrés décimaux)', 'fa-triangle-exclamation');
+        return;
+      }
+
+      capturedPosition = { lat: lat, lng: lng, accuracy: 0.05 }; // précision RTK typique ~5 cm
+      var readout = document.getElementById('gpsReadout');
+      readout.textContent = lat.toFixed(6) + ', ' + lng.toFixed(6) + ' (RTK manuel, ±5cm)';
+      readout.classList.add('filled');
+      showToast('Coordonnées RTK appliquées', 'fa-satellite-dish');
     });
 
     function addIndividuRow() {
