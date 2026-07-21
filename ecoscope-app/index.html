@@ -58,7 +58,7 @@
   main { flex: 1; overflow-y: auto; padding-bottom: calc(78px + var(--safe-bottom)); }
   .view { display: none; padding: 18px; max-width: 640px; margin: 0 auto; }
   .view.active { display: block; }
-  #view-map.active { display: flex; flex-direction: column; padding: 0; max-width: none; }
+  #view-map.active { display: flex; flex-direction: column; padding: 0; max-width: none; height: 100%; }
 
   h2.view-title {
     font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;
@@ -184,7 +184,7 @@
   }
 
   /* ===== Map view ===== */
-  #leafletMap { flex: 1; width: 100%; z-index: 1; }
+  #leafletMap { flex: 1; width: 100%; min-height: 350px; z-index: 1; }
   .map-toolbar {
     background: white; padding: 14px 18px; border-top: 1px solid var(--color-border);
     display: flex; align-items: center; justify-content: space-between; gap: 12px;
