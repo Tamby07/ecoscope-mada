@@ -163,6 +163,26 @@
   .plot-total-value { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--color-accent); }
   .plot-total-hint { font-size: 0.72rem; opacity: 0.7; margin-top: 4px; }
 
+  .track-btn {
+    width: 100%; padding: 14px; border-radius: 10px; border: none;
+    background: var(--color-secondary); color: white; font-weight: 600; font-size: 0.9rem;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .track-btn:active { background: var(--color-secondary-dark); }
+  .track-btn.tracking { background: #DC2626; }
+
+  .tracking-panel {
+    background: white; padding: 12px 18px; border-bottom: 1px solid var(--color-border);
+    display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+  .tracking-panel.active { display: flex; }
+  .tracking-status { font-size: 0.82rem; color: var(--color-text-muted); }
+  .tracking-status strong { color: var(--color-primary); }
+  .tracking-stop-btn {
+    background: #DC2626; color: white; border: none; border-radius: 50px; padding: 9px 18px;
+    font-weight: 600; font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+
   /* ===== Map view ===== */
   #leafletMap { flex: 1; width: 100%; z-index: 1; }
   .map-toolbar {
@@ -283,7 +303,12 @@
 
         <div class="field" id="dimsCirculaire" style="display:none;">
           <label for="plotRadius">Rayon (m)</label>
-          <input type="number" id="plotRadius" min="0" step="0.1" value="12.62">
+          <input type="number" id="plotRadius" min="0" step="0.01" value="17.84">
+          <p class="hint">1000 m² (rayon 17,84 m) recommandé par la littérature pour une quantification fiable</p>
+        </div>
+
+        <div class="field">
+          <button type="button" class="track-btn" id="startTrackingBtn"><i class="fas fa-route"></i> Suivre mon parcours dans cette placette</button>
         </div>
 
         <div class="field" id="dimsTransect" style="display:none;">
@@ -319,6 +344,10 @@
     <!-- ============ VUE 2 : CARTE / DÉLIMITATION ============ -->
     <section id="view-map" class="view">
       <div class="map-hint-banner"><i class="fas fa-draw-polygon"></i> Utilisez l'outil polygone (à droite de la carte) pour délimiter une zone. La surface se calcule automatiquement.</div>
+      <div class="tracking-panel" id="trackingPanel">
+        <div class="tracking-status"><i class="fas fa-satellite-dish"></i> Suivi actif · <strong id="trackingPointCount">0</strong> points · <span id="trackingDistance">0 m</span> parcourus</div>
+        <button type="button" class="tracking-stop-btn" id="stopTrackingBtn"><i class="fas fa-stop"></i> Arrêter le suivi</button>
+      </div>
       <div id="leafletMap"></div>
       <div class="map-toolbar">
         <div class="area-readout" id="areaReadout">Aucune zone dessinée</div>
@@ -812,6 +841,11 @@
     // CARTE + DESSIN DE POLYGONES
     // ============================================================
     var drawnItemsLayer = null;
+    var plotBoundaryLayer = null;
+    var trackingWatchId = null;
+    var trackingTrailLayer = null;
+    var trackingPoints = [];
+    var trackingTotalDistance = 0;
 
     function initMapIfNeeded() {
       if (leafletMapInstance) return;
@@ -904,6 +938,106 @@
     document.getElementById('locateBtn').addEventListener('click', function () {
       if (!leafletMapInstance) return;
       leafletMapInstance.locate({ setView: true, maxZoom: 14 });
+    });
+
+    // ============================================================
+    // SUIVI TERRAIN EN DIRECT : dessine la placette + trace le parcours GPS
+    // ============================================================
+    function haversineDistance(lat1, lng1, lat2, lng2) {
+      var R = 6371000;
+      var dLat = (lat2 - lat1) * Math.PI / 180;
+      var dLng = (lng2 - lng1) * Math.PI / 180;
+      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function showPlotBoundaryOnMap(geometry) {
+      if (!leafletMapInstance || !geometry) return;
+      if (plotBoundaryLayer) { leafletMapInstance.removeLayer(plotBoundaryLayer); }
+      plotBoundaryLayer = L.geoJSON(geometry, {
+        style: { color: '#D97D3D', weight: 3, fillColor: '#D97D3D', fillOpacity: 0.08, dashArray: '6 4' }
+      }).addTo(leafletMapInstance);
+      leafletMapInstance.fitBounds(plotBoundaryLayer.getBounds(), { padding: [30, 30] });
+    }
+
+    function startFieldTracking() {
+      if (!navigator.geolocation) {
+        showToast('Géolocalisation non disponible sur cet appareil', 'fa-triangle-exclamation');
+        return;
+      }
+      if (trackingWatchId !== null) return; // déjà en cours
+
+      trackingPoints = [];
+      trackingTotalDistance = 0;
+      if (trackingTrailLayer) { leafletMapInstance.removeLayer(trackingTrailLayer); }
+      trackingTrailLayer = L.layerGroup().addTo(leafletMapInstance);
+
+      document.getElementById('trackingPanel').classList.add('active');
+      document.getElementById('trackingPointCount').textContent = '0';
+      document.getElementById('trackingDistance').textContent = '0 m';
+
+      trackingWatchId = navigator.geolocation.watchPosition(function (pos) {
+        var lat = pos.coords.latitude, lng = pos.coords.longitude;
+
+        if (trackingPoints.length > 0) {
+          var last = trackingPoints[trackingPoints.length - 1];
+          trackingTotalDistance += haversineDistance(last[0], last[1], lat, lng);
+          L.polyline([last, [lat, lng]], { color: '#1F7A4D', weight: 4, opacity: 0.85 }).addTo(trackingTrailLayer);
+        }
+        L.circleMarker([lat, lng], { radius: 4, color: '#1F7A4D', fillColor: '#1F7A4D', fillOpacity: 0.9 }).addTo(trackingTrailLayer);
+        trackingPoints.push([lat, lng]);
+
+        document.getElementById('trackingPointCount').textContent = trackingPoints.length;
+        document.getElementById('trackingDistance').textContent = Math.round(trackingTotalDistance) + ' m';
+      }, function (err) {
+        showErrorBanner('Erreur de suivi GPS : ' + err.message);
+      }, { enableHighAccuracy: true, maximumAge: 1000, timeout: 20000 });
+
+      showToast('Suivi terrain démarré — déplacez-vous dans la placette', 'fa-route');
+    }
+
+    function stopFieldTracking() {
+      if (trackingWatchId !== null) {
+        navigator.geolocation.clearWatch(trackingWatchId);
+        trackingWatchId = null;
+      }
+      document.getElementById('trackingPanel').classList.remove('active');
+      showToast(trackingPoints.length + ' points de parcours enregistrés', 'fa-route');
+    }
+
+    document.getElementById('stopTrackingBtn').addEventListener('click', stopFieldTracking);
+
+    document.getElementById('startTrackingBtn').addEventListener('click', function () {
+      if (!capturedPosition) {
+        showToast('Capturez d\'abord la position GPS du centre de la placette', 'fa-triangle-exclamation');
+        return;
+      }
+      var shape = document.getElementById('plotShape').value;
+      var dims = {};
+      if (shape === 'carre') {
+        dims.side = parseFloat(document.getElementById('plotSide').value) || 0;
+      } else if (shape === 'circulaire') {
+        dims.radius = parseFloat(document.getElementById('plotRadius').value) || 0;
+      } else if (shape === 'transect') {
+        dims.length = parseFloat(document.getElementById('plotLength').value) || 0;
+        dims.azimuth = parseFloat(document.getElementById('plotAzimuth').value) || 0;
+      }
+      var geometry = computePlotGeometry(shape, dims, capturedPosition.lat, capturedPosition.lng);
+
+      // Basculer vers la vue Carte
+      document.querySelectorAll('.nav-btn').forEach(function (b) { b.classList.remove('active'); });
+      document.querySelector('.nav-btn[data-view="view-map"]').classList.add('active');
+      document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+      document.getElementById('view-map').classList.add('active');
+
+      initMapIfNeeded();
+      setTimeout(function () {
+        if (leafletMapInstance) leafletMapInstance.invalidateSize();
+        showPlotBoundaryOnMap(geometry);
+        startFieldTracking();
+      }, 100);
     });
 
     // ============================================================
