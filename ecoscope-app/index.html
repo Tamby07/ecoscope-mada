@@ -910,8 +910,41 @@
         placette.plotDimensions = dims;
         placette.plotGeometry = computePlotGeometry(shape, dims, capturedPosition.lat, capturedPosition.lng);
 
-        dbAdd('placettes', placette).then(function () {
+        dbAdd('placettes', placette).then(function (placetteId) {
           showToast(individus.length + ' individu(s) enregistré(s)', 'fa-circle-check');
+
+          // Ajoute automatiquement la placette dans les zones exportables (même forme/dimensions saisies),
+          // avec les deux valeurs de carbone (Chave et Vieilledent) en attributs.
+          var zoneAreaM2 = (typeof turf !== 'undefined' && placette.plotGeometry && placette.plotGeometry.type === 'Polygon')
+            ? turf.area(placette.plotGeometry) : null;
+          var zoneEntry = {
+            label: placette.nomPlacette,
+            geojson: { type: 'Feature', geometry: placette.plotGeometry, properties: {} },
+            areaM2: zoneAreaM2,
+            areaHa: zoneAreaM2 !== null ? zoneAreaM2 / 10000 : null,
+            dateHeure: placette.dateHeure,
+            source: 'placette',
+            placetteId: placetteId,
+            properties: {
+              placette_id: placetteId,
+              nb_individus: individus.length,
+              forme: shape,
+              agb_chave_kg: placette.totalAGB_kg,
+              carbone_chave_kg: placette.totalCarbone_kg,
+              agb_vieilledent_kg: placette.totalAGB_vieilledent_kg,
+              carbone_vieilledent_kg: placette.totalCarbone_vieilledent_kg
+            }
+          };
+          dbAdd('polygones', zoneEntry).then(function () {
+            if (leafletMapInstance && drawnItemsLayer) {
+              var layer = L.geoJSON(zoneEntry.geojson, { style: { color: '#1F7A4D' } });
+              layer.bindPopup(buildPolygonePopup(zoneEntry));
+              layer.addTo(drawnItemsLayer);
+            }
+          }).catch(function (err) {
+            showErrorBanner('La placette est enregistrée, mais son ajout automatique aux zones a échoué : ' + err.message);
+          });
+
           document.getElementById('placetteForm').reset();
           document.getElementById('dimsCarre').style.display = 'block';
           document.getElementById('dimsCirculaire').style.display = 'none';
@@ -1021,11 +1054,23 @@
       }
     }
 
+    function buildPolygonePopup(p) {
+      var lines = ['<strong>' + escapeHtml(p.label) + '</strong>'];
+      if (p.areaHa !== undefined && p.areaHa !== null) { lines.push(p.areaHa.toFixed(2) + ' ha'); }
+      if (p.properties && p.properties.carbone_chave_kg !== undefined) {
+        lines.push('Chave : ' + p.properties.carbone_chave_kg + ' kg C');
+      }
+      if (p.properties && p.properties.carbone_vieilledent_kg !== undefined) {
+        lines.push('Vieilledent : ' + p.properties.carbone_vieilledent_kg + ' kg C');
+      }
+      return lines.join('<br>');
+    }
+
     function loadSavedPolygonesOnMap() {
       dbGetAll('polygones').then(function (list) {
         list.forEach(function (p) {
           var layer = L.geoJSON(p.geojson, { style: { color: '#1F7A4D' } });
-          layer.bindPopup('<strong>' + p.label + '</strong><br>' + p.areaHa.toFixed(2) + ' ha');
+          layer.bindPopup(buildPolygonePopup(p));
           layer.addTo(drawnItemsLayer);
         });
       });
@@ -1353,7 +1398,10 @@
           type: 'FeatureCollection',
           features: polygones.map(function (p) {
             var f = JSON.parse(JSON.stringify(p.geojson));
-            f.properties = { label: p.label, areaHa: p.areaHa, dateHeure: p.dateHeure };
+            f.properties = Object.assign(
+              { label: p.label, areaHa: p.areaHa || null, dateHeure: p.dateHeure, source: p.source || 'dessin_manuel' },
+              p.properties || {}
+            );
             return f;
           })
         };
