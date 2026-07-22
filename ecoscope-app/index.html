@@ -169,9 +169,13 @@
   .plot-total-card {
     background: var(--color-secondary-dark); color: white; border-radius: 12px; padding: 16px 18px; margin-bottom: 16px;
   }
-  .plot-total-label { font-size: 0.78rem; font-weight: 600; opacity: 0.85; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
-  .plot-total-value { font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--color-accent); }
-  .plot-total-hint { font-size: 0.72rem; opacity: 0.7; margin-top: 4px; }
+  .plot-total-label { font-size: 0.78rem; font-weight: 600; opacity: 0.85; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .plot-total-row {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 4px;
+    font-size: 0.82rem; opacity: 0.9;
+  }
+  .plot-total-row strong { font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: var(--color-accent); }
+  .plot-total-hint { font-size: 0.72rem; opacity: 0.7; margin-top: 6px; }
 
   .track-btn {
     width: 100%; padding: 14px; border-radius: 10px; border: none;
@@ -349,9 +353,10 @@
         </div>
 
         <div class="plot-total-card" id="plotTotalCard">
-          <div class="plot-total-label"><i class="fas fa-calculator"></i> Biomasse / carbone de la placette (Chave et al. 2014)</div>
-          <div class="plot-total-value" id="plotTotalAGB">0 kg AGB · 0 kg C</div>
-          <div class="plot-total-hint">Calcul automatique dès qu'espèce, DHP, hauteur et densité sont renseignés</div>
+          <div class="plot-total-label"><i class="fas fa-calculator"></i> Biomasse / carbone de la placette</div>
+          <div class="plot-total-row"><span>Chave et al. 2014</span><strong id="plotTotalChave">0 kg AGB · 0 kg C</strong></div>
+          <div class="plot-total-row"><span>Vieilledent et al. 2012</span><strong id="plotTotalVieilledent">0 kg AGB · 0 kg C</strong></div>
+          <div class="plot-total-hint">Calcul automatique dès que DHP, hauteur et densité sont renseignés</div>
         </div>
 
         <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Enregistrer la placette</button>
@@ -652,7 +657,7 @@
         '</div>' +
         '<div class="individu-names-grid">' +
           '<div><label>Nom local</label><input type="text" class="ind-nomlocal" placeholder="Nom local *"></div>' +
-          '<div><label>Nom vernaculaire (base MEDD)</label><input type="text" class="ind-vernaculaire" list="vernaculaireList" placeholder="Rechercher…"></div>' +
+          '<div><label>Nom vernaculaire</label><input type="text" class="ind-vernaculaire" list="vernaculaireList" placeholder="Rechercher…"></div>' +
         '</div>' +
         '<div class="ind-match-info"></div>' +
         '<div class="individu-numeric-grid">' +
@@ -714,28 +719,44 @@
       return 0.0673 * Math.pow(densite * dhp * dhp * hauteur, 0.976);
     }
 
+    // ============================================================
+    // CALCUL BIOMASSE / CARBONE — Vieilledent et al. 2012, Strate I.2 (forêt humide)
+    // Ln(Y) = -2,108 + 0,908 × ln(D² × densité × Hauteur)
+    // AGB (kg) = exp(-2,108) × (densité × DHP² × Hauteur)^0,908
+    // ⚠️ À confirmer : correspondance Strate I = forêt humide (hypothèse liée au site COMATSA)
+    // ============================================================
+    function computeVieilledentAGB(densite, dhp, hauteur) {
+      if (!densite || !dhp || !hauteur) return null;
+      return Math.exp(-2.108) * Math.pow(densite * dhp * dhp * hauteur, 0.908);
+    }
+
     function updatePlotTotal() {
       var rows = document.querySelectorAll('#individusList .individu-row');
-      var totalAGB = 0;
+      var totalChave = 0;
+      var totalVieilledent = 0;
       var countValid = 0;
 
       rows.forEach(function (row) {
         var dhp = parseFloat(row.querySelector('.ind-dhp').value);
         var hauteur = parseFloat(row.querySelector('.ind-hauteur').value);
         var densite = parseFloat(row.querySelector('.ind-densite').value);
-        var agb = computeChaveAGB(densite, dhp, hauteur);
-        if (agb !== null) {
-          totalAGB += agb;
+        var agbChave = computeChaveAGB(densite, dhp, hauteur);
+        var agbVieilledent = computeVieilledentAGB(densite, dhp, hauteur);
+        if (agbChave !== null) {
+          totalChave += agbChave;
+          totalVieilledent += agbVieilledent;
           countValid++;
         }
       });
 
-      var totalC = totalAGB * 0.47;
-      var totalCard = document.getElementById('plotTotalAGB');
+      var chaveEl = document.getElementById('plotTotalChave');
+      var vieilledentEl = document.getElementById('plotTotalVieilledent');
       if (countValid === 0) {
-        totalCard.textContent = '0 kg AGB · 0 kg C';
+        chaveEl.textContent = '0 kg AGB · 0 kg C';
+        vieilledentEl.textContent = '0 kg AGB · 0 kg C';
       } else {
-        totalCard.textContent = totalAGB.toFixed(1) + ' kg AGB · ' + totalC.toFixed(1) + ' kg C (' + countValid + ' individu(s) calculé(s))';
+        chaveEl.textContent = totalChave.toFixed(1) + ' kg AGB · ' + (totalChave * 0.47).toFixed(1) + ' kg C';
+        vieilledentEl.textContent = totalVieilledent.toFixed(1) + ' kg AGB · ' + (totalVieilledent * 0.47).toFixed(1) + ' kg C';
       }
     }
 
@@ -822,7 +843,8 @@
         var rows = document.querySelectorAll('#individusList .individu-row');
         var individus = [];
         var hasError = false;
-        var totalAGB = 0;
+        var totalChave = 0;
+        var totalVieilledent = 0;
 
         rows.forEach(function (row) {
           var nomLocal = row.querySelector('.ind-nomlocal').value.trim();
@@ -839,7 +861,8 @@
           var hauteurVal = hauteur ? parseFloat(hauteur) : null;
           var densiteVal = densite ? parseFloat(densite) : null;
           var agbChave = computeChaveAGB(densiteVal, dhpVal, hauteurVal);
-          if (agbChave !== null) { totalAGB += agbChave; }
+          var agbVieilledent = computeVieilledentAGB(densiteVal, dhpVal, hauteurVal);
+          if (agbChave !== null) { totalChave += agbChave; totalVieilledent += agbVieilledent; }
 
           individus.push({
             nomLocal: nomLocal,
@@ -847,7 +870,8 @@
             dhp: dhpVal,
             hauteurTotale: hauteurVal,
             densite: densiteVal,
-            agbChave_kg: agbChave !== null ? Math.round(agbChave * 100) / 100 : null
+            agbChave_kg: agbChave !== null ? Math.round(agbChave * 100) / 100 : null,
+            agbVieilledent_kg: agbVieilledent !== null ? Math.round(agbVieilledent * 100) / 100 : null
           });
         });
 
@@ -865,8 +889,10 @@
           position: capturedPosition,
           observateur: document.getElementById('observateur').value.trim(),
           individus: individus,
-          totalAGB_kg: Math.round(totalAGB * 100) / 100,
-          totalCarbone_kg: Math.round(totalAGB * 0.47 * 100) / 100,
+          totalAGB_kg: Math.round(totalChave * 100) / 100,
+          totalCarbone_kg: Math.round(totalChave * 0.47 * 100) / 100,
+          totalAGB_vieilledent_kg: Math.round(totalVieilledent * 100) / 100,
+          totalCarbone_vieilledent_kg: Math.round(totalVieilledent * 0.47 * 100) / 100,
           dateHeure: new Date().toISOString()
         };
 
@@ -1143,7 +1169,7 @@
             var especesApercu = item.individus ? item.individus.slice(0, 2).map(function (i) { return i.nomLocal; }).join(', ') : '';
             var coords = item.position ? item.position.lat.toFixed(5) + ', ' + item.position.lng.toFixed(5) : 'Sans position';
             var totalInfo = (item.totalAGB_kg !== undefined && item.totalAGB_kg !== null)
-              ? item.totalAGB_kg + ' kg AGB · ' + item.totalCarbone_kg + ' kg C'
+              ? 'Chave : ' + item.totalCarbone_kg + ' kg C · Vieilledent : ' + (item.totalCarbone_vieilledent_kg !== undefined ? item.totalCarbone_vieilledent_kg : '?') + ' kg C'
               : 'Total non calculé';
             card.innerHTML =
               '<div class="data-icon"><i class="fas fa-tree"></i></div>' +
@@ -1209,8 +1235,10 @@
       dbGetAll('placettes').then(function (placettes) {
         if (placettes.length === 0) { showToast('Aucune placette à exporter', 'fa-triangle-exclamation'); return; }
         var headers = ['Placette_ID', 'Nom_placette', 'Date', 'Latitude', 'Longitude', 'Precision_GPS_m', 'Observateur',
-          'Nom_local', 'Nom_vernaculaire', 'DHP_cm', 'Hauteur_totale_m', 'Densite_g_cm3', 'AGB_Chave2014_kg',
-          'Placette_Total_AGB_kg', 'Placette_Total_Carbone_kg'];
+          'Nom_local', 'Nom_vernaculaire', 'DHP_cm', 'Hauteur_totale_m', 'Densite_g_cm3',
+          'AGB_Chave2014_kg', 'AGB_Vieilledent2012_kg',
+          'Placette_Total_AGB_Chave_kg', 'Placette_Total_Carbone_Chave_kg',
+          'Placette_Total_AGB_Vieilledent_kg', 'Placette_Total_Carbone_Vieilledent_kg'];
         var rows = [];
         placettes.forEach(function (p) {
           var lat = p.position ? p.position.lat : '';
@@ -1219,8 +1247,9 @@
           (p.individus || []).forEach(function (ind) {
             rows.push([
               p.id, p.nomPlacette, p.dateHeure, lat, lng, acc, p.observateur,
-              ind.nomLocal, ind.vernaculaire, ind.dhp, ind.hauteurTotale, ind.densite, ind.agbChave_kg,
-              p.totalAGB_kg, p.totalCarbone_kg
+              ind.nomLocal, ind.vernaculaire, ind.dhp, ind.hauteurTotale, ind.densite,
+              ind.agbChave_kg, ind.agbVieilledent_kg,
+              p.totalAGB_kg, p.totalCarbone_kg, p.totalAGB_vieilledent_kg, p.totalCarbone_vieilledent_kg
             ].map(function (v) { return '"' + String(v === null || v === undefined ? '' : v).replace(/"/g, '""') + '"'; }).join(','));
           });
         });
@@ -1254,8 +1283,10 @@
             observateur: p.observateur || '',
             forme: p.plotShape || 'point',
             nb_individus: p.individus ? p.individus.length : 0,
-            total_agb_kg: p.totalAGB_kg || 0,
-            total_carbone_kg: p.totalCarbone_kg || 0
+            total_agb_chave_kg: p.totalAGB_kg || 0,
+            total_carbone_chave_kg: p.totalCarbone_kg || 0,
+            total_agb_vieilledent_kg: p.totalAGB_vieilledent_kg || 0,
+            total_carbone_vieilledent_kg: p.totalCarbone_vieilledent_kg || 0
           }
         });
       });
