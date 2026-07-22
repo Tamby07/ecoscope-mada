@@ -1,6 +1,4 @@
-// Base de données de densité du bois — extraite du Rapport final de catégorisation
-// des bois de Madagascar (RAZAFIMAHATRATRA, MEDD, Mars 2025), Tableaux 12 et 13.
-// 115 espèces : 71 (écorégion humide) + 44 (écorégion sèche).
+// Base de données de densité du bois — 115 espèces (71 écorégion humide + 44 écorégion sèche).
 // densite en g/cm3 (D12 : densité mesurée à 12% d'humidité).
 const WOOD_DENSITY_DB = [
   {
